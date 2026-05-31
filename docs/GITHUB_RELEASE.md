@@ -42,6 +42,8 @@ Run from the repo root:
 ```bash
 rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' || true
 ruby -e 'require "yaml"; YAML.load_file("skills/kimi-agent-swarm-prompt/agents/openai.yaml"); puts "openai.yaml ok"'
+bash -n scripts/install-codex-skill.sh
+bash -n scripts/sync-prompt-engineering-upstream.sh
 tmpdir=$(mktemp -d); CODEX_HOME="$tmpdir" scripts/install-codex-skill.sh
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/SKILL.md"
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
@@ -52,8 +54,10 @@ Expected:
 
 - No local absolute path matches.
 - YAML parses.
+- Shell scripts pass syntax checks.
 - Temp install succeeds.
 - Working tree is clean before push.
+- `docs/CODE_QUALITY.md` and `docs/CODE_REVIEW.md` checklists pass.
 
 ## Create Public Repository
 

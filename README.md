@@ -102,6 +102,10 @@ If no harness exists, the skill should stop after producing the refined prompt c
 |-- README.md
 |-- LICENSE
 |-- THIRD_PARTY_NOTICES.md
+|-- docs/
+|   |-- CODE_QUALITY.md
+|   |-- CODE_REVIEW.md
+|   `-- GITHUB_RELEASE.md
 |-- scripts/
 |   |-- install-codex-skill.sh
 |   `-- sync-prompt-engineering-upstream.sh
@@ -151,6 +155,8 @@ Before publishing:
 - `scripts/install-codex-skill.sh` installs into a temp `CODEX_HOME`.
 - `THIRD_PARTY_NOTICES.md` names upstream repo, license, snapshot commit, and included files.
 - README says Codex-only and unofficial.
+- [docs/CODE_QUALITY.md](docs/CODE_QUALITY.md) quality gates pass.
+- [docs/CODE_REVIEW.md](docs/CODE_REVIEW.md) review checklist passes.
 - GitHub authentication is valid for the target owner.
 
 Detailed release notes and commands are in [docs/GITHUB_RELEASE.md](docs/GITHUB_RELEASE.md).
