@@ -153,7 +153,8 @@ Before publishing:
 - README says Codex-only and unofficial.
 - GitHub authentication is valid for the target owner.
 
+Detailed release notes and commands are in [docs/GITHUB_RELEASE.md](docs/GITHUB_RELEASE.md).
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
-
