@@ -40,14 +40,22 @@ Do not say:
 Run from the repo root:
 
 ```bash
-rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' || true
+rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' -g '!docs/CODE_QUALITY.md' -g '!docs/CODE_REVIEW.md' -g '!.github/workflows/quality.yml' || true
 ruby -e 'require "yaml"; YAML.load_file("skills/kimi-agent-swarm-prompt/agents/openai.yaml"); puts "openai.yaml ok"'
 bash -n scripts/install-codex-skill.sh
 bash -n scripts/sync-prompt-engineering-upstream.sh
 tmpdir=$(mktemp -d); CODEX_HOME="$tmpdir" scripts/install-codex-skill.sh
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/SKILL.md"
+test -f "$tmpdir/skills/kimi-agent-swarm-prompt/references/wide-search-mode.md"
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
+(cd runtime/wide-search && npm test)
 git status --short
+```
+
+After push, confirm GitHub Actions quality status:
+
+```bash
+gh run list --workflow quality --limit 3
 ```
 
 Expected:
@@ -56,7 +64,9 @@ Expected:
 - YAML parses.
 - Shell scripts pass syntax checks.
 - Temp install succeeds.
+- Wide-search runtime fixture tests pass.
 - Working tree is clean before push.
+- GitHub Actions quality workflow passes after push.
 - `docs/CODE_QUALITY.md` and `docs/CODE_REVIEW.md` checklists pass.
 
 ## Create Public Repository

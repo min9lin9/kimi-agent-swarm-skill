@@ -1,0 +1,58 @@
+{
+  "sources": [
+    {
+      "id": "S001",
+      "url": "https://example.com/official-agent-report",
+      "title": "Official Agent Research Report",
+      "sourceClass": "official",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "fixture:agent research",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Evidence-backed research workflows need source and claim traceability."
+      ]
+    },
+    {
+      "id": "S002",
+      "url": "https://example.com/community-thread",
+      "title": "Community Thread",
+      "sourceClass": "community",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "fixture:agent research",
+      "scores": {
+        "relevance": 3,
+        "authority": 2,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": [
+        "Users prefer readable synthesis before audit files."
+      ]
+    },
+    {
+      "id": "S003",
+      "url": "https://example.com/duplicate-summary",
+      "title": "Duplicate Summary",
+      "sourceClass": "secondary",
+      "publishedAt": "2025-01-10",
+      "discoveredBy": "fixture:agent research",
+      "scores": {
+        "relevance": 1,
+        "authority": 1,
+        "freshness": 1,
+        "diversity": 0,
+        "extractionValue": 1
+      },
+      "claims": [
+        "Weak duplicate source should not be accepted."
+      ]
+    }
+  ]
+}

@@ -2,9 +2,23 @@
 
 ## Mode: wide-search
 
-Use Search Swarm+ for research, wide search, niche discovery, source collection, classification, scoring, and synthesis.
+Use `wide-search` for source-heavy research, niche discovery, source collection, classification, scoring, and synthesis.
 
-Default harness directory:
+Read `wide-search-mode.md` before running this mode. It defines the user-facing approval card, search depths, readable output shape, source quality rules, evidence files, and stop conditions.
+
+Required user-facing outputs:
+
+- direct answer or recommendation
+- top findings with evidence ids
+- ranked shortlist or comparison table when useful
+- source coverage and known gaps
+- evidence paths and verification result
+
+Default profile: `standard`.
+
+Escalate to `deep` or `maximum` only after approval. `maximum` requires a hosted or explicitly provisioned distributed search system and must not be described as equivalent to hosted Kimi Agent Swarm unless the hosted system is actually used.
+
+Advanced search harness directory:
 
 ```bash
 $KIMI_SWARM_HARNESS_DIR
@@ -12,7 +26,7 @@ $KIMI_SWARM_HARNESS_DIR
 
 If `KIMI_SWARM_HARNESS_DIR` is not set, locate a local directory containing `search-swarm-plus/package.json`. If no harness is available, stop after producing the refined prompt contract.
 
-Recommended command sequence from the harness directory:
+Recommended advanced command sequence from the harness directory:
 
 ```bash
 npm run doctor
@@ -22,12 +36,18 @@ npm run inspect
 ```
 
 Notes:
-- `run` executes plan, provider retrieval, source scoring, claim synthesis, and verification report creation.
-- Before a real provider run, use `npm run provider-doctor -- --provider command --command /absolute/path/to/provider` to validate the wrapper.
-- Use `--provider command --command /absolute/path/to/provider` for real command-backed retrieval.
-- Wrapper development can start with `node examples/providers/jsonl-fixture-provider.mjs`.
+- `run` executes planning, source collection, source scoring, claim synthesis, and verification report creation.
 - `debate` and `debate-run` remain advanced planning steps. `debate-run` invokes Kimi and may require Codex escalation because Kimi writes to `~/.kimi`.
 - `verify` is the deterministic acceptance gate.
+- If no harness exists, return the refined prompt contract, approval card, and harness requirements. Do not invent search results.
+- Provider and adapter details belong in `docs/HARNESS_INTEGRATION.md`.
+
+Do not expose these command details in the normal user answer unless the user asks how to configure the harness.
+
+Built-in runtime profiles:
+
+- `fixture`: deterministic test profile
+- `local-command`: local JSONL command profile
 
 ## Mode: kimi-code
 

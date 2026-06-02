@@ -1,0 +1,62 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  package-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Check for local path leaks
+        run: |
+          if rg "/Users/|/private|Documents/Codex|dmae97" . \
+            -g '!docs/GITHUB_RELEASE.md' \
+            -g '!docs/CODE_QUALITY.md' \
+            -g '!docs/CODE_REVIEW.md' \
+            -g '!.github/workflows/quality.yml'; then
+            echo "Local path leak detected"
+            exit 1
+          fi
+
+      - name: Parse skill metadata
+        run: |
+          ruby -e 'require "yaml"; YAML.load_file("skills/kimi-agent-swarm-prompt/agents/openai.yaml")'
+          ruby -e 'require "yaml"; front=File.read("skills/kimi-agent-swarm-prompt/SKILL.md")[/\A---\n(.*?)\n---/m,1]; YAML.load(front)'
+
+      - name: Check shell scripts
+        run: |
+          bash -n scripts/install-codex-skill.sh
+          bash -n scripts/sync-prompt-engineering-upstream.sh
+
+      - name: Smoke install Codex skill
+        run: |
+          tmpdir="$(mktemp -d)"
+          CODEX_HOME="$tmpdir" scripts/install-codex-skill.sh
+          test -f "$tmpdir/skills/kimi-agent-swarm-prompt/SKILL.md"
+          test -f "$tmpdir/skills/kimi-agent-swarm-prompt/references/wide-search-mode.md"
+          test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
+
+      - name: Run wide-search runtime tests
+        working-directory: runtime/wide-search
+        run: npm test
+
+      - name: Smoke wide-search runtime CLI
+        working-directory: runtime/wide-search
+        run: |
+          tmpdir="$(mktemp -d)"
+          node src/cli.mjs run \
+            --profile local-command \
+            --provider-command node \
+            --provider-args fixtures/jsonl-provider.mjs \
+            --objective "Evaluate command-backed source ingestion" \
+            --work-dir "$tmpdir"

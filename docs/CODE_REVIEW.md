@@ -23,6 +23,8 @@ Review findings should be ordered by severity:
 - Does it ask only blocking questions?
 - Does it require an approval card before risky execution?
 - Does it report commands, ledgers, verification, and unresolved risks?
+- For `wide-search`, does it require source quality filtering, ledgers, synthesis, and deterministic verification?
+- For `wide-search`, does it return a readable answer first and keep provider/harness details out of normal user-facing output?
 
 ### Safety Boundary
 
@@ -31,6 +33,7 @@ Review findings should be ordered by severity:
 - Does it warn about Kimi `--print` and write-capable automation?
 - Does it preserve deterministic verification as source of truth?
 - Does it avoid assuming a local Search Swarm+ harness exists?
+- Does it reject single-search answers for `wide-search` unless the user explicitly asks for a quick scan?
 
 ### Packaging
 
@@ -39,10 +42,13 @@ Review findings should be ordered by severity:
 - Are vendored prompt-engineering files inside the skill folder?
 - Are scripts shellcheck-simple and `bash -n` clean?
 - Are executable scripts committed with executable mode?
+- Does `.github/workflows/quality.yml` run the same core package checks?
 
 ### Documentation
 
 - Does README explain install, usage, workflow, optional harness, and limits?
+- Does README explain `wide-search` outputs, run depth, and non-parity boundary?
+- Does README describe user examples before advanced harness configuration?
 - Does `docs/GITHUB_RELEASE.md` match current commands?
 - Does `docs/CODE_QUALITY.md` include all required quality gates?
 - Do docs avoid local absolute paths and private workspace names?
@@ -60,13 +66,15 @@ Review findings should be ordered by severity:
 
 ```bash
 git diff --check
-rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' -g '!docs/CODE_QUALITY.md' || true
+rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' -g '!docs/CODE_QUALITY.md' -g '!docs/CODE_REVIEW.md' -g '!.github/workflows/quality.yml' || true
 ruby -e 'require "yaml"; YAML.load_file("skills/kimi-agent-swarm-prompt/agents/openai.yaml"); puts "openai.yaml ok"'
 bash -n scripts/install-codex-skill.sh
 bash -n scripts/sync-prompt-engineering-upstream.sh
 tmpdir=$(mktemp -d); CODEX_HOME="$tmpdir" scripts/install-codex-skill.sh
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/SKILL.md"
+test -f "$tmpdir/skills/kimi-agent-swarm-prompt/references/wide-search-mode.md"
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
+(cd runtime/wide-search && npm test)
 git status --short
 ```
 
@@ -85,4 +93,3 @@ Verification:
 Decision:
 - approve | request changes
 ```
-

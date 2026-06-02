@@ -49,6 +49,17 @@ Quality Bar:
 - Diversity: avoid single-source conclusions when the topic requires comparison.
 - Traceability: every important claim must map to evidence.
 
+Wide-Search Addendum:
+- Search depth: light | standard | deep | maximum
+- User-facing output: ranked list | comparison table | market map | source brief | implementation brief
+- Include:
+- Exclude:
+- Region/language:
+- Freshness window:
+- Quality filters: relevance, authority, freshness, diversity, dedupe, unsupported-claim rejection
+- Stop conditions:
+- Evidence files: research plan, source ledger, claim ledger, synthesis, verification
+
 Swarm Choreography:
 1. Explore the topic or repo boundaries.
 2. Plan the work and decompose independent tasks.

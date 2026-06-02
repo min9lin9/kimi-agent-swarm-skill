@@ -1,8 +1,10 @@
 # Kimi Agent Swarm Skill
 
+[![quality](https://github.com/min9lin9/kimi-agent-swarm-skill/actions/workflows/quality.yml/badge.svg)](https://github.com/min9lin9/kimi-agent-swarm-skill/actions/workflows/quality.yml)
+
 Codex-only skill for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.1.0-pre`
+Status: `v0.1.0`
 
 This repository is **Codex-only**. It is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -13,8 +15,51 @@ This project is unofficial and is not affiliated with Moonshot AI, Kimi, or `tre
 - Turns a rough user request into a structured prompt contract.
 - Uses bundled prompt-engineering references before execution.
 - Classifies work into `prompt-only`, `wide-search`, `kimi-code`, or `hybrid`.
-- Presents an approval card before Kimi, external provider, network-heavy, or write-capable execution.
+- Presents an approval card before Kimi, external research, network-heavy, or write-capable execution.
 - Reports command evidence, ledger paths, verification results, and unresolved risks.
+
+## Wide-Search Mode
+
+Use `wide-search` when you need a researched answer, ranked shortlist, or source map that is broader than a normal one-shot search.
+
+Good requests:
+
+- `"AI browser agent 오픈소스 repo를 조사하고 비교해줘"`
+- `"YouTube niche 100개를 찾고 근거와 리스크를 표로 정리해줘"`
+- `"Paul Graham 글 전체를 주제별로 분류하고 제품 아이디어 관점에서 요약해줘"`
+- `"Kimi Agent Swarm 수준 wide search가 가능한 GitHub repo 후보를 찾아줘"`
+
+Codex should first show a short approval card:
+
+```markdown
+Goal:
+- What we are trying to discover or decide
+
+Search depth:
+- light | standard | deep | maximum
+
+Scope:
+- include / exclude / language / region / freshness window
+
+Output:
+- ranked list, comparison table, source map, market map, or implementation brief
+
+Execution:
+- prompt-only, local search, Kimi, or hosted/distributed search
+```
+
+The final answer should be readable first:
+
+- direct answer or recommendation
+- top findings with evidence ids
+- ranked shortlist or comparison table
+- source coverage and known gaps
+- evidence paths for audit
+- next human check
+
+Behind the readable answer, the workflow may create evidence files such as a research plan, source ledger, claim ledger, synthesis report, and verification report.
+
+Default search depth is `standard`. Use `deep` only after approval. Use `maximum` only with hosted Kimi Agent Swarm or an explicitly provisioned distributed search system. This repository does not claim hosted Kimi Agent Swarm parity.
 
 ## What It Is Not
 
@@ -75,25 +120,57 @@ User input
 
 Codex should ask only blocking questions. If a missing detail is optional, it should state a safe assumption and continue.
 
-## Optional Search Swarm+ Harness
+## Product Roadmap
 
-For `wide-search` mode, configure a local Search Swarm+ harness:
+The current repo is a Codex skill package. The path toward a fuller wide-search product is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
+
+Planning artifacts:
+
+- [9.3+ planner debate](docs/planning/2026-06-01-9-3-swarm-product-planner-debate.md)
+- [wide-search runtime PRD](docs/product/2026-06-01-wide-search-runtime-prd.md)
+- [wide-search benchmark spec](docs/product/2026-06-01-wide-search-benchmark-spec.md)
+- [v0.3 implementation plan](docs/product/2026-06-01-v0.3-implementation-plan.md)
+
+## Advanced: Search Execution
+
+The skill can run `wide-search` only when Codex can access Kimi, a local Search Swarm+ harness, hosted Kimi Agent Swarm, or another approved search system. Without one, it should stop after producing the refined prompt and approval card.
+
+For a local Search Swarm+ harness:
 
 ```bash
 export KIMI_SWARM_HARNESS_DIR=/absolute/path/to/search-swarm-plus
 ```
 
-Expected harness commands:
+Expected commands:
 
 ```bash
 npm run doctor
-npm run provider-doctor -- --provider command --command /absolute/path/to/provider
 npm run run -- "research objective"
 npm run verify
 npm run inspect
 ```
 
-If no harness exists, the skill should stop after producing the refined prompt contract and approval card.
+Provider, JSONL, and adapter details are intentionally kept out of the main README. They are for harness authors, not normal skill users.
+
+Detailed integration expectations are in [docs/HARNESS_INTEGRATION.md](docs/HARNESS_INTEGRATION.md). The skill-level wide-search operating contract is in [skills/kimi-agent-swarm-prompt/references/wide-search-mode.md](skills/kimi-agent-swarm-prompt/references/wide-search-mode.md).
+
+## Local Wide-Search Runtime
+
+This repo now includes an early local runtime under `runtime/wide-search`.
+
+Supported profiles:
+
+- `fixture`: deterministic smoke tests and CI
+- `local-command`: reads source candidates from a local JSONL command
+
+Example:
+
+```bash
+cd runtime/wide-search
+npm run run -- --objective "Map evidence-backed research workflow requirements"
+```
+
+The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, and `verification-report.json`.
 
 ## Repo Structure
 
