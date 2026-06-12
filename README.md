@@ -4,12 +4,14 @@
 
 Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.1.0`
+Status: `v0.4.0`
 
 Includes:
 
 - `kimi-agent-swarm-prompt`: Codex-only skill.
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
+- `runtime/wide-search`: local wide-search runtime with scorer, verifier, and provider registry.
+- `bin/kasw`: single-entry CLI for research, export, and benchmark workflows.
 
 This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -218,10 +220,11 @@ export KIMI_SWARM_HARNESS_DIR=/absolute/path/to/search-swarm-plus
 Expected commands:
 
 ```bash
-bun run doctor
-bun run src/cli.ts run -- "research objective"
-bun run src/cli.ts verify
-bun run src/cli.ts inspect
+./bin/kasw doctor        # future health check command
+./bin/kasw research "research objective"
+./bin/kasw verify --run-dir .runs/wide-search/<run-id>
+./bin/kasw inspect --run-dir .runs/wide-search/<run-id>
+./bin/kasw benchmark --profile fixture-paul-graham-corpus
 ```
 
 Provider, JSONL, and adapter details are intentionally kept out of the main README. They are for harness authors, not normal skill users.
@@ -230,49 +233,78 @@ Detailed integration expectations are in [docs/HARNESS_INTEGRATION.md](docs/HARN
 
 ## Local Wide-Search Runtime
 
-This repo now includes an early local runtime under `runtime/wide-search`.
+This repo now includes an early local runtime under `runtime/wide-search`. A single entry script at `bin/kasw` lets you run it from the repo root without `cd`.
 
 Supported profiles:
 
 - `fixture`: deterministic smoke tests and CI
 - `fixture-asset-mgmt`: buyside asset management roles benchmark
 - `fixture-sellside-research`: sell-side research organization roles benchmark
+- `fixture-youtube-niche`: YouTube niche opportunities benchmark
+- `fixture-paul-graham-corpus`: Paul Graham essays benchmark
 - `local-command`: reads source candidates from a local JSONL command
 - `web-search`: live web search via a configured provider
 
 Providers:
 
 - `mock`: deterministic demo/CI provider (default)
-- `serper`: Serper.dev Google Search API (requires `SERPER_API_KEY` environment variable)
+- `serper`: Serper.dev Google Search API (requires `SERPER_API_KEY`)
+- `tavily`: Tavily AI search API (requires `TAVILY_API_KEY`, or `TAVILY_MOCK=1` for CI)
 
 Examples:
 
 ```bash
-cd runtime/wide-search
-
-# Basic fixture
-bun run src/cli.ts run -- --objective "Map evidence-backed research workflow requirements"
+# From the repo root
+./bin/kasw research "Map evidence-backed research workflow requirements"
 
 # Buyside roles benchmark
-bun run src/cli.ts run \
-  --profile fixture-asset-mgmt \
-  --objective "Analyze asset management roles and responsibilities"
+./bin/kasw research "Analyze asset management roles and responsibilities" \
+  --profile fixture-asset-mgmt
 
 # Sellside research roles benchmark
-bun run src/cli.ts run \
-  --profile fixture-sellside-research \
-  --objective "Analyze sell-side research organization roles"
+./bin/kasw research "Analyze sell-side research organization roles" \
+  --profile fixture-sellside-research
+
+# Paul Graham benchmark
+./bin/kasw benchmark --profile fixture-paul-graham-corpus
 
 # Live web search with Serper (requires SERPER_API_KEY)
-bun run src/cli.ts run \
+./bin/kasw research "AI browser agent open-source repos" \
   --profile web-search \
-  --provider-name serper \
-  --depth standard \
-  --objective "AI browser agent open-source repos" \
-  --work-dir .
+  --provider serper \
+  --depth standard
+
+# Live web search with Tavily (requires TAVILY_API_KEY)
+./bin/kasw research "AI browser agent open-source repos" \
+  --profile web-search \
+  --provider tavily \
+  --depth light
 ```
 
-The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, and `verification-report.json`.
+Cost control:
+
+```bash
+# See the cost estimate before executing
+./bin/kasw research "AI browser agent open-source repos" \
+  --profile web-search --provider serper --dry-run
+
+# Enforce a budget
+./bin/kasw research "AI browser agent open-source repos" \
+  --profile web-search --provider serper \
+  --max-cost-usd 0.10 --max-provider-calls 5
+```
+
+Export results:
+
+```bash
+RUN_DIR=$(ls -d .runs/wide-search/* | tail -1)
+./bin/kasw export --run-dir "$RUN_DIR" --format json
+./bin/kasw export --run-dir "$RUN_DIR" --format csv
+```
+
+The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, and optionally `export.json`/`export.csv`.
+
+Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md).
 
 ## Repo Structure
 

@@ -118,6 +118,43 @@ describe("runWideSearch", () => {
     expect(sourceLedger).toInclude('"decision":"accepted"');
     expect(sourceLedger).toInclude('"decision":"rejected"');
   });
+
+  test("fixture-paul-graham-corpus run processes Paul Graham essays", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-paul-graham-"));
+
+    const result = await runWideSearch({
+      objective: "Summarize Paul Graham's essays on startups",
+      profile: "fixture-paul-graham-corpus",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-paul-graham-corpus");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("PG-001");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+  });
+
+  test("dry-run writes cost estimate without executing", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-dry-run-"));
+
+    const result = await runWideSearch({
+      objective: "Dry run test",
+      profile: "fixture",
+      workDir,
+      budget: { dryRun: true },
+    });
+
+    expect(result.verification.status).toBe("passed");
+    expect(result.verification.warnings.some((w) => w.includes("dry-run"))).toBeTrue();
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.usageMetrics.estimatedCostUsd).toBe(0);
+    expect(runJson.usageMetrics.notes).toInclude("Dry run");
+  });
 });
 
 describe("verifyRun", () => {

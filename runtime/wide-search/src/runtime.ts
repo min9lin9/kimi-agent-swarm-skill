@@ -2,10 +2,19 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { loadCommandSources } from "./command-provider";
+import {
+  calculateActualCost,
+  checkBudget,
+  checkEstimatedBudget,
+  estimateRunCost,
+  formatCostReport,
+  maxResultsForDepth,
+} from "./costs";
 import { createSearchProvider } from "./providers";
 import { scoreSource } from "./scorer";
 import { verifyRun } from "./verifier";
 import type {
+  BudgetOptions,
   Claim,
   ClaimConfidence,
   ClaimFreshness,
@@ -16,6 +25,7 @@ import type {
   Run,
   RunWideSearchOptions,
   RunWideSearchResult,
+  SearchDepth,
   Source,
   UsageMetrics,
   VerificationReport,
@@ -36,7 +46,13 @@ function claimConfidence(source: Source): ClaimConfidence {
 
 function claimFreshness(source: Source): ClaimFreshness {
   if (!source.publishedAt || source.publishedAt === "unknown") return "unknown";
-  return source.publishedAt >= "2026-01-01" ? "current" : "stale";
+
+  const now = new Date();
+  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
+    .toISOString()
+    .split("T")[0];
+
+  return source.publishedAt >= oneYearAgo ? "current" : "stale";
 }
 
 const FIXTURE_FILE_MAP: Record<string, string> = {
@@ -44,6 +60,7 @@ const FIXTURE_FILE_MAP: Record<string, string> = {
   "fixture-asset-mgmt": "asset-mgmt-roles.json",
   "fixture-sellside-research": "sellside-research-roles.json",
   "fixture-youtube-niche": "youtube-niche.json",
+  "fixture-paul-graham-corpus": "paul-graham-corpus.json",
 };
 
 async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {
@@ -85,20 +102,6 @@ async function loadSources({
   throw new Error(`unsupported execution profile: ${profile}`);
 }
 
-function maxResultsForDepth(depth: string): number {
-  switch (depth) {
-    case "light":
-      return 10;
-    case "standard":
-      return 25;
-    case "deep":
-      return 75;
-    case "maximum":
-      return 100;
-    default:
-      return 25;
-  }
-}
 
 function renderSynthesis({
   objective,
@@ -149,6 +152,13 @@ ${topRows}
 `;
 }
 
+function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
+  if (profile === "web-search") {
+    return providerName ?? "mock";
+  }
+  return "mock";
+}
+
 export async function runWideSearch({
   objective,
   profile = "fixture",
@@ -157,6 +167,7 @@ export async function runWideSearch({
   providerName,
   searchDepth = "standard",
   workDir = process.cwd(),
+  budget = {},
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   if (!objective) {
     throw new Error("runWideSearch requires objective");
@@ -166,10 +177,47 @@ export async function runWideSearch({
   const runDir = join(workDir, ".runs", "wide-search", runId);
   await mkdir(runDir, { recursive: true });
 
+  const effectiveProviderName = resolveProviderName(profile, providerName);
+  const estimate = estimateRunCost(effectiveProviderName, searchDepth);
+
   const usageMetrics: UsageMetrics = {
     providerCalls: 0,
     apiCalls: 0,
+    estimatedCostUsd: estimate.estimatedCostUsd,
   };
+
+  checkEstimatedBudget(estimate, budget);
+
+  if (budget.dryRun) {
+    usageMetrics.notes = "Dry run: no provider executed.";
+    const dryRun: Run = {
+      runId,
+      objective,
+      executionProfile: profile,
+      status: "completed",
+      createdAt: new Date().toISOString(),
+      usageMetrics,
+    };
+    await writeFile(join(runDir, "run.json"), `${JSON.stringify(dryRun, null, 2)}\n`);
+    return {
+      runId,
+      runDir,
+      verification: {
+        status: "passed",
+        acceptedSources: 0,
+        rejectedSources: 0,
+        unsupportedClaims: 0,
+        staleClaims: 0,
+        unknownFreshnessClaims: 0,
+        lowConfidenceClaims: 0,
+        duplicateClaimGroups: [],
+        conflictingClaimPairs: [],
+        coverageGaps: [],
+        failures: [],
+        warnings: ["dry-run: no sources or claims evaluated"],
+      },
+    };
+  }
 
   const rawSources = await loadSources({
     profile,
@@ -181,6 +229,9 @@ export async function runWideSearch({
     metrics: usageMetrics,
   });
   const sources: EnrichedSource[] = rawSources.map((source) => scoreSource(source));
+
+  usageMetrics.actualCostUsd = calculateActualCost(effectiveProviderName, usageMetrics);
+  checkBudget(effectiveProviderName, usageMetrics, budget);
 
   const claims: Claim[] = [];
   for (const source of sources.filter((item) => item.decision === "accepted")) {
@@ -206,7 +257,7 @@ export async function runWideSearch({
 
   const researchPlan: ResearchPlan = {
     objective,
-    searchDepth: "standard",
+    searchDepth,
     executionProfile: profile,
     queryFamilies: [profile.startsWith("fixture") ? `fixture:${profile}` : "local-command provider"],
     sourceTargets: ["official", "community", "secondary"],
@@ -227,6 +278,8 @@ export async function runWideSearch({
   const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
   const synthesis = renderSynthesis({ objective, profile, sources, claims, verification });
   await writeFile(join(runDir, "synthesis.md"), synthesis);
+
+  console.log(formatCostReport(effectiveProviderName, usageMetrics));
 
   return {
     runId,

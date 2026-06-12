@@ -5,6 +5,7 @@ export type ExecutionProfile =
   | "fixture-asset-mgmt"
   | "fixture-sellside-research"
   | "fixture-youtube-niche"
+  | "fixture-paul-graham-corpus"
   | "local-command"
   | "web-search";
 
@@ -48,6 +49,8 @@ export interface UsageMetrics {
   providerCalls: number;
   apiCalls: number;
   estimatedTokens?: number;
+  estimatedCostUsd?: number;
+  actualCostUsd?: number;
   notes?: string;
 }
 
@@ -105,6 +108,7 @@ export interface RunWideSearchOptions {
   providerName?: string;
   searchDepth?: SearchDepth;
   workDir?: string;
+  budget?: BudgetOptions;
 }
 
 export interface LoadSourcesOptions {
@@ -126,4 +130,46 @@ export interface RunWideSearchResult {
   runId: string;
   runDir: string;
   verification: VerificationReport;
+}
+
+export interface ProviderPricing {
+  perCallUsd: number;
+  per1kTokensUsd?: number;
+}
+
+export interface BudgetOptions {
+  maxCostUsd?: number;
+  maxProviderCalls?: number;
+  maxApiCalls?: number;
+  dryRun?: boolean;
+}
+
+export type ExportFormat = "json" | "csv";
+
+export interface ExportOptions {
+  runDir: string;
+  format: ExportFormat;
+  outPath?: string;
+}
+
+export interface GoldenAnswer {
+  expectedClaims: string[];
+  expectedSourceUrls?: string[];
+}
+
+export interface BenchmarkResult {
+  profile: string;
+  precision: number;
+  recall: number;
+  citationAccuracy: number;
+  f1: number;
+  passed: boolean;
+}
+
+export interface CostEstimate {
+  providerName: string;
+  depth: SearchDepth;
+  estimatedProviderCalls: number;
+  estimatedApiCalls: number;
+  estimatedCostUsd: number;
 }

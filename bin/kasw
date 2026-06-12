@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+RUNTIME_DIR="$REPO_ROOT/runtime/wide-search"
+
+if [[ ! -d "$RUNTIME_DIR" ]]; then
+  echo "Error: wide-search runtime not found at $RUNTIME_DIR" >&2
+  exit 1
+fi
+
+exec bun run "$RUNTIME_DIR/src/cli.ts" "$@"
