@@ -128,7 +128,14 @@ $kimi-agent-swarm-prompt "먼저 시장 조사를 하고, 승인 후 로컬 repo
 
 ## Use In Kimi Code CLI
 
-Prompt refinement plus AgentSwarm execution:
+The skill works best inside an interactive Kimi Code CLI session. For wide-search tasks, first activate swarm mode so the assistant treats the request as a parallel-delegation task:
+
+```text
+/swarm
+/skill:kimi-agent-swarm-cli "AI browser agent open-source repos를 조사하고 비교해줘" mode=wide-search
+```
+
+If you do not activate `/swarm`, invoke the skill directly:
 
 ```text
 /skill:kimi-agent-swarm-cli "AI browser agent open-source repos를 조사하고 비교해줘"
@@ -145,6 +152,8 @@ Hybrid mode:
 ```text
 /skill:kimi-agent-swarm-cli "먼저 시장 조사를 하고, 승인 후 로컬 repo에서 README와 skill 패키징을 개선해줘"
 ```
+
+> Note: `/swarm` is a TUI slash command; it cannot be activated from `kimi -p` non-interactive mode. For automation, use the local `runtime/wide-search` harness or call the `AgentSwarm` tool directly.
 
 ## Workflow
 

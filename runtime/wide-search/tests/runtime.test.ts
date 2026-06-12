@@ -107,12 +107,121 @@ describe("verifyRun", () => {
     await writeFile(join(runDir, "source-ledger.jsonl"), '{"id":"S001","decision":"accepted"}\n');
     await writeFile(
       join(runDir, "claim-ledger.jsonl"),
-      '{"id":"C001","claim":"unsupported","sourceIds":[]}\n',
+      '{"id":"C001","claim":"unsupported","sourceIds":[],"confidence":"medium","freshness":"current"}\n',
     );
 
     const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
 
     expect(verification.status).toBe("failed");
     expect(verification.failures.some((failure) => failure.includes("unsupported"))).toBeTrue();
+  });
+
+  test("detects duplicate claims", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-dup-run-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis"}\n',
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      [
+        '{"id":"C001","claim":"Portfolio managers make final investment decisions","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+        '{"id":"C002","claim":"Portfolio managers make final investment decisions","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+        '{"id":"C003","claim":"Analysts conduct research but do not decide","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+      ].join("\n") + "\n",
+    );
+
+    const verification = await verifyRun({ runDir });
+
+    expect(verification.status).toBe("passed");
+    expect(verification.duplicateClaimGroups.length).toBe(1);
+    expect(verification.warnings.some((w) => w.includes("duplicate"))).toBeTrue();
+  });
+
+  test("warns on stale claim ratio", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-stale-run-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis"}\n',
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      [
+        '{"id":"C001","claim":"Old fact","sourceIds":["S001"],"confidence":"high","freshness":"stale"}',
+        '{"id":"C002","claim":"Current fact","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+      ].join("\n") + "\n",
+    );
+
+    const verification = await verifyRun({ runDir, maxStaleRatio: 0.6 });
+
+    expect(verification.status).toBe("passed");
+    expect(verification.staleClaims).toBe(1);
+    expect(verification.warnings.some((w) => w.includes("stale"))).toBeTrue();
+  });
+
+  test("fails when stale claim ratio exceeds threshold", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-stale-fail-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis"}\n',
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      [
+        '{"id":"C001","claim":"Old fact one","sourceIds":["S001"],"confidence":"high","freshness":"stale"}',
+        '{"id":"C002","claim":"Old fact two","sourceIds":["S001"],"confidence":"high","freshness":"stale"}',
+        '{"id":"C003","claim":"Current fact","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+      ].join("\n") + "\n",
+    );
+
+    const verification = await verifyRun({ runDir, maxStaleRatio: 0.5 });
+
+    expect(verification.status).toBe("failed");
+    expect(verification.failures.some((f) => f.includes("stale claim ratio"))).toBeTrue();
+  });
+
+  test("fails on broken source references", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-broken-ref-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis"}\n',
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      '{"id":"C001","claim":"Fact","sourceIds":["S002"],"confidence":"high","freshness":"current"}\n',
+    );
+
+    const verification = await verifyRun({ runDir });
+
+    expect(verification.status).toBe("failed");
+    expect(verification.failures.some((f) => f.includes("broken source references"))).toBeTrue();
+  });
+
+  test("reports coverage gaps", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-gap-run-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      [
+        '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis","reason":"meets relevance and authority threshold"}',
+        '{"id":"S002","decision":"rejected","sourceClass":"primary-analysis","reason":"duplicate or low-value source"}',
+        '{"id":"S003","decision":"rejected","sourceClass":"secondary","reason":"duplicate or low-value source"}',
+      ].join("\n") + "\n",
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      '{"id":"C001","claim":"Fact","sourceIds":["S001"],"confidence":"low","freshness":"unknown"}\n',
+    );
+
+    const verification = await verifyRun({ runDir, maxLowConfidenceRatio: 1.0 });
+
+    expect(verification.status).toBe("passed");
+    expect(verification.coverageGaps.length).toBeGreaterThan(0);
+    expect(verification.lowConfidenceClaims).toBe(1);
+    expect(verification.unknownFreshnessClaims).toBe(1);
   });
 });

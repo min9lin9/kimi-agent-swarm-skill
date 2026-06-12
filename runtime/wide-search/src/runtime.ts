@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { loadCommandSources } from "./command-provider";
+import { createSearchProvider } from "./providers";
 import { verifyRun } from "./verifier";
 import type {
   Claim,
@@ -66,6 +67,8 @@ async function loadSources({
   objective,
   providerCommand,
   providerArgs,
+  providerName,
+  searchDepth,
 }: LoadSourcesOptions): Promise<Source[]> {
   if (profile.startsWith("fixture")) {
     return loadFixtureSources(profile);
@@ -75,7 +78,31 @@ async function loadSources({
     return loadCommandSources({ providerCommand, providerArgs, objective });
   }
 
+  if (profile === "web-search") {
+    const provider = createSearchProvider(providerName ?? "mock");
+    return provider.search({
+      objective,
+      depth: searchDepth ?? "standard",
+      maxResults: maxResultsForDepth(searchDepth ?? "standard"),
+    });
+  }
+
   throw new Error(`unsupported execution profile: ${profile}`);
+}
+
+function maxResultsForDepth(depth: string): number {
+  switch (depth) {
+    case "light":
+      return 10;
+    case "standard":
+      return 25;
+    case "deep":
+      return 75;
+    case "maximum":
+      return 100;
+    default:
+      return 25;
+  }
 }
 
 function renderSynthesis({
@@ -132,6 +159,8 @@ export async function runWideSearch({
   profile = "fixture",
   providerCommand,
   providerArgs = [],
+  providerName,
+  searchDepth = "standard",
   workDir = process.cwd(),
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   if (!objective) {
@@ -142,7 +171,14 @@ export async function runWideSearch({
   const runDir = join(workDir, ".runs", "wide-search", runId);
   await mkdir(runDir, { recursive: true });
 
-  const rawSources = await loadSources({ profile, objective, providerCommand, providerArgs });
+  const rawSources = await loadSources({
+    profile,
+    objective,
+    providerCommand,
+    providerArgs,
+    providerName,
+    searchDepth,
+  });
   const sources: EnrichedSource[] = rawSources.map((source) => ({
     ...source,
     ...scoreDecision(source),

@@ -53,6 +53,12 @@ async function main(): Promise<void> {
     const providerCommand = readFlag(args, "--provider-command");
     const providerArgsRaw = readFlag(args, "--provider-args", "");
     const providerArgs = providerArgsRaw ? providerArgsRaw.split(" ").filter(Boolean) : [];
+    const providerName = readFlag(args, "--provider-name");
+    const searchDepth = (readFlag(args, "--depth", "standard") ?? "standard") as
+      | "light"
+      | "standard"
+      | "deep"
+      | "maximum";
 
     if (!objective) {
       throw new Error("run command requires --objective or a positional objective");
@@ -64,6 +70,8 @@ async function main(): Promise<void> {
       profile,
       providerCommand,
       providerArgs,
+      providerName,
+      searchDepth,
     });
     console.log(JSON.stringify(result, null, 2));
     return;
@@ -87,7 +95,10 @@ async function main(): Promise<void> {
   }
 
   console.error("Usage: bun run src/cli.ts <run|verify|inspect>");
-  console.error("Profiles: fixture, fixture-asset-mgmt, fixture-sellside-research, local-command");
+  console.error(
+    "Profiles: fixture, fixture-asset-mgmt, fixture-sellside-research, local-command, web-search",
+  );
+  console.error("Web-search providers: mock (default), serper (requires SERPER_API_KEY)");
   process.exitCode = 1;
 }
 

@@ -4,7 +4,8 @@ export type ExecutionProfile =
   | "fixture"
   | "fixture-asset-mgmt"
   | "fixture-sellside-research"
-  | "local-command";
+  | "local-command"
+  | "web-search";
 
 export interface SourceScores {
   relevance: number;
@@ -59,11 +60,22 @@ export interface ResearchPlan {
   stopConditions: string[];
 }
 
+export interface DuplicateClaimGroup {
+  representativeClaimId: string;
+  claimIds: string[];
+  similarityReason: string;
+}
+
 export interface VerificationReport {
   status: "passed" | "failed";
   acceptedSources: number;
   rejectedSources: number;
   unsupportedClaims: number;
+  staleClaims: number;
+  unknownFreshnessClaims: number;
+  lowConfidenceClaims: number;
+  duplicateClaimGroups: DuplicateClaimGroup[];
+  coverageGaps: string[];
   failures: string[];
   warnings: string[];
 }
@@ -73,6 +85,8 @@ export interface RunWideSearchOptions {
   profile?: ExecutionProfile;
   providerCommand?: string;
   providerArgs?: string[];
+  providerName?: string;
+  searchDepth?: SearchDepth;
   workDir?: string;
 }
 
@@ -81,6 +95,8 @@ export interface LoadSourcesOptions {
   objective: string;
   providerCommand?: string;
   providerArgs?: string[];
+  providerName?: string;
+  searchDepth?: SearchDepth;
 }
 
 export interface VerifyRunOptions {
