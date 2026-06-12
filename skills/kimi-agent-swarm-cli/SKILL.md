@@ -15,6 +15,48 @@ Use this skill inside **Kimi Code CLI** to turn a rough request into a structure
 
 This skill is unofficial and not affiliated with Moonshot AI or Kimi.
 
+## How to Invoke This Skill
+
+### Recommended: inside Kimi Code CLI TUI with `/swarm` mode
+
+1. Start Kimi Code CLI interactively:
+   ```bash
+   cd <project>
+   kimi
+   ```
+2. Activate swarm mode so the assistant treats the request as a delegation task:
+   ```text
+   /swarm
+   ```
+3. Request the skill with an objective and mode:
+   ```text
+   /skill:kimi-agent-swarm-cli "Compare open-source AI browser agent repos at light depth" mode=wide-search
+   ```
+   Or simply describe the wide-search task after `/swarm`; the skill file will be loaded automatically if it matches the request.
+
+### Alternative: Kimi Code CLI TUI without `/swarm`
+
+```text
+/skill:kimi-agent-swarm-cli "Analyze global sell-side research roles" mode=wide-search
+```
+
+### Non-interactive (`kimi -p`) limitation
+
+`kimi -p` runs a single prompt and may fail to invoke a non-inline skill through the `Skill` tool. If that happens, the model should read this file directly and follow the workflow manually. For reliable non-interactive wide-search, prefer running the local harness:
+
+```bash
+cd runtime/wide-search
+bun run src/cli.ts run --profile fixture \
+  --objective "Compare AI browser agent repos" \
+  --work-dir ../../
+```
+
+## `/swarm` Mode vs. `AgentSwarm` Tool
+
+- `/swarm` is a **Kimi Code CLI TUI slash command** that injects a system reminder encouraging parallel delegation. It must be entered by the user; a skill cannot programmatically activate it.
+- `AgentSwarm` is the **built-in tool** that actually launches subagents. In `/swarm` mode, the assistant is more likely to choose `AgentSwarm` automatically.
+- This skill bridges the two: it tells the assistant when to use `AgentSwarm`, how to design items, and what evidence to produce.
+
 ## Capability Boundary
 
 This skill uses **Kimi Code CLI's built-in tools only** (`AgentSwarm`, `Agent`, `WebSearch`, `FetchURL`, `Read`, `Write`, `Bash`, etc.). It does **not** call the hosted Kimi Agent Swarm web/API service. Do not claim 300 subagents, 4000+ tool calls, or proprietary ranking behavior unless the user explicitly switches to hosted Kimi Agent Swarm.
@@ -44,7 +86,8 @@ Read `references/agent-swarm-tool.md` before using `AgentSwarm`.
 4. **Show an approval card** before executing AgentSwarm, web searches, network-heavy commands, or write-capable code work, unless the user already explicitly approved execution.
 
 5. **Execute the selected workflow**:
-   - For `wide-search`, prefer activating `/swarm` mode or using the `AgentSwarm` tool directly with `explore` subagents.
+   - For `wide-search` in the TUI, first suggest `/swarm` to the user, then use the `AgentSwarm` tool with `explore` subagents. If the user already typed `/swarm`, skip the suggestion.
+   - For `wide-search` outside the TUI, use `AgentSwarm` directly or fall back to the local `runtime/wide-search` harness.
    - For `kimi-code`, dispatch the appropriate built-in subagent (`coder`, `explore`, or `plan`).
    - For `hybrid`, run wide-search first and wait for approval before code changes.
 
@@ -136,8 +179,10 @@ For the objective `"글로벌 sell-side 리서치 조직의 역할과 업무를 
 
 ## Safety Rules
 
-- Prefer `/swarm` mode or `AgentSwarm` for parallel research; do not fake parallelism with sequential calls.
+- Prefer `/swarm` mode (when in the TUI) or `AgentSwarm` for parallel research; do not fake parallelism with sequential calls.
+- If the user wants wide-search but `/swarm` is not active, suggest it explicitly before launching `AgentSwarm`.
 - Do not satisfy a `wide-search` request with a single web search unless the user explicitly downgrades to `light`.
 - Keep provider, JSONL, and adapter details out of the user-facing answer unless the user is configuring the harness.
 - Use verifier output and local ledgers as the source of truth, not LLM summaries.
 - For code-writing tasks, prefer interactive approval or a disposable worktree.
+- Do not claim the skill can activate `/swarm` programmatically; only the user can type `/swarm` in the TUI.

@@ -70,8 +70,18 @@ If some subagents fail or time out, the result includes `agent_id` values. Use `
 
 ## Combining with `/swarm` Mode
 
-You can also activate Kimi Code CLI's `/swarm` slash command before running a wide task. `/swarm` injects a system reminder that encourages the model to delegate work to `AgentSwarm` automatically.
+`/swarm` is a **TUI slash command**, not a tool call. The user must type it in an interactive Kimi Code CLI session. After `/swarm` is active, the system reminder encourages the assistant to delegate wide tasks to `AgentSwarm` automatically.
 
 ```text
 /swarm Research AI browser agent open-source repos and compare them
 ```
+
+When using this skill with `/swarm`:
+
+1. The user enters `/swarm`.
+2. The assistant reads this skill and `references/wide-search-mode.md`.
+3. The assistant drafts a prompt contract and, if needed, asks blocking questions.
+4. The assistant executes `AgentSwarm` as the only tool call in a response.
+5. The assistant synthesizes results and writes evidence files.
+
+A skill file cannot type `/swarm` for the user. In non-interactive contexts (e.g., `kimi -p`), use `AgentSwarm` directly or run the local `runtime/wide-search` harness.

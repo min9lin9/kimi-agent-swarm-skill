@@ -6,4 +6,5 @@ tmp/
 bun.lock
 bun.lockb
 .private-references/
+.runs/
 

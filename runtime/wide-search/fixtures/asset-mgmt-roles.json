@@ -15,9 +15,22 @@
         "extractionValue": 5
       },
       "claims": [
-        "PM is the final investment decision maker with P&L responsibility.",
-        "PM defines investment strategy, allocates capital, and manages portfolio risk within mandate.",
-        "PM collaborates closely with Analysts, Traders, Risk, and Compliance."
+        "The Portfolio Manager is the final investment decision-maker who reviews analyst recommendations and holds ultimate authority over the portfolio-level risk-return balance.",
+        "PMs bear P&L responsibility for the fund and typically receive performance-linked compensation.",
+        "Key performance indicators include alpha versus benchmark, information ratio, tracking error, and maximum drawdown.",
+        "In large asset managers, PMs focus on portfolio decisions and manage analysts; in boutique firms they often directly research sectors and perform analyst functions.",
+        "PMs are involved across the full investment lifecycle, from idea review and final security selection to trade execution and position monitoring.",
+        "The portfolio manager makes final investment decisions and bears P&L responsibility for the fund.",
+        "Compensation is typically a base salary plus performance-linked incentive pay tied to fund returns and AUM.",
+        "Responsibilities include portfolio construction, buy/sell decisions, alpha generation, and operating within the risk budget.",
+        "In large Korean managers such as Samsung, many PMs operate within 15 investment headquarters and 58 teams; in small firms the CEO/CIO often acts as PM.",
+        "Representative KPIs include alpha, information ratio, tracking error, maximum drawdown, and relative return versus benchmark.",
+        "In small firms the PM may also perform analyst functions.",
+        "PMs make final Buy/Sell/Hold decisions and bear P&L responsibility, while analysts only propose ideas.",
+        "In large asset managers the PM and analyst roles are clearly separated; in small/boutique firms PMs often perform research themselves.",
+        "Boutique PMs spend about 90% of their time on investment and asset-allocation decisions.",
+        "Common role combinations include CEO/CIO serving as PM and PM serving as analyst.",
+        "PM compensation is performance-based, tied to P&L, and has high volatility."
       ]
     },
     {
@@ -35,9 +48,23 @@
         "extractionValue": 5
       },
       "claims": [
-        "Analyst conducts company analysis, financial modeling, and investment idea generation.",
-        "Analyst produces investment notes, earnings previews/reviews, and valuation models.",
-        "Analyst supports PM decisions but does not hold final investment authority."
+        "Research analysts conduct in-depth company and industry analysis, financial modeling, and company visits to generate investment ideas.",
+        "They recommend securities but do not have final buy/sell authority; the PM makes the ultimate decision.",
+        "Core deliverables include investment recommendation reports, DCF models, sector outlooks, competitive analyses, and ESG profiles.",
+        "Large asset managers maintain dedicated sector-specialist research centers, while small firms often have PMs perform analysis directly.",
+        "Buy-side analysts are expected to build independent internal research capability rather than rely on sell-side research.",
+        "The research analyst analyzes investee companies, builds financial models (e.g., DCF), and proposes investment ideas to portfolio managers.",
+        "A core rationale for the buy-side analyst is to build independent internal research capability rather than rely on sell-side research.",
+        "Analysts also collaborate with corporate IR, sell-side analysts, and industry experts.",
+        "Large firms assign sector-specific analysts; small firms often have portfolio managers perform analysis directly or rely on external research.",
+        "Representative KPIs include idea adoption rate, recommended stock return, report quality, model accuracy, and number of sectors covered.",
+        "In small firms the analyst role may be combined with PM or ESG analyst responsibilities.",
+        "Analysts produce investment ideas and research reports but do not make final investment decisions.",
+        "Core work includes earnings analysis, DCF modeling, industry research, and company visits.",
+        "Key skills are financial modeling, industry analysis, company visits, and data analysis.",
+        "Compensation is base salary plus performance bonus, generally more stable than PM compensation.",
+        "In large firms analysts specialize by sector; in boutiques they cover multiple sectors as generalists.",
+        "CFA is effectively the standard credential for investment analyst and PM roles."
       ]
     },
     {
@@ -55,9 +82,16 @@
         "extractionValue": 4
       },
       "claims": [
-        "Risk Manager monitors market, credit, liquidity, and operational risk exposures.",
-        "Risk Manager runs VaR, stress tests, and limit breach reports.",
-        "Risk Manager acts as a control function independent of portfolio management."
+        "The risk manager quantitatively measures portfolio risk through daily VaR, stress tests, and limit monitoring.",
+        "Risk managers act as the second line of defense and serve as a data-interpretation hub between front and back offices.",
+        "Key outputs include daily VaR reports, stress test results, limit breach alerts, and risk committee materials.",
+        "Representative KPIs include VaR exceedances, limit breaches, stress test coverage, reporting timeliness, and model backtest accuracy.",
+        "In small firms the risk manager may be combined with compliance or performance analysis.",
+        "Risk managers quantify potential losses using VaR and stress tests.",
+        "They monitor risk limits and act on breaches as part of the second line of defense.",
+        "Required skills include financial modeling, statistics, programming (Python/SQL), and regulation knowledge.",
+        "Compensation is base-salary centered and relatively stable.",
+        "Risk managers report risk-limit breaches through the CRO to the investment committee and board."
       ]
     },
     {
@@ -75,9 +109,19 @@
         "extractionValue": 4
       },
       "claims": [
-        "Fund Accounting calculates NAV, settlement, and reconciliation.",
-        "Fund Accounting handles corporate actions, dividend processing, and external audit support.",
-        "Fund Accounting is often the boundary between asset manager and fund administrator."
+        "Fund accountants calculate NAV, handle fund accounting, and support external audits and dividend processing.",
+        "In Korea, fund accounting and NAV calculation are mostly outsourced to fund administrators; Samsung Asset Management is the only large firm with in-house NAV pricing.",
+        "As of 2024, the Korean fund-administration market exceeded 1,000 trillion KRW in AUM, dominated by bank-affiliated administrators.",
+        "Daily reconciliation between internal systems and external administrator data is a core control activity.",
+        "Fund accounting calculates the fund's net asset value (NAV), performs settlements, and supports external audits.",
+        "In Korea, fund accounting and NAV calculation are generally outsourced to fund administrators; Samsung Asset Management is the only large firm with in-house NAV calculation capability.",
+        "Key outputs include NAV calculation records, settlement financial statements, audit materials, and dividend records.",
+        "Representative KPIs include NAV accuracy, settlement timeliness, audit findings, reconciliation breaks, and dividend errors.",
+        "In small firms fund accounting may be combined with operations.",
+        "Fund accounting calculates the fund's net asset value (NAV).",
+        "NAV calculation errors can remain undetected for months, as seen in the Macquarie (2007) and Deutsche (2008) cases.",
+        "In Korea fund accounting is typically outsourced to an administration company, though Samsung Asset Management uniquely operates its own Shadow NAV system.",
+        "Errors in NAV propagate downstream and distort performance attribution and client reporting."
       ]
     },
     {
@@ -95,9 +139,15 @@
         "extractionValue": 4
       },
       "claims": [
-        "Product Manager designs fund products, structures, and regulatory filings.",
-        "Product Manager bridges investment management and distribution/sales.",
-        "Product Manager monitors competitor products and client demand trends."
+        "Product managers design the fund product portfolio, identify market opportunities, and manage new fund launches.",
+        "MiFID II Product Governance requires manufacturers to conduct target-market assessments and scenario analyses.",
+        "Key outputs include product proposals, fund prospectuses, KIID/KID documents, and target-market assessments.",
+        "Large firms may have a dedicated product-strategy division; small firms often merge product management with marketing or sales support.",
+        "The product manager designs and manages the product portfolio, identifies market opportunities, and develops new funds.",
+        "MiFID II product governance requirements have strengthened responsibilities such as target-market assessment and regular product review.",
+        "Key outputs include product plans, fund rules, prospectus, KIID/KID, fund notification forms, target-market assessments, and product portfolio dashboards.",
+        "Representative KPIs include new fund inflows, net flows, number of launches, product performance, regulatory compliance, and target-market appropriateness.",
+        "In small and mid-sized firms the product manager may also cover investment support, marketing/sales support, or compliance."
       ]
     },
     {
@@ -115,9 +165,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "Institutional Sales drives AUM growth by acquiring and retaining clients.",
-        "Sales works with PMs, Product, and Client Service to craft proposals and RFPs.",
-        "Sales performance is measured by flows, win rates, and client coverage."
+        "Institutional sales teams target pension funds, insurers, sovereign wealth funds, and other large asset owners.",
+        "Core KPIs are net inflows and AUM growth.",
+        "They collaborate closely with PMs, product managers, and RFP teams to win and retain mandates."
       ]
     },
     {
@@ -135,9 +185,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "Alternative investment firms add Deal Sourcing, Due Diligence, Operating Partner, and Valuation roles.",
-        "Alternative investment lifecycle includes sourcing, diligence, structuring, investment, management, and exit.",
-        "IR/Fundraising manages LP relationships and capital commitments."
+        "Deal sourcing sits at the top of the alternative-investment pipeline and determines the quality of subsequent stages.",
+        "Firms may evaluate more than 1,000 opportunities annually yet close only a small fraction.",
+        "In small firms, deal sourcing is performed by VP/Principal-level investors; dedicated origination teams are mainly found in mega funds."
       ]
     },
     {
@@ -156,6 +206,1337 @@
       },
       "claims": [
         "Generic job postings can list many titles but lack contextual role analysis."
+      ]
+    },
+    {
+      "id": "quantitative-analyst",
+      "url": "https://example.com/buyside-reference/quantitative-analyst",
+      "title": "Quantitative Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Quantitative analysts use large datasets and algorithms to design investment strategies, conduct backtests, and optimize portfolios.",
+        "They develop factor models, risk models, and execution-system support for algorithmic trading and index replication.",
+        "In ETF/index managers, quant analysts are core front-office roles responsible for systematic strategy accuracy.",
+        "Daily work includes model monitoring, data-pipeline management, and tracking-error analysis; small-firm quants may overlap with risk or IT.",
+        "The quantitative analyst designs data-driven investment strategies, develops algorithms, conducts backtesting, builds portfolio optimization models, and constructs risk models.",
+        "In ETF and index managers, quants serve as core front-office roles responsible for systematic strategy execution accuracy.",
+        "Key outputs include backtest reports, strategy performance analyses, optimization models, and risk models.",
+        "Representative KPIs include Sharpe ratio, maximum drawdown, tracking error, slippage, model accuracy, and system uptime.",
+        "In small firms the quant role may overlap with risk analysis or IT."
+      ]
+    },
+    {
+      "id": "economist-strategist",
+      "url": "https://example.com/buyside-reference/economist-strategist",
+      "title": "Economist Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Economists and strategists analyze macroeconomic trends and asset-class outlooks to propose asset-allocation direction.",
+        "They serve as the starting point for top-down investment processes and provide critical input for strategic and tactical asset allocation decisions.",
+        "Outputs include macro outlook reports, asset-allocation matrices, scenario analyses, and institutional-commentary presentations.",
+        "In small and mid-size firms, the CIO or PM often covers strategy functions.",
+        "Economists and strategists develop macroeconomic forecasts and provide strategic and tactical asset allocation direction.",
+        "They supply key inputs to CIO and PM investment decisions and evaluate relative attractiveness across asset classes.",
+        "The role is typically a specialized organization in large asset managers.",
+        "In small and mid-sized firms the CIO or PM often covers strategy functions."
+      ]
+    },
+    {
+      "id": "trader",
+      "url": "https://example.com/buyside-reference/trader",
+      "title": "Trader",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Traders execute PM orders in the market under the Best Execution obligation, aiming to minimize market impact and trading costs.",
+        "They are functionally independent from PMs to separate investment decision-making from execution.",
+        "For large orders, traders commonly use VWAP or TWAP algorithms to reduce price impact.",
+        "Execution quality is measured by slippage, implementation shortfall, and VWAP slippage.",
+        "The role is evolving from manual executor to algorithm designer and monitor as algorithmic trading expands.",
+        "The trader executes portfolio managers' orders in the market and is responsible for execution efficiency, market-impact management, and best execution.",
+        "Traders are functionally independent from PMs under the separation of duties principle.",
+        "The role is shifting from manual execution toward algorithm design and monitoring as algorithmic trading expands.",
+        "Key outputs include execution records, transaction cost analysis (TCA) reports, broker evaluations, and trade journals.",
+        "Representative KPIs include slippage, market impact, best execution achievement rate, execution speed, and broker coverage.",
+        "In small firms the PM may execute orders directly.",
+        "Traders execute orders under the best-execution principle and choose brokers and algorithms.",
+        "Algorithmic trading is shifting the trader role from manual executor to algorithm designer.",
+        "Common execution errors include incorrect stock codes and quantity-unit confusion.",
+        "Order Management Systems provide automated risk checks before market execution."
+      ]
+    },
+    {
+      "id": "execution-specialist",
+      "url": "https://example.com/buyside-reference/execution-specialist",
+      "title": "Execution Specialist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Execution specialists build Transaction Cost Analysis frameworks and optimize execution strategies.",
+        "They lead regulatory-response work, especially under MiFID II Best Execution and product-governance requirements.",
+        "Their importance has grown as algorithmic trading and execution-quality regulation have become more prominent."
+      ]
+    },
+    {
+      "id": "retail-channel-management",
+      "url": "https://example.com/buyside-reference/retail-channel-management",
+      "title": "Retail Channel Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Retail channel managers handle indirect distribution through banks, securities firms, and other sales channels.",
+        "In Korea, AUM growth is highly dependent on distributor channels; some firms report a large share of sales through affiliated distributors.",
+        "The role requires financial-product knowledge, presentation skills, and ongoing channel education."
+      ]
+    },
+    {
+      "id": "client-service",
+      "url": "https://example.com/buyside-reference/client-service",
+      "title": "Client Service",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Client-service teams maintain post-contract relationships, respond to investor inquiries, and distribute regular reports.",
+        "They focus on retention, reinvestment, and customer satisfaction.",
+        "They work with sales, performance analytics, fund accounting, and marketing to resolve client issues."
+      ]
+    },
+    {
+      "id": "investor-relations",
+      "url": "https://example.com/buyside-reference/investor-relations",
+      "title": "Investor Relations",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "In alternative-investment and private-fund contexts, IR manages Limited Partner communication and encourages reinvestment (re-ups).",
+        "IR produces LP reports, supports roadshows, and coordinates capital calls and distributions.",
+        "The LP-GP relationship is long-term and partnership-based rather than purely transactional."
+      ]
+    },
+    {
+      "id": "rfp-team",
+      "url": "https://example.com/buyside-reference/rfp-team",
+      "title": "Rfp Team",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The RFP team writes formal responses to institutional investor requests for proposals.",
+        "RFP win rate directly affects revenue and is a key gateway to winning institutional mandates.",
+        "The team collaborates with PMs, performance analysts, legal, and compliance to ensure accurate, compliant submissions.",
+        "The RFP team responds to institutional investor requests for proposals and due diligence questionnaires, and produces pitch books.",
+        "Passing the RFP stage is a gate to acquiring institutional investors.",
+        "Key outputs include RFP responses, DDQs, pitch books, and investment explanation presentations.",
+        "Representative KPIs include RFP pass rate, proposal quality, submission timeliness, and omission rate.",
+        "In small firms the RFP function may be combined with sales or product management."
+      ]
+    },
+    {
+      "id": "marketing",
+      "url": "https://example.com/buyside-reference/marketing",
+      "title": "Marketing",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Marketing builds brand awareness, produces sales materials and market-insight content, and supports distribution.",
+        "It contributes indirectly to AUM growth rather than directly executing trades or making investment decisions.",
+        "In small firms, marketing may be combined with sales support or product management.",
+        "Marketing manages brand, produces sales materials and content, and handles media/PR and the website.",
+        "Key outputs include brochures, web content, market insight reports, and brand guidelines.",
+        "Representative KPIs include brand awareness, lead generation, content engagement, and media exposure.",
+        "In small firms marketing may be combined with sales support or product management."
+      ]
+    },
+    {
+      "id": "risk-management",
+      "url": "https://example.com/buyside-reference/risk-management",
+      "title": "Risk Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Chief Risk Officer occupies an independent position linked to the board risk committee and oversees market, liquidity, and operational risk enterprise-wide.",
+        "Core risk tools include Value at Risk, stress testing, and liquidity-stress metrics such as LSV.",
+        "Portfolio risk limits follow a CIO proposal → CRO review → investment-committee approval process.",
+        "Risk managers calculate daily VaR, monitor limits, and produce risk reports, acting as a numerical data hub between front and back offices.",
+        "In small asset managers, the CCO often concurrently serves as CRO, weakening independence."
+      ]
+    },
+    {
+      "id": "compliance",
+      "url": "https://example.com/buyside-reference/compliance",
+      "title": "Compliance",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Chief Compliance Officer monitors legal compliance, operates internal controls, and reports both to the board and to the CEO.",
+        "Conflict-of-interest policies are mandatory internal regulations for every asset manager.",
+        "Internal-control standards prohibit certain role overlaps, such as combining investment/accounting or marketing/accounting duties.",
+        "Following the Optimus and Lime fund scandals, CCO responsibilities expanded; Korea mandates a full-time compliance officer for managers with AUM above 500 billion KRW.",
+        "Compliance officers review marketing materials, monitor employee trading, investigate breaches, and track regulatory changes."
+      ]
+    },
+    {
+      "id": "performance-analyst",
+      "url": "https://example.com/buyside-reference/performance-analyst",
+      "title": "Performance Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Performance analysts measure fund performance and conduct attribution analysis to evaluate PM skill.",
+        "The Brinson Model is widely used to decompose returns into allocation, selection, and interaction effects.",
+        "They manage Global Investment Performance Standards compliance, which underpins external ratings by fund evaluators.",
+        "They serve as data interpreters, turning fund-accounting NAV data into performance reports for PMs and institutional clients.",
+        "The Brinson Model does not capture operational efficiency, risk-management skill, or ESG integration effects.",
+        "The performance analyst measures fund performance, performs Brinson attribution (allocation/selection/interaction), and manages GIPS compliance.",
+        "Performance analysts convert NAV data into objective evaluations of PM skill.",
+        "Key outputs include performance reports, Brinson attribution reports, GIPS composite reports, and institutional investor reports.",
+        "Representative KPIs include performance calculation accuracy, attribution timeliness, GIPS violations, reporting timeliness, and data error rates.",
+        "In small firms performance analysis may be combined with risk analysis or fund accounting.",
+        "Performance analysts decompose returns using the Brinson model into allocation, selection, and interaction effects.",
+        "They produce performance reports that are delivered to clients through the sales team.",
+        "If NAV contains errors, the Brinson attribution and resulting client decisions are distorted."
+      ]
+    },
+    {
+      "id": "operations",
+      "url": "https://example.com/buyside-reference/operations",
+      "title": "Operations",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Operations manages trade settlement, confirmation, reconciliation, corporate actions, and securities lending.",
+        "Korean equities settle on a T+2 cycle, and operations teams monitor failed trades and settlement timeliness.",
+        "Robotic Process Automation is reducing repetitive tasks and shifting the role toward exception handling and oversight.",
+        "The operations team handles trade settlement, reconciliation, corporate actions, and securities lending.",
+        "RPA-based automation is reducing repetitive tasks and increasing exception handling and monitoring responsibilities.",
+        "Korean equities typically settle on T+2 through Korea Securities Depository.",
+        "Key outputs include settlement records, reconciliation reports, corporate action records, and failed-trade lists.",
+        "Representative KPIs include failed-trade rate, settlement timeliness, reconciliation breaks, corporate-action timeliness, and SLA achievement.",
+        "In small firms operations may be combined with fund accounting."
+      ]
+    },
+    {
+      "id": "fund-structuring",
+      "url": "https://example.com/buyside-reference/fund-structuring",
+      "title": "Fund Structuring",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Fund structuring specialists design the legal and regulatory form of funds, including ETFs, private funds, UCITS, AIFMD, and ELTIF structures.",
+        "They handle AP agreements, ETF creation/redemption mechanics, and tax-efficient structures.",
+        "In small and mid-size firms, product managers usually perform structuring duties."
+      ]
+    },
+    {
+      "id": "chief-executive-officer",
+      "url": "https://example.com/buyside-reference/chief-executive-officer",
+      "title": "Chief Executive Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CEO sets overall strategic direction, manages the board, represents shareholders, and oversees fiduciary duty.",
+        "In large asset managers, the CEO is governance-focused; in boutique firms, founder-CEOs often act as player-coaches and remain directly involved in investing.",
+        "Key KPIs include AUM growth, net profit, ROE, regulatory breach count, and key-investor satisfaction."
+      ]
+    },
+    {
+      "id": "chief-investment-officer",
+      "url": "https://example.com/buyside-reference/chief-investment-officer",
+      "title": "Chief Investment Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CIO oversees investment strategy, chairs the investment committee, and supervises portfolio managers.",
+        "The CIO decides strategic and tactical asset allocation (what asset class to invest in), while PMs decide individual securities.",
+        "The CIO-PM relationship is increasingly bidirectional rather than a pure command structure."
+      ]
+    },
+    {
+      "id": "chief-operating-officer",
+      "url": "https://example.com/buyside-reference/chief-operating-officer",
+      "title": "Chief Operating Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The COO oversees operations, outsourcing management, business-continuity planning, and systems infrastructure.",
+        "As fund administration outsourcing expands, the COO role is shifting from direct operations to oversight of external service providers.",
+        "Key metrics include operating cost relative to AUM, service-provider SLA achievement, and operational incident counts."
+      ]
+    },
+    {
+      "id": "chief-financial-officer",
+      "url": "https://example.com/buyside-reference/chief-financial-officer",
+      "title": "Chief Financial Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CFO manages financial soundness, budgeting, capital, tax, external audit, and financial reporting.",
+        "In small and mid-size firms, the CFO role is often combined with the COO role."
+      ]
+    },
+    {
+      "id": "it-data",
+      "url": "https://example.com/buyside-reference/it-data",
+      "title": "It Data",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "IT and data teams operate core systems such as Portfolio Management Systems and Order/Execution Management Systems.",
+        "They manage data pipelines, ESG data infrastructure, API integrations, and cybersecurity.",
+        "BlackRock's Aladdin platform processes data on more than 400,000 companies, illustrating how technology infrastructure has become a competitive asset.",
+        "AI/ML and algorithmic trading are moving IT/data from a pure back-office support function to a front- and middle-office enabler.",
+        "IT and data roles manage core systems (OMS/PMS), data pipelines, ESG data infrastructure, algorithmic trading support, and cybersecurity.",
+        "BlackRock's Aladdin platform processes data on more than 400,000 companies.",
+        "Key outputs include system uptime reports, data quality reports, ESG data governance documents, and incident response reports.",
+        "Representative KPIs include system uptime, data accuracy, incident recovery time, security incidents, and data-driven regulatory reporting errors.",
+        "In small firms IT/data may be combined with operations or fund accounting."
+      ]
+    },
+    {
+      "id": "esg-stewardship",
+      "url": "https://example.com/buyside-reference/esg-stewardship",
+      "title": "Esg Stewardship",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "ESG officers set ESG policy, produce stewardship reports, manage PRI reporting, and handle TCFD/SFDR disclosures.",
+        "Korean Stewardship Code participants grew from 16 institutions in 2016 to 249 in 2024; an implementation-review system begins in 2026.",
+        "Opposition proxy-voting proposals in Korea rose from 1.84% in 2016 to 4.59% in 2024.",
+        "ESG role structures differ by region: Europe is regulation-driven, the U.S. is affected by anti-ESG sentiment, and Korea is institution-centric stewardship.",
+        "Korean stewardship code participating institutions grew from 16 in 2016 to 249 in 2024.",
+        "An implementation review system is scheduled for 2026, accelerating demand for dedicated ESG staff.",
+        "ESG functions are structured as investment-team-integrated, centralized ESG team, or hybrid models."
+      ]
+    },
+    {
+      "id": "investment-lifecycle",
+      "url": "https://example.com/buyside-reference/investment-lifecycle",
+      "title": "Investment Lifecycle",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The asset-management value chain has seven stages: product strategy, research, investment decision, trade execution, risk/compliance control, fund accounting/operations, and client reporting.",
+        "The alternative-investment lifecycle has six stages: deal sourcing, due diligence, structuring, investment, management/value creation, and exit.",
+        "Listed-equity strategies operate on a daily, high-frequency cycle; alternative strategies operate on a multi-year, non-linear cycle with overlapping fund lifecycles.",
+        "The traditional asset-management lifecycle has eight stages: idea generation (Analyst) → strategy setting (CIO) → security selection (PM) → trade execution (Trader) → settlement (Operations) → NAV calculation (Fund Accounting) → performance analysis (Performance) → client reporting (Client).",
+        "The alternative-investment lifecycle has six stages: deal sourcing → due diligence → structuring → investment → management/value creation → exit.",
+        "Multiple fund lifecycles overlap in parallel at alternative investment firms."
+      ]
+    },
+    {
+      "id": "organization-structure",
+      "url": "https://example.com/buyside-reference/organization-structure",
+      "title": "Organization Structure",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Asset managers are traditionally divided into Front Office (revenue generation), Middle Office (risk and compliance), Back Office (settlement and accounting), and C-level/support functions.",
+        "This structure reflects the Three Lines of Defense governance framework.",
+        "Large firms segment roles into many specialized teams; small firms rely heavily on role overlap and outsourcing.",
+        "The degree of role separation is strongly determined by assets under management."
+      ]
+    },
+    {
+      "id": "korean-four-party-ecosystem",
+      "url": "https://example.com/buyside-reference/korean-four-party-ecosystem",
+      "title": "Korean Four Party Ecosystem",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Korean fund market is built on a four-party structure: asset manager, custodian bank, fund administrator, and distributor.",
+        "Contractual investment trusts account for more than 90% of Korean funds.",
+        "Core functions such as investment decision-making, compliance, and risk management remain internal; fund accounting/NAV, custody, and distribution are largely outsourced.",
+        "After the Optimus scandal, custodian banks' oversight duties were codified and strengthened."
+      ]
+    },
+    {
+      "id": "nav-reconciliation",
+      "url": "https://example.com/buyside-reference/nav-reconciliation",
+      "title": "Nav Reconciliation",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "NAV calculation relies on three-way filtering: the fund administrator calculates, the asset manager verifies, and the custodian bank reconciles.",
+        "Historical NAV errors at Macquarie in 2007 (approximately 8.9 billion KRW) and Deutsche in 2008 (approximately 1.5 billion KRW) went undetected for about four months.",
+        "The standard Korean process discloses NAV on the morning after the trade date (T+1), while settlement occurs on T+2.",
+        "Samsung Asset Management is the only large Korean asset manager able to calculate its own NAV in-house."
+      ]
+    },
+    {
+      "id": "asset-manager-types",
+      "url": "https://example.com/buyside-reference/asset-manager-types",
+      "title": "Asset Manager Types",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Large comprehensive managers prioritize relative return versus benchmark and information ratio, and keep most functions in-house.",
+        "Boutique managers focus on absolute return and Sharpe ratio, charge management fees of roughly 1.5% to 2%, and outsource 90% to 100% of fund administration.",
+        "ETF/index managers prioritize tracking error, with 0.2% to 1.0% generally considered good, and earn revenue from total expense ratios.",
+        "Alternative-investment managers focus on IRR, DPI, TVPI, MOIC, and carried interest."
+      ]
+    },
+    {
+      "id": "alternative-due-diligence",
+      "url": "https://example.com/buyside-reference/alternative-due-diligence",
+      "title": "Alternative Due Diligence",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Alternative-investment due diligence uses a dual structure: Investment Due Diligence and Operational Due Diligence.",
+        "IDD covers strategy, track record, market opportunity, and portfolio analysis; ODD covers back-office operations, service providers, compliance, and cybersecurity.",
+        "A typical deal review includes financial, legal, and management-background checks, channel checks, virtual data-room review, and contingency analysis.",
+        "The process usually takes three to six weeks per transaction."
+      ]
+    },
+    {
+      "id": "alternative-operating-partner",
+      "url": "https://example.com/buyside-reference/alternative-operating-partner",
+      "title": "Alternative Operating Partner",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Operating partners and portfolio-management teams drive post-investment value creation.",
+        "Operational improvements accounted for 47% of buyout value creation after 2010.",
+        "They implement 100-day plans, set KPIs, participate on boards, and coach management; Operating Partners are often former CEOs, consultants, CFOs, or COOs.",
+        "Large PE firms maintain dedicated Portfolio Operations groups with functional centers of excellence."
+      ]
+    },
+    {
+      "id": "alternative-valuation",
+      "url": "https://example.com/buyside-reference/alternative-valuation",
+      "title": "Alternative Valuation",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Valuation teams measure fair value of illiquid assets under ASC 820 / IFRS 13, usually on a quarterly basis.",
+        "They use comparable-company analysis, precedent-transaction analysis, and discounted-cash-flow models.",
+        "External appraisers are often used and supervised by the valuation team.",
+        "In small firms, valuation is usually combined with fund accounting or portfolio management."
+      ]
+    },
+    {
+      "id": "alternative-ir-fundraising",
+      "url": "https://example.com/buyside-reference/alternative-ir-fundraising",
+      "title": "Alternative Ir Fundraising",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "IR and fundraising teams raise committed capital from Limited Partners and manage long-term LP-GP relationships.",
+        "They produce private placement memoranda, pitchbooks, LP reports, and DDQ responses, and coordinate capital calls and distributions.",
+        "They also support LP Advisory Committees and may work with placement agents.",
+        "Global private-equity fundraising fell 11.5% in 2023, increasing competition for LP capital."
+      ]
+    },
+    {
+      "id": "ceo",
+      "url": "https://example.com/buyside-reference/ceo",
+      "title": "Ceo",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CEO of an asset manager is responsible for firm-wide strategy, external communication, and the firm's sustainability and profitability.",
+        "Key responsibilities include chairing the board and management committees, managing regulatory relations, appointing and supervising C-level executives, and deciding M&A and financing strategy.",
+        "At large Korean asset managers such as Samsung Asset Management, the CEO heads an organization structured as 3 headquarters, 1 office, 4 divisions, 15 investment headquarters, and 58 teams.",
+        "At small asset managers (roughly 5-15 people), the CEO often doubles as CIO or PM and may spend more than 90% of time on direct investing.",
+        "Representative outputs include management strategy reports, board proposals, regulatory filings, shareholder letters, and CEO letters.",
+        "Representative KPIs include AUM growth, net profit, ROE, staff turnover, regulatory violations, and institutional investor satisfaction."
+      ]
+    },
+    {
+      "id": "cio",
+      "url": "https://example.com/buyside-reference/cio",
+      "title": "Cio",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CIO oversees the asset manager's investment strategy, chairs the Investment Committee, and supervises portfolio managers.",
+        "The CIO sets investment policy and decides strategic and tactical asset allocation (SAA/TAA).",
+        "The CIO-PM relationship is evolving from a command structure into a two-way consultative relationship.",
+        "Key outputs include Investment Committee minutes, investment policy statements, SAA allocation plans, and PM performance evaluations.",
+        "Representative KPIs include fund alpha, tracking error, AUM changes, PM turnover, and investment process breaches.",
+        "In small asset managers, the CIO often directly manages funds."
+      ]
+    },
+    {
+      "id": "coo",
+      "url": "https://example.com/buyside-reference/coo",
+      "title": "Coo",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The COO manages overall operations, outsourcing, business continuity planning (BCP), systems infrastructure, and operational risk.",
+        "In large U.S. mutual fund organizations, COO sales-per-AUM efficiency is strongly linked to executive incentive pay.",
+        "Key responsibilities include managing administrators and custodians, operating BCP, and overseeing system upgrades.",
+        "Key outputs include operations strategy reports, vendor evaluations, BCP documents, and operations KPI dashboards.",
+        "Representative KPIs include operating cost relative to AUM, vendor SLA achievement, operational incidents, system uptime, and process error rates.",
+        "In small and mid-sized firms, the COO may also serve as CFO."
+      ]
+    },
+    {
+      "id": "cro",
+      "url": "https://example.com/buyside-reference/cro",
+      "title": "Cro",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CRO heads firm-wide risk culture and framework, integrating market, liquidity, and operational risk.",
+        "Core duties include establishing risk policy, setting risk limits, running stress tests, and reporting to the board.",
+        "Key outputs include risk policy documents, risk committee minutes, VaR reports, stress test results, and risk dashboards.",
+        "Representative KPIs include risk limit breaches, VaR exceedances, operational risk incidents, and risk coverage ratio.",
+        "In small firms the CRO may be combined with the CCO; below certain AUM thresholds the CCO can also hold the CRO role."
+      ]
+    },
+    {
+      "id": "cco",
+      "url": "https://example.com/buyside-reference/cco",
+      "title": "Cco",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CCO supervises regulatory compliance and has a dual reporting line to both the CEO and the board.",
+        "Responsibilities expanded significantly after the Optimus and Lime incidents in Korea.",
+        "Core duties include monitoring regulatory changes, operating the compliance oversight system, managing conflicts of interest, monitoring employee personal account dealing, and training.",
+        "Korean regulation requires a full-time compliance officer for asset managers with AUM of roughly KRW 500 billion or more.",
+        "In small firms the CCO may combine with CRO or legal roles, which can weaken independence.",
+        "Representative KPIs include the number of regulatory violations, training completion rates, conflict-of-interest incidents, audit findings, and processing time."
+      ]
+    },
+    {
+      "id": "cfo",
+      "url": "https://example.com/buyside-reference/cfo",
+      "title": "Cfo",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CFO manages the asset manager's financial soundness, accounting, tax, treasury, and external audit response.",
+        "In Korea, the full-time compliance officer obligation for larger firms is linked to an AUM threshold of roughly KRW 500 billion.",
+        "Key outputs include financial statements, audit reports, budgets, treasury plans, and tax filings.",
+        "Representative KPIs include ROE, debt ratio, audit opinion, budget variance, and cost-to-revenue ratio.",
+        "In small and mid-sized firms the CFO may also serve as COO."
+      ]
+    },
+    {
+      "id": "compliance-officer",
+      "url": "https://example.com/buyside-reference/compliance-officer",
+      "title": "Compliance Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The compliance officer oversees regulatory compliance, operates internal controls, monitors employee personal dealing, reviews sales materials, and responds to audits.",
+        "The role sits under the CCO or within a legal/compliance team.",
+        "Key outputs include compliance reports, internal control standards, conflict-of-interest records, training materials, and violation investigation reports.",
+        "Representative KPIs include number of regulatory violations, training completion rate, processing time, and audit findings.",
+        "In small firms compliance may be combined with CRO or legal functions.",
+        "Compliance officers check whether controls and procedures meet regulatory standards.",
+        "Large firms operate dedicated compliance headquarters and permanent compliance officers.",
+        "Korean regulations require a permanent compliance officer for asset managers with AUM above 500 billion KRW.",
+        "In small firms the COO may double as compliance officer, and the CCO may double as the CRO, which is not ideal under Three Lines of Defense.",
+        "Product, Sales, and Compliance form a triangular governance relationship."
+      ]
+    },
+    {
+      "id": "fund-structuring-specialist",
+      "url": "https://example.com/buyside-reference/fund-structuring-specialist",
+      "title": "Fund Structuring Specialist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The fund structuring specialist designs the legal and regulatory structure of a fund, determining how a product concept is implemented.",
+        "Specialized structuring roles are growing globally for ETFs, private funds, ELTIFs, and real estate funds.",
+        "ETF structuring covers creation/redemption mechanisms, AP agreements, and authorized participant selection.",
+        "The role requires knowledge of UCITS, AIFMD, ELTIF, tax-efficient structures, and local fund laws.",
+        "In small and mid-sized firms structuring is usually combined with product management."
+      ]
+    },
+    {
+      "id": "sales",
+      "url": "https://example.com/buyside-reference/sales",
+      "title": "Sales",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Sales is responsible for growing AUM by attracting institutional and retail investors and managing the distribution pipeline.",
+        "In Korea a significant share of AUM growth depends on affiliated distribution channels; for example, NH-Amundi derives about 46% from such channels.",
+        "Key outputs include sales pipeline reports, meeting records, distributor training materials, and RFP support materials.",
+        "Representative KPIs include AUM inflows, net flows, new clients, pipeline conversion, sales target achievement, and retention.",
+        "In small firms sales may be combined with marketing or investor relations."
+      ]
+    },
+    {
+      "id": "client-service-ir",
+      "url": "https://example.com/buyside-reference/client-service-ir",
+      "title": "Client Service Ir",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Client service and investor relations retain existing clients, encourage reinvestment, handle periodic reporting, and respond to inquiries.",
+        "Outputs include client reports, FAQs, voice-of-customer reports, redemption trend analysis, and satisfaction surveys.",
+        "Representative KPIs include retention rate, reinvestment rate, inquiry response time, customer satisfaction, and redemption reduction.",
+        "In small firms client service may be combined with sales or marketing."
+      ]
+    },
+    {
+      "id": "esg-officer",
+      "url": "https://example.com/buyside-reference/esg-officer",
+      "title": "Esg Officer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The ESG officer sets ESG strategy, oversees stewardship responsibilities, handles regulatory responses, and represents the firm externally.",
+        "The role interacts with CIO, COO, PMs, risk, and compliance.",
+        "Key outputs include ESG policy, stewardship reports, PRI reports, and TCFD/SFDR disclosures.",
+        "Representative KPIs include ESG policy coverage, engagement incidents, and voting exercise rate.",
+        "In small and mid-sized firms the ESG officer role may be combined with compliance or risk."
+      ]
+    },
+    {
+      "id": "esg-analyst",
+      "url": "https://example.com/buyside-reference/esg-analyst",
+      "title": "Esg Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The ESG analyst performs ESG risk analysis, supports integration into investments, monitors controversies, and assists with engagement.",
+        "Key outputs include ESG research notes, ESG profiles, and controversy alerts.",
+        "Representative KPIs include ESG coverage, research utilization rate, and number of engagement trips.",
+        "In small firms the ESG analyst may be combined with the sector analyst role."
+      ]
+    },
+    {
+      "id": "proxy-voting-manager",
+      "url": "https://example.com/buyside-reference/proxy-voting-manager",
+      "title": "Proxy Voting Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The proxy voting manager exercises shareholder rights and fulfills fiduciary duties on behalf of institutional investors.",
+        "In Korea, the share of opposed voting proposals rose from 1.84% in 2016 to 4.59% in 2024 under the stewardship code.",
+        "SEC Rule 206(4)-6 requires investment advisers to adopt written policies and procedures for voting client securities in clients' best interests.",
+        "Proxy voting is recognized as a key mechanism for fulfilling fiduciary duties, including climate-related ESG obligations.",
+        "In small firms proxy voting may be handled by compliance officers or fund administrators.",
+        "A Korean stewardship code compliance review system scheduled from 2026 is expected to increase pressure to hire dedicated staff."
+      ]
+    },
+    {
+      "id": "korean-fund-four-party-structure",
+      "url": "https://example.com/buyside-reference/korean-fund-four-party-structure",
+      "title": "Korean Fund Four Party Structure",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Korean fund market is built on a four-party structure: asset manager, custodian bank, fund administrator, and distributor.",
+        "Contractual investment trusts account for more than 90% of Korean funds.",
+        "Legal roles are codified: the manager makes investment decisions (Capital Markets Act Art. 253); the custodian bank safekeeps assets and monitors the manager (Securities 244, 247); the administrator calculates NAV and fund accounting (Art. 254); the distributor solicits investors (Art. 249-4).",
+        "After the Optimus scandal, the custodian bank's monitoring duty was strengthened by law."
+      ]
+    },
+    {
+      "id": "internal-external-boundary",
+      "url": "https://example.com/buyside-reference/internal-external-boundary",
+      "title": "Internal External Boundary",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Core functions typically kept in-house are investment decision-making, compliance oversight, and risk management.",
+        "Functions commonly outsourced include fund accounting/NAV calculation, asset custody, external audit, and distribution through banks and brokerages.",
+        "In Korea, custody of fund assets and NAV calculation by administrators are standard, while Samsung Asset Management is the only large firm with in-house NAV pricing.",
+        "Data management and middle-office functions are being reconsidered for in-sourcing due to data sovereignty and AI/ML real-time analysis needs."
+      ]
+    },
+    {
+      "id": "investment-lifecycle-handoffs",
+      "url": "https://example.com/buyside-reference/investment-lifecycle-handoffs",
+      "title": "Investment Lifecycle Handoffs",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The investment lifecycle moves through sequential handoffs: Analyst → PM (idea), PM → Trader (order), Trader → Operations (execution), Fund Accounting → Performance → Client (reporting).",
+        "Handoff points are high-risk error points; Macquarie (2007, KRW 8.9 billion) and Deutsche (2008, KRW 1.5 billion) NAV errors remained undetected for about four months due to chained handoff failures.",
+        "Middle Office roles (risk, compliance, performance) act as information hubs where handoff flows intersect.",
+        "Control points include OMS auto-checks, trade blotters, T+1 reconciliation, shadow NAV, custodian verification, and GIPS compliance."
+      ]
+    },
+    {
+      "id": "pm-vs-analyst",
+      "url": "https://example.com/buyside-reference/pm-vs-analyst",
+      "title": "Pm Vs Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The PM holds final investment decision authority and is accountable for portfolio P&L; the analyst provides information and ideas without decision authority.",
+        "Analysts produce investment recommendations, financial models, and sector analyses; PMs decide buy/sell/hold.",
+        "At large firms PMs manage teams of analysts; at small firms the PM often performs research directly.",
+        "A typical career path is analyst for 5-10 years before promotion to PM."
+      ]
+    },
+    {
+      "id": "risk-vs-compliance",
+      "url": "https://example.com/buyside-reference/risk-vs-compliance",
+      "title": "Risk Vs Compliance",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Risk management focuses on numerical uncertainty of gains/losses, using VaR, stress tests, and risk models.",
+        "Compliance focuses on legal and regulatory permissibility, using internal controls, conflict policies, and regulatory monitoring.",
+        "The CCO has a dual reporting line to the board and CEO; the CRO reports to the board/management.",
+        "In small Korean firms the CCO often doubles as CRO, especially below roughly KRW 500 billion AUM."
+      ]
+    },
+    {
+      "id": "fund-accounting-vs-performance",
+      "url": "https://example.com/buyside-reference/fund-accounting-vs-performance",
+      "title": "Fund Accounting Vs Performance",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Fund accounting is the data producer that calculates NAV and settlement returns from trade ledgers.",
+        "Performance analytics is the data interpreter that decomposes returns using the Brinson model to evaluate PM skill.",
+        "In Korea, NAV calculation is generally outsourced to administrators, so internal performance analytics is secondary analysis on administrator-provided data.",
+        "Samsung Asset Management is the only large Korean firm with in-house NAV pricing, giving it direct access to source data.",
+        "In small firms the two functions are often combined, potentially weakening independence between data production and interpretation."
+      ]
+    },
+    {
+      "id": "fund-operations",
+      "url": "https://example.com/buyside-reference/fund-operations",
+      "title": "Fund Operations",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Operations confirms that executed trades settle correctly, typically within T+2.",
+        "Daily reconciliation between internal data and external institutions is a mandatory task.",
+        "Operations is a back-office role with the most stable, base-salary-centered compensation.",
+        "RPA and Python-based automation skills are increasingly required in operations roles."
+      ]
+    },
+    {
+      "id": "sales-ir",
+      "url": "https://example.com/buyside-reference/sales-ir",
+      "title": "Sales Ir",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Sales raises capital by marketing to institutional investors and managing distribution channels.",
+        "Compensation is performance-based and linked to AUM inflows.",
+        "In Korea, distributor channel dependence can be high; NH-Amundi relied on affiliated distributors for 46% of sales.",
+        "In alternative investments, IR/fundraising maintains long-term LP-GP partnerships rather than simple vendor-client relationships."
+      ]
+    },
+    {
+      "id": "cio-investment-strategy",
+      "url": "https://example.com/buyside-reference/cio-investment-strategy",
+      "title": "Cio Investment Strategy",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The CIO sets investment strategy in the lifecycle: Analyst idea generation → CIO strategy → PM selection → Trader execution.",
+        "The Investment Strategy Committee may include the CIO, CRO, legal head, compliance head, and equity head.",
+        "In small asset managers the CEO often doubles as CIO and PM."
+      ]
+    },
+    {
+      "id": "large-integrated-asset-manager",
+      "url": "https://example.com/buyside-reference/large-integrated-asset-manager",
+      "title": "Large Integrated Asset Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Large integrated asset managers keep the full value chain—research, portfolio management, sales, risk, compliance, IT—in-house to maximize specialization.",
+        "Samsung Asset Management is organized into 3 divisions/1 office/4 departments/15 headquarters/58 teams/4 legal entities.",
+        "BlackRock organizes into Investment Strategies, Client Businesses, Technology & Operations, and Risk & Quantitative Analysis.",
+        "Key KPIs are relative return vs benchmark, information ratio, AUM growth, net flows, and customer retention.",
+        "Typical outsourcing levels are fund administration 50-70%, research 10-30%, and IT/systems 30-50%."
+      ]
+    },
+    {
+      "id": "boutique-asset-manager",
+      "url": "https://example.com/buyside-reference/boutique-asset-manager",
+      "title": "Boutique Asset Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Boutiques use flat, investment-centric organizations with clear investment philosophies.",
+        "All non-investment functions are outsourced so PMs can focus about 90% of their time on investment decisions.",
+        "Outsourcing levels are the highest among firm types: fund administration 90-100%, custody 100%, research support 50-80%, IT/systems 70-90%, distribution 50-70%.",
+        "Key KPIs are absolute return, Sharpe ratio, net inflow, management fee of 1.5-2%, and incentive fee.",
+        "Founder/Partner frequently serves as the core PM."
+      ]
+    },
+    {
+      "id": "etf-index-asset-manager",
+      "url": "https://example.com/buyside-reference/etf-index-asset-manager",
+      "title": "Etf Index Asset Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "ETF/index managers rely on quantitative models and system infrastructure rather than discretionary company analysis.",
+        "Samsung's index fund team has 9 members, all with quantitative backgrounds in financial engineering or statistics.",
+        "Core roles include quant/system analyst, ETF portfolio manager, system engineer/developer, risk/tracking-error analyst, and liquidity-provider manager.",
+        "The primary KPI is tracking error, with 0.2-1.0% generally considered good.",
+        "Tracking difference measures the average return gap versus the benchmark; discount/premium measures the ETF market price gap versus NAV.",
+        "Outsourcing is high for custody (100%), fund accounting (80-100%), index data licenses (100%), and market data (100%)."
+      ]
+    },
+    {
+      "id": "alternative-investment-firm",
+      "url": "https://example.com/buyside-reference/alternative-investment-firm",
+      "title": "Alternative Investment Firm",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Alternative investment firms organize around the deal cycle: sourcing → due diligence → investment committee → portfolio management → exit.",
+        "Deal teams typically follow a hierarchy of Managing Director → Principal → VP → Associate → Analyst.",
+        "Key performance metrics are IRR, TVPI, DPI, RVPI, MOIC, and carried interest.",
+        "Cash-flow-based metrics dominate because capital is called from committed capital and distributions are irregular.",
+        "Outsourcing levels are high: fund administration 75-90%, valuation 50-70%, legal/compliance 30-50%, tax/structuring 50-70%, back office 70-90%."
+      ]
+    },
+    {
+      "id": "deal-sourcing-origination",
+      "url": "https://example.com/buyside-reference/deal-sourcing-origination",
+      "title": "Deal Sourcing Origination",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Deal sourcing sits at the top of the alternative-investment pipeline and determines the quality of later stages.",
+        "Core responsibilities include proprietary deal sourcing, pipeline database management, network building, and initial qualification.",
+        "Sourcing combines inbound channels and outbound target-company approaches using LinkedIn, Crunchbase, PitchBook, and industry events.",
+        "Mega funds like Blackstone and KKR have dedicated origination teams; in mid/small firms VP/Principal investors usually handle sourcing.",
+        "Key KPIs are number of newly sourced deals, pipeline-to-closing conversion rate, and proprietary deal ratio."
+      ]
+    },
+    {
+      "id": "due-diligence",
+      "url": "https://example.com/buyside-reference/due-diligence",
+      "title": "Due Diligence",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Alternative investment due diligence uses an IDD+ODD dual structure.",
+        "IDD covers investment strategy, historical performance, market opportunity, and portfolio analysis.",
+        "ODD reviews back-office operations, third-party service providers, compliance infrastructure, and cybersecurity protocols.",
+        "Financial, legal, and management due diligence run in parallel, including virtual data-room review, management interviews, channel checks, and contingency analysis.",
+        "A typical due diligence process takes 3-6 weeks per deal."
+      ]
+    },
+    {
+      "id": "operating-partner",
+      "url": "https://example.com/buyside-reference/operating-partner",
+      "title": "Operating Partner",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Alternative investment follows a 'buy and fix' model; 47% of buyout value creation since 2010 came from operational improvement, versus 18% in the 1980s.",
+        "Portfolio management teams lead 100-day plans, KPI setting, operational improvement initiatives, board participation, and management oversight.",
+        "Large PE firms operate dedicated Operating Partner groups such as KKR Capstone and Blackstone Portfolio Operations.",
+        "Operating Partners commonly come from former CEOs (26%), management consultants (28%), and former CFOs/COOs (17%).",
+        "IMM PE provides an average of 90 hours of coaching per employee to C-level executives at portfolio companies."
+      ]
+    },
+    {
+      "id": "valuation-alternative-investments",
+      "url": "https://example.com/buyside-reference/valuation-alternative-investments",
+      "title": "Valuation Alternative Investments",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Unlisted assets require periodic fair-value measurement under ASC 820 (US) and IFRS 13 (international).",
+        "Valuation teams use comparable company analysis, precedent transaction analysis, and DCF models.",
+        "They calculate quarterly portfolio company values, determine fund NAV, and select/supervise external appraisers.",
+        "Most firms have fund accounting or portfolio management handle valuation; only large institutions operate dedicated Valuation Committees."
+      ]
+    },
+    {
+      "id": "investor-relations-fundraising",
+      "url": "https://example.com/buyside-reference/investor-relations-fundraising",
+      "title": "Investor Relations Fundraising",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "IR/fundraising raises committed capital from limited partners and maintains long-term LP-GP partnerships.",
+        "Tasks include preparing PPMs, pitchbooks, roadshows, quarterly/annual LP reports, capital calls, distributions, DDQ responses, and LPAC support.",
+        "Global PE fundraising fell 11.5% in 2023, the lowest level since 2017."
       ]
     }
   ]

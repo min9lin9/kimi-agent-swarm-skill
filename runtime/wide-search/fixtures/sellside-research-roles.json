@@ -15,9 +15,10 @@
         "extractionValue": 5
       },
       "claims": [
-        "Sell-side research typically has a 3-tier hierarchy: Global Head -> Regional Head -> Sector Head.",
-        "Research leadership combines manager duties with idea production and client representation.",
-        "COO of Research manages budget, staffing, and workflow metrics."
+        "The Global Head of Research sets the overall strategy, quality standards, and business model for the research organization.",
+        "Goldman Sachs' Jan Hatzius has served as Chief Economist and Head of Global Investment Research since 2020, evaluating analysts on 'client votes and stock picking'.",
+        "JPMorgan's Joyce Chang sits on the Corporate & Investment Bank Management Committee and oversees 920 research professionals across 26 countries covering 3,600 stocks and 1,100 credits.",
+        "Barclays appointed Brad Rogoff, previously head of FICC Research, as Global Head of Research in October 2024, reflecting growing cross-asset research integration."
       ]
     },
     {
@@ -35,9 +36,11 @@
         "extractionValue": 5
       },
       "claims": [
-        "Coverage Analyst deeply analyzes 10-20 companies and produces Buy/Sell/Hold recommendations.",
-        "Key deliverables include initiation reports, update notes, earnings previews/reviews, and flash notes.",
-        "Analyst title spans VP/Director/MD levels in sell-side organizations."
+        "Makes final investment recommendations and target prices for 10-20 companies in a sector.",
+        "Covers 8-12 large-cap names or 15-20 names when including mid- and small-cap stocks.",
+        "Core value lies in relationship networks with executives and institutional investors rather than modeling alone.",
+        "In sell-side research, Vice President, Director, and Managing Director professionals are all externally called 'Analyst.'",
+        "Promotion to Analyst typically takes 2-5 years; top-ranked analysts can earn over $1 million annually."
       ]
     },
     {
@@ -55,9 +58,15 @@
         "extractionValue": 5
       },
       "claims": [
-        "Research Associate supports Analysts with financial modeling, data gathering, and draft writing.",
-        "Typical workload is 70% writing and 30% modeling, varying by analyst style.",
-        "Career path progresses from Associate to Analyst, then VP/Director/MD."
+        "Research Associates support senior analysts through financial model updates, data collection and verification, draft report writing, and conference call notes.",
+        "Their workload is roughly split as 30% model updates, 25% data collection/verification, 25% report drafting, 10% conference call notes, and 10% ad-hoc requests.",
+        "Associates hand off model spreadsheets, data packs, and draft sections to VP/MD analysts.",
+        "Junior professional with 0-4 years of experience supporting senior analysts.",
+        "Each associate covers about 7-10 names; teams usually consist of one senior analyst and 2-3 associates.",
+        "Work is roughly 70% writing and 30% modeling, though this varies widely by senior analyst style.",
+        "Entry-level associates build three-statement model basics, DCF sub-sheets, and comps data; senior associates independently build models and write drafts.",
+        "During earnings season, associates work 70-80 hours per week across four quarterly peaks.",
+        "Typical U.S. base salary is $125,000-$200,000 plus bonus."
       ]
     },
     {
@@ -75,9 +84,11 @@
         "extractionValue": 4
       },
       "claims": [
-        "Equity Strategist develops top-down market, index, and sector-level strategies.",
-        "Strategist complements bottom-up analysts by answering 'where to allocate'.",
-        "Deliverables include strategy outlooks, morning notes, sector rotation models, and earnings season previews."
+        "Sets the direction for global equity markets, index targets, and sector allocation.",
+        "Peter Oppenheimer served as Goldman Sachs Chief Global Equity Strategist for more than 28 years and co-led Global Economics, Commodities and Strategy research.",
+        "Morgan Stanley's Global Equity Allocation team has used a top-down approach since 1986 to set regional, country, sector, and industry overweights and underweights.",
+        "The role typically requires PhD-level quantitative capability combined with market sense and around 15 or more years of experience.",
+        "Key deliverables include the Annual Strategy Outlook, Global Equity Outlook, Sector Rotation Matrix, and monthly ranking model."
       ]
     },
     {
@@ -95,9 +106,14 @@
         "extractionValue": 4
       },
       "claims": [
-        "Economist forecasts macro variables such as GDP, inflation, and rates.",
-        "Macro Strategist translates macro forecasts into asset price implications and trade recommendations.",
-        "Some firms split Chief Economist and Chief Markets Economist roles."
+        "The Chief Economist focuses on macroeconomic forecasting, policy analysis, and asset allocation strategy.",
+        "At most investment banks, the Chief Economist supervises only the macro research division, whereas the Global Head of Research covers all asset classes.",
+        "Goldman Sachs is an exception where Jan Hatzius combines the Chief Economist and Global Head of GIR roles.",
+        "Holds final responsibility for macroeconomic forecasts including GDP, inflation, interest rates, and employment.",
+        "Deutsche Bank's Jim Reid concurrently heads Global Macro and Thematic Research, Corporate Bank Research, and Credit Strategy.",
+        "Jim Reid published the 'Early Morning Reid' report daily for 18 years, building Deutsche Bank Research's most-subscribed publication.",
+        "The role typically requires a PhD in economics and 15 or more years of experience, with central-bank and policy networks as key assets.",
+        "Estimated salary range is $125,000-$175,000."
       ]
     },
     {
@@ -115,9 +131,11 @@
         "extractionValue": 4
       },
       "claims": [
-        "Rates Strategist models yield curves and policy rate paths.",
-        "Credit Analyst evaluates issuer ratings, credit spreads, and default risk.",
-        "FIG and Structured Credit analysts cover financial bonds, CLOs, MBS, and ABS."
+        "Analyzes investment-grade corporate bonds, credit risk, financial health, and credit spreads.",
+        "JP Morgan's Global Research Credit Strategy Analyst contributes to top-down U.S. investment-grade credit views using data-driven research and modeling.",
+        "A typical day starts at 6:45 a.m., includes a Bloomberg news scan, morning desk call, earnings calls, detailed note writing, and compliance review.",
+        "Earnings flash notes must be published within 60-90 minutes after results.",
+        "Produces credit snapshots, issuer ratings, investment-grade relative-value matrices, and earnings flash notes."
       ]
     },
     {
@@ -135,9 +153,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "Research Editor ensures clarity, logic, and structure without changing investment thesis.",
-        "Production Coordinator handles formatting, charts, and PDF generation.",
-        "Publication Manager coordinates Compliance, Legal, Sales, and distribution schedules."
+        "Research Editors check linguistic accuracy, logical consistency, and structural clarity of analyst drafts.",
+        "They do not change the analyst's investment view but ensure it is conveyed accurately and clearly.",
+        "Without editorial support, analysts waste time on layout and language issues instead of focusing on research and market interpretation."
       ]
     },
     {
@@ -155,9 +173,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "Research Sales translates analyst ideas into client-ready pitches and drives trading commissions.",
-        "Distribution Manager schedules morning calls and tracks research consumption metrics.",
-        "Corporate Access Manager connects corporate management with institutional investors."
+        "Research Salespersons amplify research reports through personal client outreach, build and maintain relationships with new funds, and repackage research for client-specific strategies.",
+        "They attend daily morning calls to identify high-impact research and pitch ideas to institutional investors.",
+        "First-year sales and trading associates receive total compensation of approximately $240,000-$270,000."
       ]
     },
     {
@@ -175,9 +193,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "Research Compliance Officer supervises information barriers and MNPI handling.",
-        "Supervisory Analyst (Series 16) pre-approves research reports for regulatory compliance.",
-        "Chinese wall separates research from investment banking to manage conflicts."
+        "RBC's Research Compliance Oversight role supervises information barriers, operates the control room, conducts pre-publication review, manages MNPI, prepares regulatory inquiry responses, and delivers compliance training.",
+        "Required qualifications include Series 7, 2+ years of financial services experience, proficiency in FINRA Rule 2241 and Regulation M, control room experience, and a law degree is preferred.",
+        "The role reports to the Chief Compliance Officer and legal department and maintains functional independence from the research head."
       ]
     },
     {
@@ -195,9 +213,9 @@
         "extractionValue": 4
       },
       "claims": [
-        "ESG Research Analyst studies financially material ESG issues and develops integration tools.",
-        "ESG roles are among the fastest-growing in sell-side research due to regulation.",
-        "Thematic Analyst identifies long-term structural trends and beneficiaries across sectors."
+        "JPMorgan Sustainable Investing Research Analysts research financially material ESG issues, develop analytical tools, write reports, and collaborate with global portfolio managers.",
+        "They integrate ESG factors into financial forecasts and valuation using DCF discount-rate adjustments, multiple adjustments, and cash-flow revisions.",
+        "The role spends roughly 25-30% of time on ESG data and scoring and 25-30% on integrating ESG into financial models."
       ]
     },
     {
@@ -216,6 +234,1475 @@
       },
       "claims": [
         "Forum discussions may contain anecdotes but lack structured role analysis."
+      ]
+    },
+    {
+      "id": "regional-head-of-research",
+      "url": "https://example.com/sellside-reference/regional-head-of-research",
+      "title": "Regional Head Of Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Regional Heads manage coverage priorities, analyst teams, and local client service within a specific region such as Americas, EMEA, or APAC.",
+        "Nomura's APAC Equity Research uses a Joint-Head structure, with CW Chung leading Korea/pan-Asia Tech and Masataka Kunugimoto leading Japan/Asia-Pacific Auto.",
+        "Regional Heads translate global strategy into local coverage plans and act as intermediaries between the Global Head and Sector Heads."
+      ]
+    },
+    {
+      "id": "sector-head",
+      "url": "https://example.com/sellside-reference/sector-head",
+      "title": "Sector Head",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Sector Heads are responsible for research quality, coverage strategy, and mentoring analysts within a specific industry sector.",
+        "They act as the operational 'combat commander' of the research organization and have authority to decide which companies are covered.",
+        "Coverage decisions by Sector Heads frequently involve negotiation or conflict with traders.",
+        "Oversees all coverage analysts within an industry sector and is responsible for sector-wide research direction and quality.",
+        "Typically holds a Managing Director title with 15 or more years of experience.",
+        "Sets sector overweights and underweights, manages the team, maintains client relationships, and decides new coverage.",
+        "Sector-specialist funds have recorded 340-940 basis points higher IRR than generalist funds.",
+        "Buy-side voters value in-depth industry knowledge and accessibility/responsiveness most."
+      ]
+    },
+    {
+      "id": "research-coo",
+      "url": "https://example.com/sellside-reference/research-coo",
+      "title": "Research Coo",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Research COO supervises day-to-day operations, process improvement, and infrastructure for the research organization.",
+        "Deutsche Bank maintains a VP-level Head of Research Business Operations overseeing hundreds of equity analysts, economists, and fixed income strategists.",
+        "This role prioritizes operational efficiency and change management over research experience, with salaries around £43,200-£72,000."
+      ]
+    },
+    {
+      "id": "equity-research-coverage-analyst",
+      "url": "https://example.com/sellside-reference/equity-research-coverage-analyst",
+      "title": "Equity Research Coverage Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "MD-level Coverage Analysts typically cover 10-15 large companies, build financial models, issue Buy/Hold/Sell recommendations, and meet with C-suite and IR teams.",
+        "VP-level Research Analysts usually cover 8-12 mid-cap companies and handle modeling, report writing, and investor inquiries.",
+        "Small/Mid-Cap Analysts cover 15-20 companies and produce initiation reports of 50-100+ pages."
+      ]
+    },
+    {
+      "id": "fixed-income-credit-research",
+      "url": "https://example.com/sellside-reference/fixed-income-credit-research",
+      "title": "Fixed Income Credit Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Credit Research Analysts analyze corporate bond issuers' credit risk and default probability, producing issuer ratings, credit snapshots, IG/HY RV matrices, and daily credit notes.",
+        "Rates Strategists provide interest-rate market forecasts, yield curve analysis, duration strategies, and central bank previews.",
+        "The Head of Fixed Income Research manages overall fixed income research strategy and coordinates rates and credit teams."
+      ]
+    },
+    {
+      "id": "quantitative-research",
+      "url": "https://example.com/sellside-reference/quantitative-research",
+      "title": "Quantitative Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Quantitative Research develops factor models, algorithmic strategies, and derivative pricing models for systematic investors and trading desks.",
+        "Goldman Sachs Quantitative Investment Strategies accounts for 27% of total staff and provides systematic strategies to research clients.",
+        "Quant roles operate on a dual track: Trading-aligned Quants focus on P&L-adjacent revenue generation, while Research-aligned Quants support analysis and model development."
+      ]
+    },
+    {
+      "id": "esg-sustainability-research",
+      "url": "https://example.com/sellside-reference/esg-sustainability-research",
+      "title": "Esg Sustainability Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "ESG Research has a dual mission of investment analysis and regulatory response, covering EU Taxonomy, SFDR, and CSRD.",
+        "The three-layer ESG model consists of a centralized ESG data team, sector-embedded ESG integration, and client-facing ESG advisory.",
+        "ESG Sector Analysts integrate ESG risk assessments and assumptions into sector-specific company models."
+      ]
+    },
+    {
+      "id": "research-production-editorial",
+      "url": "https://example.com/sellside-reference/research-production-editorial",
+      "title": "Research Production Editorial",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Editors review language, structure, and investment-logic consistency of research reports.",
+        "Supervisory Analysts provide final pre-publication approval for compliance and data accuracy; FINRA Rule 2241 mandates this role for member firms.",
+        "Research Production Specialists handle template-based formatting, chart and table insertion, and timely publication of reports."
+      ]
+    },
+    {
+      "id": "corporate-access",
+      "url": "https://example.com/sellside-reference/corporate-access",
+      "title": "Corporate Access",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Corporate Access connects corporate management with institutional investors through non-deal roadshows, field trips, and approximately six conferences per year.",
+        "Wells Fargo Corporate Access Analysts earn between $104,000 and $168,000 annually.",
+        "MiFID II exempts corporate access for companies below £200 million market capitalization, while ESMA permits payment from Research Payment Accounts."
+      ]
+    },
+    {
+      "id": "compliance-regulatory-review",
+      "url": "https://example.com/sellside-reference/compliance-regulatory-review",
+      "title": "Compliance Regulatory Review",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Compliance Officers supervise information barriers, control rooms, pre-approval processes, MNPI management, and training.",
+        "FINRA Rule 2241 prohibits investment banking employees from pre-reviewing or approving research reports and bars analyst compensation from being tied to specific investment banking transactions.",
+        "Control Room Analysts maintain watch/restricted lists, evaluate material nonpublic information, and document deal-team access permissions."
+      ]
+    },
+    {
+      "id": "data-analytics-visualization",
+      "url": "https://example.com/sellside-reference/data-analytics-visualization",
+      "title": "Data Analytics Visualization",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Data Analysts process alternative data, manage quality, and create visualizations, collaborating with quant researchers, data engineers, and coverage analysts.",
+        "UBS Evidence Lab spans more than 55 specialist areas and over 1,000 datasets.",
+        "Alternative Data Analysts collect and analyze unstructured data through web scraping, social media analysis, consumer surveys, supply chain monitoring, and machine learning/NLP."
+      ]
+    },
+    {
+      "id": "research-distribution-product-management",
+      "url": "https://example.com/sellside-reference/research-distribution-product-management",
+      "title": "Research Distribution Product Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Distribution Managers run the morning call process, track readership metrics, manage Institutional Investor poll strategy, and produce thematic emails.",
+        "Research Product Managers schedule morning calls, maintain report best-practice guides, collect client feedback, and develop ranking strategies.",
+        "The morning-call pipeline follows a handoff chain from analyst to product management, to equity salesperson, to sales trader, and finally to broker vote evaluation."
+      ]
+    },
+    {
+      "id": "regional-equity-strategist",
+      "url": "https://example.com/sellside-reference/regional-equity-strategist",
+      "title": "Regional Equity Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Specializes in the equity market of a specific region such as Europe, Asia, or Japan.",
+        "Acts as a translation layer between global strategy and local sector analysts.",
+        "Nomura's Yunosuke Ikeda moved from Chief FX Strategist to Chief Equity Strategist, showing FX analysis skills can extend into equity strategy.",
+        "Produces regional outlooks, weekly regional notes, and regional sector rankings."
+      ]
+    },
+    {
+      "id": "sector-strategist",
+      "url": "https://example.com/sellside-reference/sector-strategist",
+      "title": "Sector Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Advises capital allocation within a specific sector rather than picking individual stocks.",
+        "Evaluates relative attractiveness of sub-sectors, for example software versus hardware versus semiconductors within technology.",
+        "Partially overlaps with sector analysts but is differentiated by a higher-level allocation perspective.",
+        "Produces sector strategy notes, sub-sector rotation matrices, and thematic sector reports."
+      ]
+    },
+    {
+      "id": "quantitative-equity-strategist",
+      "url": "https://example.com/sellside-reference/quantitative-equity-strategist",
+      "title": "Quantitative Equity Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Generates strategy insights through quantitative models, factor analysis, and portfolio optimization.",
+        "Savita Subramanian at Bank of America concurrently heads ESG Research and U.S. Equity & Quantitative Strategy.",
+        "Uses tools such as Python, R, and machine learning to develop quantitative models.",
+        "Requires a skill set distinct from traditional fundamental strategists."
+      ]
+    },
+    {
+      "id": "senior-economist",
+      "url": "https://example.com/sellside-reference/senior-economist",
+      "title": "Senior Economist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Specializes in macroeconomic analysis of a specific country or region.",
+        "Nomura's Rob Subbaraman leads a 20-person team as Head of Global Macro Research and has recruited buy-side talent such as David Seif as Developed Markets Chief Economist.",
+        "Economic analysts produce original written research, develop quantitative models, and interpret high-frequency data releases.",
+        "Hiring often occurs through Economics PhD Fellowship programs."
+      ]
+    },
+    {
+      "id": "macro-strategist",
+      "url": "https://example.com/sellside-reference/macro-strategist",
+      "title": "Macro Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Translates macroeconomic forecasts into actionable insights for rates and foreign-exchange markets.",
+        "Combines policy analysis with quantitative modeling.",
+        "Nomura's Yunosuke Ikeda developed the 'Nomura Yen Supply-Demand Index' to capture market themes not visible in raw data.",
+        "Deutsche Bank's macro research structure includes separate global heads for Economic Research, Rates Research, and FX Research.",
+        "Outputs include asset-allocation frameworks, macro strategy notes, rates/FX outlooks, and cross-asset trade ideas."
+      ]
+    },
+    {
+      "id": "rates-strategist",
+      "url": "https://example.com/sellside-reference/rates-strategist",
+      "title": "Rates Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Focuses on government bond markets, yield-curve shape, duration positioning, and central-bank policy market impact.",
+        "Translates economists' macro forecasts into market prices rather than forecasting macro variables.",
+        "A Barclays U.S. Rates Strategist posting specifies Python/MATLAB proficiency and pays $125,000-$175,000 at the AVP level.",
+        "Produces daily rates strategy notes, yield-curve outlooks, central-bank previews and reactions, and week-ahead calendars."
+      ]
+    },
+    {
+      "id": "hy-distressed-analyst",
+      "url": "https://example.com/sellside-reference/hy-distressed-analyst",
+      "title": "Hy Distressed Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Analyzes high-yield bonds and distressed corporate debt.",
+        "Skill set overlaps considerably with equity analysts.",
+        "Examines capital structure, default probability, and debt-restructuring scenarios.",
+        "Morgan Stanley's High Yield team implements autonomous approaches within the Fixed Income division."
+      ]
+    },
+    {
+      "id": "fig-structured-credit-analyst",
+      "url": "https://example.com/sellside-reference/fig-structured-credit-analyst",
+      "title": "Fig Structured Credit Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "FIG credit analysts specialize in debt of banks, insurers, and other financial institutions, requiring understanding of regulatory capital frameworks.",
+        "Structured credit analysts analyze MBS, ABS, and CDO products.",
+        "Requires complex quantitative modeling including prepayment models, default correlation, and cash flow waterfalls."
+      ]
+    },
+    {
+      "id": "fx-strategist",
+      "url": "https://example.com/sellside-reference/fx-strategist",
+      "title": "Fx Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Analyzes currency values and develops currency strategies.",
+        "Core work areas include monetary policy analysis, carry-trade strategies, and macro-fundamental modeling using purchasing-power parity, macro indicators, and positioning data.",
+        "Uses Python, R, and EViews for quantitative modeling.",
+        "Nomura's Yunosuke Ikeda created the 'Nomura Yen Supply-Demand Index' and moved from FX strategist to Chief Equity Strategist.",
+        "Deutsche Bank's George Saravelos serves as Global Head of FX Research."
+      ]
+    },
+    {
+      "id": "commodities-strategist",
+      "url": "https://example.com/sellside-reference/commodities-strategist",
+      "title": "Commodities Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Analyzes supply-demand dynamics and price forecasts for energy, metals, and agricultural commodities.",
+        "Goldman Sachs' Jeff Currie served as Global Head of Commodities Research, covering corporate risk management and short- and long-term commodity investment strategy.",
+        "Goldman Sachs' 2026 Commodity Views Outlook cites U.S.-China AI and geopolitical competition plus a global energy supply wave as its core scenario.",
+        "The role typically prefers a PhD or master's in economics and requires macroeconomic research experience."
+      ]
+    },
+    {
+      "id": "precious-metals-analyst",
+      "url": "https://example.com/sellside-reference/precious-metals-analyst",
+      "title": "Precious Metals Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Focuses on gold, silver, and platinum.",
+        "Gold has safe-haven asset attributes and tends to have an inverse relationship with real interest rates.",
+        "Collaborates frequently with rates strategists.",
+        "Tracks central-bank gold reserve changes, ETF flows, and jewelry and industrial demand."
+      ]
+    },
+    {
+      "id": "quantitative-researcher",
+      "url": "https://example.com/sellside-reference/quantitative-researcher",
+      "title": "Quantitative Researcher",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Develops mathematical models, data analysis, statistical modeling, and portfolio optimization.",
+        "JP Morgan Quantitative Research collaborates with traders, marketers, and risk managers across products and regions in centralized and embedded forms.",
+        "Doctoral program enrollees enter at Associate level, while bachelor's and master's graduates enter at Analyst level.",
+        "Credit quantitative researchers develop valuation, risk, P&L, pricing, and market-making algorithms for global spread businesses.",
+        "Rates quantitative researchers develop arbitrage-free pricing models for interest-rate derivatives using stochastic processes."
+      ]
+    },
+    {
+      "id": "derivatives-strategist",
+      "url": "https://example.com/sellside-reference/derivatives-strategist",
+      "title": "Derivatives Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Researches, designs, and implements pricing models for equity options, volatility products, and structured derivatives.",
+        "Works more closely with trading desks than any other research role.",
+        "Uses stochastic processes, finite-difference methods, and Monte Carlo simulation.",
+        "Morgan Stanley's Exotic Derivatives Strats implement quantitative models, pricing methodologies, and risk-management and hedging infrastructure.",
+        "Success is tied directly to trading desk P&L and profitability."
+      ]
+    },
+    {
+      "id": "asset-allocation-strategist",
+      "url": "https://example.com/sellside-reference/asset-allocation-strategist",
+      "title": "Asset Allocation Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Develops portfolio construction and risk-management strategies at the intersection of macro, quantitative, and fundamental analysis.",
+        "UBS Multi Asset Analysts support macro asset-allocation decisions for multi-asset strategies and funds.",
+        "Uses tools such as FactSet, Morningstar, Axioma, and MSCI Barra.",
+        "Deutsche Bank's quantitative strategy team identified a non-diversifiable liquidity factor separate from recognized factors such as value, size, and momentum."
+      ]
+    },
+    {
+      "id": "index-etf-strategist",
+      "url": "https://example.com/sellside-reference/index-etf-strategist",
+      "title": "Index Etf Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Develops rule-based systematic strategies and productizes them for clients.",
+        "Goldman Sachs' Systematic Trading Strategies group offers strategies via OTC derivatives, certificates, notes, and funds.",
+        "BlackRock's iShares product innovation team supports research, build, and development of new ETFs and performs custom backtesting and scenario analysis."
+      ]
+    },
+    {
+      "id": "group-head",
+      "url": "https://example.com/sellside-reference/group-head",
+      "title": "Group Head",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Manages two or more related sectors, for example TMT (Technology, Media, Telecom).",
+        "Coordinates cross-sector themes and reduces resource duplication.",
+        "Adjusts uneven coverage sizes across sectors."
+      ]
+    },
+    {
+      "id": "thematic-cross-sector-analyst",
+      "url": "https://example.com/sellside-reference/thematic-cross-sector-analyst",
+      "title": "Thematic Cross Sector Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Analyzes long-term structural trends that cross traditional sector boundaries, such as AI, climate change, demographics, and geopolitical risk.",
+        "Cross-sector analysts integrate macro-level themes with micro-level sector impacts.",
+        "Nomura's 'Asia Insights' is jointly authored by economists, strategists, and analysts to combine macro themes with company analysis."
+      ]
+    },
+    {
+      "id": "co-coverage-analyst",
+      "url": "https://example.com/sellside-reference/co-coverage-analyst",
+      "title": "Co Coverage Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Operates in a two-person coverage model for mega-cap or heavily traded companies.",
+        "The lead analyst makes final decisions while the co-coverage analyst handles detailed modeling and daily monitoring.",
+        "Common for mega-cap technology companies and large banks, especially during M&A or high earnings-impact periods."
+      ]
+    },
+    {
+      "id": "initiating-analyst",
+      "url": "https://example.com/sellside-reference/initiating-analyst",
+      "title": "Initiating Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Leads new coverage initiations producing 50-100 page Initiating Coverage Reports.",
+        "Report structure follows Executive Summary, Business Overview, Industry Analysis, Financial Analysis, Valuation, and Risk Factors.",
+        "Coordinates associates for modeling and data collection and editorial for formatting, acting as project manager."
+      ]
+    },
+    {
+      "id": "esg-quant-analyst",
+      "url": "https://example.com/sellside-reference/esg-quant-analyst",
+      "title": "Esg Quant Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "GS SUSTAIN develops proprietary ESG scores and datasets for approximately 7,000 companies and delivers them via API.",
+        "ESG Quant Analysts perform machine-learning-based scoring, integrate ESG into factor models, and measure portfolio-level ESG risk.",
+        "Python and SQL programming skills are essential for this hybrid finance-quant role."
+      ]
+    },
+    {
+      "id": "climate-transition-analyst",
+      "url": "https://example.com/sellside-reference/climate-transition-analyst",
+      "title": "Climate Transition Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "HSBC's Climate and ESG Research Analyst manages climate and ESG databases, tracks policy, conducts country research, and analyzes regulatory impact.",
+        "The role quantifies physical and transition climate risks beyond traditional ESG analysis.",
+        "It evaluates how climate transition scenarios affect creditworthiness and stock prices in carbon-intensive sectors."
+      ]
+    },
+    {
+      "id": "policy-regulatory-analyst",
+      "url": "https://example.com/sellside-reference/policy-regulatory-analyst",
+      "title": "Policy Regulatory Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Policy and Regulatory Analysts monitor regulatory changes such as EU SFDR, CSRD, and EU Taxonomy and analyze legislative impacts on sectors and companies.",
+        "Barclays places policy and regulatory career experts directly within its ESG team.",
+        "Changes to SFDR Article 9 classification criteria are increasing ESG research precision while causing de-classification of some social-objective funds."
+      ]
+    },
+    {
+      "id": "thematic-analyst",
+      "url": "https://example.com/sellside-reference/thematic-analyst",
+      "title": "Thematic Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Thematic Analysts identify beneficiaries of long-term structural changes and research cross-sector themes.",
+        "Barclays Global Thematic Investing Research studies water, robotics, and automation over long horizons while analyzing fund flows.",
+        "Citi GPS has dedicated Thematic Analysts covering nature and gender themes.",
+        "BNP Paribas Exane elevated Clean Energy Research to a team equal to traditional sector coverage."
+      ]
+    },
+    {
+      "id": "esg-organization-models",
+      "url": "https://example.com/sellside-reference/esg-organization-models",
+      "title": "Esg Organization Models",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "ESG research functions are organized into three models: Centralized, Embedded, and Hybrid.",
+        "Goldman Sachs' GS SUSTAIN is a centralized model; Deutsche Bank uses an embedded sector-analyst model; Barclays uses a hybrid model.",
+        "The most sophisticated architecture has three layers: centralized data and methodology, sector-specific ESG integration, and client-facing ESG advisory.",
+        "ESG research demand surged after 2018 MiFID II despite overall sell-side research budget cuts, driven by EU Taxonomy, SFDR, and CSRD."
+      ]
+    },
+    {
+      "id": "research-data-analyst",
+      "url": "https://example.com/sellside-reference/research-data-analyst",
+      "title": "Research Data Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Citadel Securities' Research Data Analyst processes, improves quality, and monitors alternative datasets to strengthen alpha signals for systematic trading and research.",
+        "The role requires SQL, Tableau, and a STEM degree and collaborates closely with Quantitative Researchers and Data Engineers.",
+        "At large investment banks, Research Data Analysts operate in 10-20 person teams as a hub among multiple stakeholders."
+      ]
+    },
+    {
+      "id": "research-technologist",
+      "url": "https://example.com/sellside-reference/research-technologist",
+      "title": "Research Technologist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Goldman Sachs GIR Engineering uses cloud, mobile, and big-data technologies to build digital investment research strategy and modeling infrastructure.",
+        "JPMorgan's Quantitative Research Developer designs and implements trading algorithms in production platforms and integrates AI/ML methodologies into modeling.",
+        "The role bridges cutting-edge research and practical application and requires both finance domain knowledge and engineering capability."
+      ]
+    },
+    {
+      "id": "research-platform-engineer",
+      "url": "https://example.com/sellside-reference/research-platform-engineer",
+      "title": "Research Platform Engineer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Citadel Securities' Research Platform Engineer designs and develops distributed systems for large-scale simulations.",
+        "The role primarily uses Go and C++ and requires experience with cloud platforms such as GCP and AWS.",
+        "It contributes directly to revenue by building core infrastructure for research alpha generation."
+      ]
+    },
+    {
+      "id": "alternative-data-analyst",
+      "url": "https://example.com/sellside-reference/alternative-data-analyst",
+      "title": "Alternative Data Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "UBS Evidence Lab Alternative Data Analysts transform structured and unstructured datasets into actionable insights to help investors integrate alternative data into their processes.",
+        "They collaborate with researchers, engineers, data scientists, and sales across a global team.",
+        "UBS Evidence Lab covers 55+ specialized areas, 1,000+ datasets, and 5,000+ companies, and was ranked #1 in alternative data by Greenwich Associates in 2025."
+      ]
+    },
+    {
+      "id": "data-visualization-specialist",
+      "url": "https://example.com/sellside-reference/data-visualization-specialist",
+      "title": "Data Visualization Specialist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Data Visualization Specialists create charts, graphs, and infographics that visually convey data-driven arguments in research reports.",
+        "A JPMorgan-Tableau collaboration study found that a one standard-deviation increase in visualization use was associated with a 4.1% improvement in EPS forecast accuracy.",
+        "More experienced analysts and analysts at larger brokers tend to use visualization tools less."
+      ]
+    },
+    {
+      "id": "research-operations-analyst",
+      "url": "https://example.com/sellside-reference/research-operations-analyst",
+      "title": "Research Operations Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Barclays' Research Operations Analyst manages research product production and delivery, supports MiFID II compliance, and improves systems with IT.",
+        "The global team is based in London, New York, and Mumbai and handles MiFID II entertainment packages, conflict management, and IT system testing.",
+        "Some investment banks appoint a Research Division COO to oversee overall research business operations, budget, and compliance."
+      ]
+    },
+    {
+      "id": "production-coordinator",
+      "url": "https://example.com/sellside-reference/production-coordinator",
+      "title": "Production Coordinator",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Berenberg's Equity Research Production Coordinator handles electronic distribution, MS Word and PowerPoint formatting, and Excel chart creation.",
+        "The role requires knowledge of Adobe Photoshop, Illustrator, and InDesign.",
+        "JPMorgan's Mumbai-based Production Specialist works night shifts starting between 8pm and 11pm, for up to 3-4 consecutive weeks, to provide 24-hour coverage."
+      ]
+    },
+    {
+      "id": "publication-manager",
+      "url": "https://example.com/sellside-reference/publication-manager",
+      "title": "Publication Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Acuity Knowledge Partners' Research Publishing team provides end-to-end research publishing services including Supervisory Analyst approval, editing, formatting, and distribution.",
+        "The team operates a follow-the-sun engagement model and has more than 20 years of experience.",
+        "Senior roles such as Preqin's Head of Production require 15+ years of research, analysis, editing, and production experience."
+      ]
+    },
+    {
+      "id": "translator-localization-specialist",
+      "url": "https://example.com/sellside-reference/translator-localization-specialist",
+      "title": "Translator Localization Specialist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "KL Translations provides equity research translation in more than 100 languages and requires translators to have at least 5 years of equity research translation experience.",
+        "Ulatus supported Huatai Securities' English equity report issuance, reducing translation turnaround time by 65%.",
+        "AI translation integrated with Document Management Systems and Translation Management Systems accelerates revision tracking and automatic company profile application."
+      ]
+    },
+    {
+      "id": "research-distribution-manager",
+      "url": "https://example.com/sellside-reference/research-distribution-manager",
+      "title": "Research Distribution Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Distribution Managers manage the morning call process, decide which analysts participate, guide research report best practices, track leadership metrics, and manage the annual Institutional Investor voting process.",
+        "Jefferies' Equity Research Product Management Associate starts work at 5:30am to prepare for the 7:30 Equity Morning Call and produces weekly thematic and stock research emails.",
+        "The role functions as the marketing arm of the research department."
+      ]
+    },
+    {
+      "id": "client-service-analyst",
+      "url": "https://example.com/sellside-reference/client-service-analyst",
+      "title": "Client Service Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Coordinators manage schedules, travel, and expenses for 4-5 analysts and support logistics for marketing events, non-deal roadshows, and medical conferences.",
+        "Institutional Distribution Analysts support consultant relations and institutional sales teams by preparing briefing documents and developing pipeline opportunities.",
+        "The salary range for a Client Service Analyst in New York City is $105,000-$115,000."
+      ]
+    },
+    {
+      "id": "corporate-access-manager",
+      "url": "https://example.com/sellside-reference/corporate-access-manager",
+      "title": "Corporate Access Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Corporate Access Managers organize non-deal roadshows, field trips, and investor conferences that connect corporate management with institutional investors.",
+        "Wells Fargo's Corporate Access Analyst role pays $104,000-$168,000 and requires Series 7 and 63 licenses.",
+        "Academic research indicates corporate access is the area buy-side investors value most from sell-side firms.",
+        "ESMA does not classify corporate access as research, but it may be paid from a Research Payment Account."
+      ]
+    },
+    {
+      "id": "sales-desk-research-liaison",
+      "url": "https://example.com/sellside-reference/sales-desk-research-liaison",
+      "title": "Sales Desk Research Liaison",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Sales Desk Research Liaison acts as a real-time information bridge between analysts and the sales desk.",
+        "They coordinate analyst appearances on the morning call, summarize report key points into 30-second client pitches, and relay client feedback back to analysts.",
+        "Jefferies' Product Management Associate starts at 5:30am to prepare for the 7:30 morning call."
+      ]
+    },
+    {
+      "id": "sales-trader",
+      "url": "https://example.com/sellside-reference/sales-trader",
+      "title": "Sales Trader",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Sales Traders execute agency trades without taking principal risk.",
+        "They pitch short-term execution ideas based on research and support liquidity sourcing for large orders.",
+        "They collect market color from the trading desk and relay client execution feedback to the research team."
+      ]
+    },
+    {
+      "id": "trading-idea-feedback-coordinator",
+      "url": "https://example.com/sellside-reference/trading-idea-feedback-coordinator",
+      "title": "Trading Idea Feedback Coordinator",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Trading Idea Feedback Coordinator injects short-term market dynamics back into research production.",
+        "They analyze hedge fund positioning data from Prime Brokerage, track option market event pricing, and report supply-and-demand anomalies.",
+        "Their output becomes an input for analyst model updates and report revisions."
+      ]
+    },
+    {
+      "id": "research-supervisory-analyst",
+      "url": "https://example.com/sellside-reference/research-supervisory-analyst",
+      "title": "Research Supervisory Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Supervisory Analyst is the final compliance checkpoint before public research distribution.",
+        "FINRA Series 16 comprises a regulatory side (Series 161, 34 questions plus 16 department-related questions, 72% pass) and a securities valuation side (Series 162, 16 questions plus 34 reasonable-basis questions, 74% pass).",
+        "CFA Level I pass holders are exempt from Series 162."
+      ]
+    },
+    {
+      "id": "information-barrier-manager",
+      "url": "https://example.com/sellside-reference/information-barrier-manager",
+      "title": "Information Barrier Manager",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The Information Barrier Manager acts as a pre-approval gatekeeper for communications between research and investment banking.",
+        "They manage Watch Lists and Restricted Lists, assess MNPI, document deal team access, and review staff movement after transactions.",
+        "They implement controls such as disabling email autocomplete, enabling external distribution popup warnings, and operating pre-trade approval systems."
+      ]
+    },
+    {
+      "id": "primary-research-coordinator",
+      "url": "https://example.com/sellside-reference/primary-research-coordinator",
+      "title": "Primary Research Coordinator",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Evercore ISI uses proprietary surveys as a core differentiator and was ranked #1 Firm in the Extel All-America Survey for four consecutive years from 2022 to 2025.",
+        "Ed Hyman's Macro franchise includes Global Economics, Global Policy, Surveys, China, and Technical Analysis teams.",
+        "Primary research provides independent data that is not available from corporate disclosures."
+      ]
+    },
+    {
+      "id": "expert-network-coordinator",
+      "url": "https://example.com/sellside-reference/expert-network-coordinator",
+      "title": "Expert Network Coordinator",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Expert Network Coordinators source and match experts through platforms such as GLG, Third Bridge, and AlphaSights.",
+        "AlphaSights is recognized for speed and scale; Third Bridge differentiates itself through analyst-led interviews and a transcript library.",
+        "The SEC closely monitors MNPI leakage through expert networks and requires call tracking, recording, summaries, secondary note review, and trading activity review."
+      ]
+    },
+    {
+      "id": "channel-check-analyst",
+      "url": "https://example.com/sellside-reference/channel-check-analyst",
+      "title": "Channel Check Analyst",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Channel Check Analysts collect independent information through distribution channels that is not provided by the analyzed companies.",
+        "They interview customers, distributors, and suppliers to cross-verify corporate financial health.",
+        "The SEC does not ban legitimate channel checks; it prohibits only obviously illegal tip-based information gathering."
+      ]
+    },
+    {
+      "id": "alternative-data-integration-specialist",
+      "url": "https://example.com/sellside-reference/alternative-data-integration-specialist",
+      "title": "Alternative Data Integration Specialist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Alternative Data Integration Specialists collect and process unstructured data beyond traditional financial data.",
+        "UBS Evidence Lab covers 55+ specialized areas, billions of monthly data items, 1,000+ datasets, 5,000+ companies, and operates 1,000+ web-scraping robots.",
+        "Data types include geospatial, pricing and trading, social media, and supply chain data."
+      ]
+    },
+    {
+      "id": "multimedia-producer",
+      "url": "https://example.com/sellside-reference/multimedia-producer",
+      "title": "Multimedia Producer",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Morgan Stanley Research Creative Suite converts approximately 70,000 annual research reports into dynamic audio, video, and editorial marketing assets.",
+        "The role uses Adobe Premiere, After Effects, and Audition.",
+        "Major sell-side podcasts include J.P. Morgan's Making Sense, Deutsche Bank's Perspectives Weekly, and TD Cowen's Insights."
+      ]
+    },
+    {
+      "id": "end-to-end-research-workflow",
+      "url": "https://example.com/sellside-reference/end-to-end-research-workflow",
+      "title": "End To End Research Workflow",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research production is decomposed into nine stages: idea generation, data collection, model build/update, draft writing, internal review, publication/distribution, sales/client communication, event follow-up, and compliance/archiving.",
+        "Internal review led by the Editor and Supervisory Analyst is the most certain bottleneck, especially during earnings season.",
+        "Data collection and SA approval are described as permanent bottlenecks in the workflow."
+      ]
+    },
+    {
+      "id": "morning-call",
+      "url": "https://example.com/sellside-reference/morning-call",
+      "title": "Morning Call",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The morning call is described as the daily heartbeat of sell-side research, typically starting around 7:30am U.S. Eastern Time.",
+        "Coverage analysts pitch initiations, rating changes, and deep dives in roughly 5-10 minutes each.",
+        "After the call, the sales team delivers 30-second pitches to clients, and interested clients' orders are handed off to sales traders."
+      ]
+    },
+    {
+      "id": "earnings-season-cadence",
+      "url": "https://example.com/sellside-reference/earnings-season-cadence",
+      "title": "Earnings Season Cadence",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Earnings season occurs quarterly: January-February for Q4, April-May for Q1, July-August for Q2, and October-November for Q3.",
+        "Flash notes must be published within 60-90 minutes of an earnings release.",
+        "The season requires 70-80 hour intensive work weeks and 24-hour production coverage."
+      ]
+    },
+    {
+      "id": "global-ib-research-platform",
+      "url": "https://example.com/sellside-reference/global-ib-research-platform",
+      "title": "Global Ib Research Platform",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Global investment banks such as Goldman Sachs, JPMorgan, Morgan Stanley, UBS, Barclays, and Deutsche Bank employ 500-1,000+ research staff across New York, London, and Hong Kong.",
+        "Goldman Sachs GIR allocates 62% of staff to Equity Research, 13% to Macro Research, and 25% to Specialized Teams.",
+        "JPMorgan has 920 research professionals in 26 countries covering 3,600 equities and 1,100 credits.",
+        "This organizational type is the only one that fully develops all 16 Role Families."
+      ]
+    },
+    {
+      "id": "full-service-brokerage-research",
+      "url": "https://example.com/sellside-reference/full-service-brokerage-research",
+      "title": "Full Service Brokerage Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Full-service brokers such as Nomura, BNP Paribas Exane, and Daiwa Securities provide integrated research, sales, trading, and investment banking with 100-500 research staff.",
+        "Nomura Research Institute spun off from Nomura's research department in 1965 and is now an independent consulting and IT solutions entity.",
+        "BNP Paribas has formalized the Information Barrier Manager role and Barrier Crossing procedures."
+      ]
+    },
+    {
+      "id": "independent-research-house",
+      "url": "https://example.com/sellside-reference/independent-research-house",
+      "title": "Independent Research House",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Independent research houses such as Bernstein/Autonomous and Redburn Partners maintain a research-only model to prevent investment banking conflicts.",
+        "Bernstein/Autonomous has 750+ employees and dual headquarters in New York and London.",
+        "The research-only structure naturally satisfies FINRA Rule 2241's separation requirement between investment banking and research."
+      ]
+    },
+    {
+      "id": "sector-specialist-boutique",
+      "url": "https://example.com/sellside-reference/sector-specialist-boutique",
+      "title": "Sector Specialist Boutique",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Evercore ISI was ranked #1 in the Extel All-America Survey from 2022 to 2025, and Ed Hyman's Economics team has held the #1 ranking for 44 consecutive years.",
+        "Wolfe Research, founded in 2008, has 250 employees, 28 lead analysts, and covers 575 stocks.",
+        "Boutiques have an advantage in relationship-intensive functions such as corporate access, expert networks, and alternative data integration."
+      ]
+    },
+    {
+      "id": "lean-regional-broker",
+      "url": "https://example.com/sellside-reference/lean-regional-broker",
+      "title": "Lean Regional Broker",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "CLSA operates 15 Asia-Pacific offices, covers 178 listed companies in China, and its China Forum draws 460+ institutional investors and 90+ Chinese companies.",
+        "Among 42 Korean securities firms, 26 recorded a 0% sell ratio, contrasting with J.P. Morgan Seoul branch's 51.3% sell ratio.",
+        "Regional brokers face a double squeeze between global IB scale/technology and boutique specialization/agility."
+      ]
+    },
+    {
+      "id": "hidden-research-infrastructure",
+      "url": "https://example.com/sellside-reference/hidden-research-infrastructure",
+      "title": "Hidden Research Infrastructure",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Non-analyst roles in data, technology, operations, editing, compliance, and distribution can account for 50-60% of total research FTE at large investment banks.",
+        "Client-visible output quality is directly proportional to the health of invisible infrastructure.",
+        "Outsourcing can reduce staffing costs by 50%+ and time-to-market by 30%, but cannot replace regulatory mandatory functions such as Supervisory Analyst approval."
+      ]
+    },
+    {
+      "id": "core-research-roles",
+      "url": "https://example.com/sellside-reference/core-research-roles",
+      "title": "Core Research Roles",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Ten roles are identified as highest leverage: Coverage Analyst, Research Associate, Equity Strategist, Macro Economist, Quant Researcher, Credit Analyst, Research Salesperson, Editor/SA, ESG Analyst, and Research Technologist.",
+        "Coverage Analyst, Strategist, Economist, and Credit Analyst are client-facing idea producers with very high replacement difficulty due to relationship assets.",
+        "Editor/SA and Research Technologist are invisible but govern research quality, compliance, and digital transformation."
+      ]
+    },
+    {
+      "id": "research-production-bottlenecks",
+      "url": "https://example.com/sellside-reference/research-production-bottlenecks",
+      "title": "Research Production Bottlenecks",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "The top five bottlenecks are SA approval, new model build, alternative data cleansing, multimedia production, and ESG regulatory response.",
+        "SA approval is hardest to alleviate because FINRA Rule 2241 mandates it and the supply of Series 16-qualified staff is inflexible.",
+        "Data cleansing and multimedia production are relatively easier to mitigate through technology investment and organizational design."
+      ]
+    },
+    {
+      "id": "automation-human-judgment",
+      "url": "https://example.com/sellside-reference/automation-human-judgment",
+      "title": "Automation Human Judgment",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Easily automated tasks include formatting/templates, data collection/extraction, translation/localization, basic chart creation, and CRM updates.",
+        "Human judgment remains critical for investment recommendations, management meeting evaluation, key assumption setting, regulatory judgment, and ESG financial materiality assessment.",
+        "Automation and human judgment are complementary rather than substitutive."
+      ]
+    },
+    {
+      "id": "organizational-design-principles",
+      "url": "https://example.com/sellside-reference/organizational-design-principles",
+      "title": "Organizational Design Principles",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Scale and specialization are non-linear; Global IBs have all 16 Role Families but face coordination costs and relationship dilution.",
+        "Hidden infrastructure roles account for 50-60% of research FTE at large IBs and should be treated as core value-chain infrastructure.",
+        "SA approval and data cleansing are permanent bottlenecks that must be optimized at the process level.",
+        "The boundary between automation and human judgment must be managed dynamically.",
+        "Three-party attribution tension among analyst, sales, and trading should be managed constructively through broker vote and multi-faceted evaluation."
+      ]
+    },
+    {
+      "id": "future-structural-transitions",
+      "url": "https://example.com/sellside-reference/future-structural-transitions",
+      "title": "Future Structural Transitions",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Quant-Fundamental Convergence is making Python/SQL data analysis essential for bottom-up analysts and spreading T-shaped skill expectations.",
+        "The Three-Layer ESG Model, combining centralized data, sector-embedded integration, and client-facing advisory, is becoming an industry standard.",
+        "AI automation is creating a Research Production Paradox: automation reduces manual burden but shifts work to higher-level analysis, raising barriers for junior roles.",
+        "Boutique-Global Polarization is squeezing mid-tier regional brokers and independent houses; the market may consolidate into 5-7 global IBs and 10-15 boutiques/independents."
       ]
     }
   ]
