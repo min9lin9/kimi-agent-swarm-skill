@@ -1,6 +1,10 @@
 export type SearchDepth = "light" | "standard" | "deep" | "maximum";
 
-export type ExecutionProfile = "fixture" | "local-command";
+export type ExecutionProfile =
+  | "fixture"
+  | "fixture-asset-mgmt"
+  | "fixture-sellside-research"
+  | "local-command";
 
 export interface SourceScores {
   relevance: number;

@@ -203,13 +203,27 @@ This repo now includes an early local runtime under `runtime/wide-search`.
 Supported profiles:
 
 - `fixture`: deterministic smoke tests and CI
+- `fixture-asset-mgmt`: buyside asset management roles benchmark
+- `fixture-sellside-research`: sell-side research organization roles benchmark
 - `local-command`: reads source candidates from a local JSONL command
 
-Example:
+Examples:
 
 ```bash
 cd runtime/wide-search
+
+# Basic fixture
 bun run src/cli.ts run -- --objective "Map evidence-backed research workflow requirements"
+
+# Buyside roles benchmark
+bun run src/cli.ts run \
+  --profile fixture-asset-mgmt \
+  --objective "Analyze asset management roles and responsibilities"
+
+# Sellside research roles benchmark
+bun run src/cli.ts run \
+  --profile fixture-sellside-research \
+  --objective "Analyze sell-side research organization roles"
 ```
 
 The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, and `verification-report.json`.

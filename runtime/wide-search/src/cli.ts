@@ -87,6 +87,7 @@ async function main(): Promise<void> {
   }
 
   console.error("Usage: bun run src/cli.ts <run|verify|inspect>");
+  console.error("Profiles: fixture, fixture-asset-mgmt, fixture-sellside-research, local-command");
   process.exitCode = 1;
 }
 

@@ -45,8 +45,18 @@ function claimFreshness(source: Source): ClaimFreshness {
   return source.publishedAt >= "2026-01-01" ? "current" : "stale";
 }
 
-async function loadFixtureSources(): Promise<Source[]> {
-  const fixtureUrl = new URL("../fixtures/basic-sources.json", import.meta.url);
+const FIXTURE_FILE_MAP: Record<string, string> = {
+  fixture: "basic-sources.json",
+  "fixture-asset-mgmt": "asset-mgmt-roles.json",
+  "fixture-sellside-research": "sellside-research-roles.json",
+};
+
+async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {
+  const fileName = FIXTURE_FILE_MAP[profile];
+  if (fileName === undefined) {
+    throw new Error(`unknown fixture profile: ${profile}`);
+  }
+  const fixtureUrl = new URL(`../fixtures/${fileName}`, import.meta.url);
   const fixture = JSON.parse(await readFile(fixtureUrl, "utf8")) as { sources: Source[] };
   return fixture.sources;
 }
@@ -57,8 +67,8 @@ async function loadSources({
   providerCommand,
   providerArgs,
 }: LoadSourcesOptions): Promise<Source[]> {
-  if (profile === "fixture") {
-    return loadFixtureSources();
+  if (profile.startsWith("fixture")) {
+    return loadFixtureSources(profile);
   }
 
   if (profile === "local-command") {
@@ -163,9 +173,9 @@ export async function runWideSearch({
     objective,
     searchDepth: "standard",
     executionProfile: profile,
-    queryFamilies: [profile === "fixture" ? "fixture:agent research" : "local-command provider"],
+    queryFamilies: [profile.startsWith("fixture") ? `fixture:${profile}` : "local-command provider"],
     sourceTargets: ["official", "community", "secondary"],
-    stopConditions: [profile === "fixture" ? "fixture source set exhausted" : "provider output exhausted"],
+    stopConditions: [profile.startsWith("fixture") ? "fixture source set exhausted" : "provider output exhausted"],
   };
 
   await writeFile(join(runDir, "run.json"), `${JSON.stringify(run, null, 2)}\n`);

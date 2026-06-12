@@ -35,6 +35,46 @@ describe("runWideSearch", () => {
     expect(sourceLedger).toInclude('"decision":"rejected"');
   });
 
+  test("fixture-asset-mgmt run processes buyside role fixture", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-asset-mgmt-"));
+
+    const result = await runWideSearch({
+      objective: "Analyze asset management roles and responsibilities",
+      profile: "fixture-asset-mgmt",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-asset-mgmt");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("AM-FO-PM");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+    expect(sourceLedger).toInclude('"decision":"rejected"');
+  });
+
+  test("fixture-sellside-research run processes sellside role fixture", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-sellside-"));
+
+    const result = await runWideSearch({
+      objective: "Analyze sell-side research organization roles",
+      profile: "fixture-sellside-research",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-sellside-research");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("SS-COVERAGE");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+    expect(sourceLedger).toInclude('"decision":"rejected"');
+  });
+
   test("local-command run ingests JSONL source candidates from command provider", async () => {
     const workDir = await mkdtemp(join(tmpdir(), "wide-search-local-command-"));
     const providerCommand = process.execPath;

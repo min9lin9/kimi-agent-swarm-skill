@@ -1,0 +1,222 @@
+{
+  "sources": [
+    {
+      "id": "SS-LEADERSHIP",
+      "url": "https://example.com/sellside-research/leadership",
+      "title": "Sell-Side Research Leadership and Org Design",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Sell-side research typically has a 3-tier hierarchy: Global Head -> Regional Head -> Sector Head.",
+        "Research leadership combines manager duties with idea production and client representation.",
+        "COO of Research manages budget, staffing, and workflow metrics."
+      ]
+    },
+    {
+      "id": "SS-COVERAGE",
+      "url": "https://example.com/sellside-research/coverage-analyst",
+      "title": "Company Coverage Analyst in Sell-Side Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Coverage Analyst deeply analyzes 10-20 companies and produces Buy/Sell/Hold recommendations.",
+        "Key deliverables include initiation reports, update notes, earnings previews/reviews, and flash notes.",
+        "Analyst title spans VP/Director/MD levels in sell-side organizations."
+      ]
+    },
+    {
+      "id": "SS-ASSOCIATE",
+      "url": "https://example.com/sellside-research/research-associate",
+      "title": "Research Associate in Sell-Side Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Research Associate supports Analysts with financial modeling, data gathering, and draft writing.",
+        "Typical workload is 70% writing and 30% modeling, varying by analyst style.",
+        "Career path progresses from Associate to Analyst, then VP/Director/MD."
+      ]
+    },
+    {
+      "id": "SS-STRATEGY",
+      "url": "https://example.com/sellside-research/equity-strategist",
+      "title": "Equity Strategist in Sell-Side Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Equity Strategist develops top-down market, index, and sector-level strategies.",
+        "Strategist complements bottom-up analysts by answering 'where to allocate'.",
+        "Deliverables include strategy outlooks, morning notes, sector rotation models, and earnings season previews."
+      ]
+    },
+    {
+      "id": "SS-MACRO",
+      "url": "https://example.com/sellside-research/macro-economist",
+      "title": "Macro Economist and Strategist",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Economist forecasts macro variables such as GDP, inflation, and rates.",
+        "Macro Strategist translates macro forecasts into asset price implications and trade recommendations.",
+        "Some firms split Chief Economist and Chief Markets Economist roles."
+      ]
+    },
+    {
+      "id": "SS-CREDIT",
+      "url": "https://example.com/sellside-research/credit-research",
+      "title": "Fixed Income and Credit Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Rates Strategist models yield curves and policy rate paths.",
+        "Credit Analyst evaluates issuer ratings, credit spreads, and default risk.",
+        "FIG and Structured Credit analysts cover financial bonds, CLOs, MBS, and ABS."
+      ]
+    },
+    {
+      "id": "SS-EDITORIAL",
+      "url": "https://example.com/sellside-research/editorial-production",
+      "title": "Editorial and Publishing Operations",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Research Editor ensures clarity, logic, and structure without changing investment thesis.",
+        "Production Coordinator handles formatting, charts, and PDF generation.",
+        "Publication Manager coordinates Compliance, Legal, Sales, and distribution schedules."
+      ]
+    },
+    {
+      "id": "SS-SALES",
+      "url": "https://example.com/sellside-research/research-sales",
+      "title": "Research Sales and Distribution",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Research Sales translates analyst ideas into client-ready pitches and drives trading commissions.",
+        "Distribution Manager schedules morning calls and tracks research consumption metrics.",
+        "Corporate Access Manager connects corporate management with institutional investors."
+      ]
+    },
+    {
+      "id": "SS-COMPLIANCE",
+      "url": "https://example.com/sellside-research/compliance",
+      "title": "Research Compliance and Information Barriers",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Research Compliance Officer supervises information barriers and MNPI handling.",
+        "Supervisory Analyst (Series 16) pre-approves research reports for regulatory compliance.",
+        "Chinese wall separates research from investment banking to manage conflicts."
+      ]
+    },
+    {
+      "id": "SS-ESG",
+      "url": "https://example.com/sellside-research/esg-research",
+      "title": "ESG and Thematic Research",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-12",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": [
+        "ESG Research Analyst studies financially material ESG issues and develops integration tools.",
+        "ESG roles are among the fastest-growing in sell-side research due to regulation.",
+        "Thematic Analyst identifies long-term structural trends and beneficiaries across sectors."
+      ]
+    },
+    {
+      "id": "SS-LOW-QUALITY",
+      "url": "https://example.com/sellside-research/generic-forum",
+      "title": "Generic Finance Career Forum Thread",
+      "sourceClass": "secondary",
+      "publishedAt": "2024-01-01",
+      "discoveredBy": "sellside-reference",
+      "scores": {
+        "relevance": 1,
+        "authority": 1,
+        "freshness": 1,
+        "diversity": 1,
+        "extractionValue": 1
+      },
+      "claims": [
+        "Forum discussions may contain anecdotes but lack structured role analysis."
+      ]
+    }
+  ]
+}

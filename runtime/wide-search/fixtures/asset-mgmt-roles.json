@@ -1,0 +1,162 @@
+{
+  "sources": [
+    {
+      "id": "AM-FO-PM",
+      "url": "https://example.com/asset-mgmt/portfolio-manager",
+      "title": "Portfolio Manager (PM) in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "PM is the final investment decision maker with P&L responsibility.",
+        "PM defines investment strategy, allocates capital, and manages portfolio risk within mandate.",
+        "PM collaborates closely with Analysts, Traders, Risk, and Compliance."
+      ]
+    },
+    {
+      "id": "AM-FO-ANALYST",
+      "url": "https://example.com/asset-mgmt/research-analyst",
+      "title": "Research Analyst in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Analyst conducts company analysis, financial modeling, and investment idea generation.",
+        "Analyst produces investment notes, earnings previews/reviews, and valuation models.",
+        "Analyst supports PM decisions but does not hold final investment authority."
+      ]
+    },
+    {
+      "id": "AM-MO-RISK",
+      "url": "https://example.com/asset-mgmt/risk-manager",
+      "title": "Risk Manager in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 5,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Risk Manager monitors market, credit, liquidity, and operational risk exposures.",
+        "Risk Manager runs VaR, stress tests, and limit breach reports.",
+        "Risk Manager acts as a control function independent of portfolio management."
+      ]
+    },
+    {
+      "id": "AM-BO-FUNDACCT",
+      "url": "https://example.com/asset-mgmt/fund-accounting",
+      "title": "Fund Accounting in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Fund Accounting calculates NAV, settlement, and reconciliation.",
+        "Fund Accounting handles corporate actions, dividend processing, and external audit support.",
+        "Fund Accounting is often the boundary between asset manager and fund administrator."
+      ]
+    },
+    {
+      "id": "AM-PC-PRODUCT",
+      "url": "https://example.com/asset-mgmt/product-manager",
+      "title": "Product Manager in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Product Manager designs fund products, structures, and regulatory filings.",
+        "Product Manager bridges investment management and distribution/sales.",
+        "Product Manager monitors competitor products and client demand trends."
+      ]
+    },
+    {
+      "id": "AM-PC-SALES",
+      "url": "https://example.com/asset-mgmt/institutional-sales",
+      "title": "Institutional Sales in Asset Management",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-15",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Institutional Sales drives AUM growth by acquiring and retaining clients.",
+        "Sales works with PMs, Product, and Client Service to craft proposals and RFPs.",
+        "Sales performance is measured by flows, win rates, and client coverage."
+      ]
+    },
+    {
+      "id": "AM-ALT-DEAL",
+      "url": "https://example.com/asset-mgmt/alternative-investment-roles",
+      "title": "Alternative Investment Roles",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-12",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Alternative investment firms add Deal Sourcing, Due Diligence, Operating Partner, and Valuation roles.",
+        "Alternative investment lifecycle includes sourcing, diligence, structuring, investment, management, and exit.",
+        "IR/Fundraising manages LP relationships and capital commitments."
+      ]
+    },
+    {
+      "id": "AM-LOW-QUALITY",
+      "url": "https://example.com/asset-mgmt/generic-job-board",
+      "title": "Generic Asset Management Job Posting Aggregator",
+      "sourceClass": "secondary",
+      "publishedAt": "2024-01-01",
+      "discoveredBy": "buyside-reference",
+      "scores": {
+        "relevance": 1,
+        "authority": 1,
+        "freshness": 1,
+        "diversity": 1,
+        "extractionValue": 1
+      },
+      "claims": [
+        "Generic job postings can list many titles but lack contextual role analysis."
+      ]
+    }
+  ]
+}

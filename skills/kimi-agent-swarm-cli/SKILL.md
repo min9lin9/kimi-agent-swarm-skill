@@ -85,6 +85,55 @@ bun run src/cli.ts run --profile local-command \
   --objective "$objective" --work-dir <work-dir>
 ```
 
+## AgentSwarm Example: Asset Management Roles Research
+
+For the objective `"자산운용사의 역할과 업무를 구조적으로 분석해줘"`, design the swarm like this:
+
+```json
+{
+  "description": "Research asset management roles by functional area",
+  "subagent_type": "explore",
+  "prompt_template": "Research the following functional area in asset management: {{item}}. Return a structured summary with: (1) key roles and titles, (2) why each role exists, (3) core responsibilities and typical deliverables, (4) main collaboration partners, (5) common KPIs or success metrics, (6) caveats or regional variations. Be concise and evidence-based. Use WebSearch if needed.",
+  "items": [
+    "Front Office roles in asset management: PM, Analyst, Quant, Trader, Sales",
+    "Middle Office roles in asset management: Risk, Compliance, Performance, Legal",
+    "Back Office roles in asset management: Fund Accounting, Operations, Settlement, IT/Data",
+    "Product and Client-facing roles: Product Manager, Client Service, IR, RFP, Marketing",
+    "External ecosystem: custodian, fund administrator, distributor, auditor",
+    "Firm-type differences: large综合운용사, boutique, ETF/index shop, alternative investment manager"
+  ]
+}
+```
+
+After the swarm returns, synthesize the subagent outputs into:
+
+- a ranked role list or comparison table
+- a handoff matrix across Front/Middle/Back Office
+- a firm-type comparison
+- source/claim ledgers if external sources were used
+
+## AgentSwarm Example: Sell-Side Research Roles Research
+
+For the objective `"글로벌 sell-side 리서치 조직의 역할과 업무를 분석해줘"`, design the swarm like this:
+
+```json
+{
+  "description": "Research sell-side research organization roles",
+  "subagent_type": "explore",
+  "prompt_template": "Research the following role family in global sell-side research organizations: {{item}}. Return: (1) specific roles and titles, (2) mission and existence reason, (3) main task clusters and deliverables, (4) key stakeholders and handoffs, (5) frequency (universal/common/specialized), (6) caveats or firm-type variations. Use WebSearch if needed.",
+  "items": [
+    "Leadership and org design: Global Head, Regional Head, Sector Head, COO of Research",
+    "Top-down research: Equity Strategy, Macro, FI/Credit, FX/Commodities, Quant/AA/Derivatives",
+    "Bottom-up research: Sector Research, Company Coverage Analysts, Research Associates",
+    "Research support infrastructure: Data, Modeling, Research Platform, Alternative Data",
+    "Editorial and publishing: Editor, Production Coordinator, Publication Manager, Visualization",
+    "Client and sales interface: Research Sales, Distribution, Corporate Access, Sales-Trading liaison",
+    "Compliance and regulation: Research Compliance, Supervisory Analyst, Information Barrier Manager",
+    "Specialized functions: ESG, Policy, Thematic, Multimedia, Expert Network, Survey"
+  ]
+}
+```
+
 ## Safety Rules
 
 - Prefer `/swarm` mode or `AgentSwarm` for parallel research; do not fake parallelism with sequential calls.
