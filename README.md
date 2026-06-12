@@ -155,6 +155,29 @@ Hybrid mode:
 
 > Note: `/swarm` is a TUI slash command; it cannot be activated from `kimi -p` non-interactive mode. For automation, use the local `runtime/wide-search` harness or call the `AgentSwarm` tool directly.
 
+### Testing `/swarm` Interactively
+
+1. Install the skill (see "Install For Kimi Code CLI" above).
+2. Start a new Kimi Code CLI session in the project directory:
+   ```bash
+   cd kimi-agent-swarm-skill
+   kimi
+   ```
+3. Activate swarm mode:
+   ```text
+   /swarm
+   ```
+   You should see a system reminder encouraging parallel delegation.
+4. Invoke the skill with a wide-search objective:
+   ```text
+   /skill:kimi-agent-swarm-cli "AI browser agent open-source repos를 조사하고 비교해줘" mode=wide-search
+   ```
+5. Approve the prompt contract if asked.
+6. Confirm that `AgentSwarm` launches and writes evidence to `.runs/wide-search/<run-id>/`.
+7. Inspect `synthesis.md`, `source-ledger.jsonl`, `claim-ledger.jsonl`, and `verification-report.json`.
+
+If the skill is not recognized, restart Kimi Code CLI or check that `~/.kimi-code/skills/kimi-agent-swarm-cli/SKILL.md` exists and frontmatter parses as YAML.
+
 ## Workflow
 
 ```text

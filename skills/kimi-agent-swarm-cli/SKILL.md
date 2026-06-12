@@ -96,6 +96,7 @@ Read `references/agent-swarm-tool.md` before using `AgentSwarm`.
    - commands or tool calls used
    - readable answer first
    - evidence paths (source ledger, claim ledger, synthesis, verification)
+   - usage metrics: `AgentSwarm` subagent count, provider/API calls, estimated tokens/quota
    - unresolved risks or human checks
 
 ## Wide-Search Workflow in Kimi Code CLI

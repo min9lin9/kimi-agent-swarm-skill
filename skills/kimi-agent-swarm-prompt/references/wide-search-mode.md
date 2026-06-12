@@ -116,6 +116,12 @@ Return the synthesis in this order:
 - Synthesis:
 - Verification:
 
+## Usage / Cost
+- Subagents launched:
+- Provider/API calls:
+- Estimated tokens or quota used:
+- Any paid provider (e.g., Serper) usage:
+
 ## Next Human Check
 - <what the user should inspect before acting>
 ```

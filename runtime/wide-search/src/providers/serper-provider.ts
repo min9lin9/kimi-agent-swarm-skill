@@ -1,5 +1,5 @@
 import type { SearchOptions, SearchProvider } from "./search-provider";
-import type { Source, SourceScores } from "../types";
+import type { Source, SourceScores, UsageMetrics } from "../types";
 
 interface SerperOrganicResult {
   title: string;
@@ -95,15 +95,22 @@ function buildScores(sourceClass: "primary" | "secondary"): SourceScores {
 export class SerperSearchProvider implements SearchProvider {
   readonly name = "serper";
   private readonly apiKey: string;
+  private readonly metrics?: UsageMetrics;
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, metrics?: UsageMetrics) {
     if (!apiKey) {
       throw new Error("SerperSearchProvider requires a non-empty API key");
     }
     this.apiKey = apiKey;
+    this.metrics = metrics;
   }
 
   async search({ objective, maxResults }: SearchOptions): Promise<Source[]> {
+    if (this.metrics) {
+      this.metrics.providerCalls += 1;
+      this.metrics.apiCalls += 1;
+    }
+
     const response = await fetch("https://google.serper.dev/search", {
       method: "POST",
       headers: {

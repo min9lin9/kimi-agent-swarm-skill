@@ -96,7 +96,7 @@ async function main(): Promise<void> {
 
   console.error("Usage: bun run src/cli.ts <run|verify|inspect>");
   console.error(
-    "Profiles: fixture, fixture-asset-mgmt, fixture-sellside-research, local-command, web-search",
+    "Profiles: fixture, fixture-asset-mgmt, fixture-sellside-research, fixture-youtube-niche, local-command, web-search",
   );
   console.error("Web-search providers: mock (default), serper (requires SERPER_API_KEY)");
   process.exitCode = 1;

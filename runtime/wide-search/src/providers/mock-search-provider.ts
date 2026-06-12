@@ -1,10 +1,19 @@
 import type { SearchOptions, SearchProvider } from "./search-provider";
-import type { Source } from "../types";
+import type { Source, UsageMetrics } from "../types";
 
 export class MockSearchProvider implements SearchProvider {
   readonly name = "mock";
+  private readonly metrics?: UsageMetrics;
+
+  constructor(metrics?: UsageMetrics) {
+    this.metrics = metrics;
+  }
 
   async search({ objective, depth }: SearchOptions): Promise<Source[]> {
+    if (this.metrics) {
+      this.metrics.providerCalls += 1;
+      this.metrics.apiCalls += 1;
+    }
     const now = new Date().toISOString().split("T")[0];
     return [
       {

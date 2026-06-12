@@ -1,0 +1,262 @@
+{
+  "sources": [
+    {
+      "id": "YT-NICHE-001",
+      "url": "https://example.com/youtube-niche/personal-finance-for-gen-z",
+      "title": "Personal Finance for Gen Z",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-20",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 5,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Niche: Personal finance for Gen Z and young millennials.",
+        "Audience: 18-28 year olds entering the workforce with student debt and first salaries.",
+        "Repeated pain point: Confusion about investing, budgeting apps, and credit building.",
+        "Evidence signal: Multiple channels with 500K+ subscribers and consistent 100K+ views.",
+        "Freshness signal: Algorithm and product launches change monthly; evergreen fundamentals remain stable.",
+        "Monetization angle: Affiliate links to neobanks, investment apps, budgeting tools, and digital courses.",
+        "Caveat: High competition; differentiation requires strong personal story or credentials."
+      ]
+    },
+    {
+      "id": "YT-NICHE-002",
+      "url": "https://example.com/youtube-niche/slow-living-minimalism",
+      "title": "Slow Living and Minimalism",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-18",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Niche: Slow living, minimalism, and intentional lifestyle design.",
+        "Audience: 25-40 year olds overwhelmed by consumer culture and digital overload.",
+        "Repeated pain point: Desire to declutter home, calendar, and mental space.",
+        "Evidence signal: High engagement on room-tour, declutter-with-me, and capsule-wardrobe videos.",
+        "Freshness signal: Trends shift with seasons and sustainability discourse.",
+        "Monetization angle: Eco-friendly product affiliates, digital planners, Patreon, and brand partnerships.",
+        "Caveat: Audience may resist overt consumerism, so sponsorships must align with values."
+      ]
+    },
+    {
+      "id": "YT-NICHE-003",
+      "url": "https://example.com/youtube-niche/ai-tools-for-creators",
+      "title": "AI Tools for Creators",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-06-01",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 5,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 5
+      },
+      "claims": [
+        "Niche: Tutorials and reviews of AI tools for writers, designers, and video creators.",
+        "Audience: Freelancers, solopreneurs, and content creators looking to save time.",
+        "Repeated pain point: Overwhelm from rapidly changing AI tools and unclear ROI.",
+        "Evidence signal: Tool-comparison and workflow-automation videos frequently pass 200K views.",
+        "Freshness signal: Extremely fast-moving; weekly updates needed to stay relevant.",
+        "Monetization angle: Affiliate links to SaaS tools, paid newsletters, and cohort courses.",
+        "Caveat: High churn; tool popularity can collapse within months."
+      ]
+    },
+    {
+      "id": "YT-NICHE-004",
+      "url": "https://example.com/youtube-niche/over-40-fitness",
+      "title": "Fitness for Adults Over 40",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-04-15",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 3,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Niche: Strength, mobility, and nutrition for adults over 40.",
+        "Audience: 40-60 year olds concerned about sarcopenia, joint health, and sustainable habits.",
+        "Repeated pain point: Fear of injury and confusion about what exercises are safe.",
+        "Evidence signal: Strong comments and community posts around form checks and modifications.",
+        "Freshness signal: Evergreen with periodic updates as new longevity research emerges.",
+        "Monetization angle: Online coaching, supplement affiliates, and age-specific workout programs.",
+        "Caveat: Requires credibility; misinformation risks are high in health content."
+      ]
+    },
+    {
+      "id": "YT-NICHE-005",
+      "url": "https://example.com/youtube-niche/indoor-gardening",
+      "title": "Indoor Gardening and Houseplants",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-10",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 3,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": [
+        "Niche: Indoor gardening, houseplant care, and apartment-friendly green spaces.",
+        "Audience: Urban renters and homeowners aged 24-45 seeking nature at home.",
+        "Repeated pain point: Plants dying due to watering, light, or pest issues.",
+        "Evidence signal: High search volume for care guides and troubleshooting videos.",
+        "Freshness signal: Seasonal trends around spring planting and holiday gifting.",
+        "Monetization angle: Plant shop affiliates, grow-light sponsors, and merchandise.",
+        "Caveat: Visual production quality matters; audience expects calming aesthetics."
+      ]
+    },
+    {
+      "id": "YT-NICHE-006",
+      "url": "https://example.com/youtube-niche/language-learning-short-form",
+      "title": "Short-Form Language Learning",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-25",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Niche: Bite-sized language lessons and pronunciation tips in Shorts/Reels format.",
+        "Audience: Busy commuters and casual learners who want daily micro-lessons.",
+        "Repeated pain point: Lack of time for traditional language courses.",
+        "Evidence signal: Shorts with native-speaker examples get high replay and share rates.",
+        "Freshness signal: Algorithm favors consistency and trending audio hooks.",
+        "Monetization angle: Language app affiliates, premium courses, and membership communities.",
+        "Caveat: Short-form limits depth; retention to long-form courses can be low."
+      ]
+    },
+    {
+      "id": "YT-NICHE-007",
+      "url": "https://example.com/youtube-niche/career-pivoting",
+      "title": "Career Pivoting and Job Search Strategy",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-12",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Niche: Career change, resume optimization, interview preparation, and salary negotiation.",
+        "Audience: Mid-career professionals aged 28-45 considering industry or role changes.",
+        "Repeated pain point: Uncertainty about transferable skills and fear of starting over.",
+        "Evidence signal: High engagement on resume-roast and mock-interview videos.",
+        "Freshness signal: Labor market conditions and hiring tools evolve continuously.",
+        "Monetization angle: Resume templates, LinkedIn optimization services, and coaching packages.",
+        "Caveat: Outcomes vary heavily by industry and location; avoid overpromising."
+      ]
+    },
+    {
+      "id": "YT-NICHE-008",
+      "url": "https://example.com/youtube-niche/home-coffee-roasting",
+      "title": "Home Coffee Roasting and Brewing",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-04-28",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 3,
+        "authority": 3,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": [
+        "Niche: Home coffee roasting, brewing techniques, and equipment reviews.",
+        "Audience: Coffee enthusiasts aged 25-45 willing to invest in gear and beans.",
+        "Repeated pain point: Difficulty replicating cafe-quality results at home.",
+        "Evidence signal: Active communities around specific roasters, grinders, and brew methods.",
+        "Freshness signal: New equipment releases and harvest seasons drive periodic spikes.",
+        "Monetization angle: Equipment affiliates, green-bean suppliers, and brewing courses.",
+        "Caveat: Niche is smaller; high average revenue per viewer but limited scale."
+      ]
+    },
+    {
+      "id": "YT-NICHE-009",
+      "url": "https://example.com/youtube-niche/accessible-travel",
+      "title": "Accessible and Inclusive Travel",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-05",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 4,
+        "authority": 3,
+        "freshness": 4,
+        "diversity": 5,
+        "extractionValue": 4
+      },
+      "claims": [
+        "Niche: Travel content focused on accessibility, neurodiversity, and inclusive experiences.",
+        "Audience: Travelers with disabilities, families with strollers, and seniors.",
+        "Repeated pain point: Lack of reliable accessibility information for destinations.",
+        "Evidence signal: Strong community gratitude and low competition for specific destinations.",
+        "Freshness signal: Destination guides need updates as venues change.",
+        "Monetization angle: Accessible travel agencies, hotel affiliates, and tourism board partnerships.",
+        "Caveat: Requires lived experience or deep research to maintain trust."
+      ]
+    },
+    {
+      "id": "YT-NICHE-010",
+      "url": "https://example.com/youtube-niche/vanlife-europe",
+      "title": "Vanlife and Road Travel in Europe",
+      "sourceClass": "primary-analysis",
+      "publishedAt": "2026-05-22",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 3,
+        "authority": 3,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": [
+        "Niche: Vanlife routes, campsites, and logistics for European road travel.",
+        "Audience: Remote workers and retirees exploring long-term vehicle-based travel.",
+        "Repeated pain point: Complex regulations for camping, insurance, and border crossings.",
+        "Evidence signal: Route-planning and budget-breakdown videos perform consistently.",
+        "Freshness signal: Seasonal route guides and changing local regulations require updates.",
+        "Monetization angle: Van conversion sponsors, campsite apps, travel insurance affiliates.",
+        "Caveat: Travel disruptions and fuel costs can quickly date recommendations."
+      ]
+    },
+    {
+      "id": "YT-NICHE-LOW-QUALITY",
+      "url": "https://example.com/youtube-niche/generic-forum",
+      "title": "Generic YouTube Growth Forum Thread",
+      "sourceClass": "secondary",
+      "publishedAt": "2024-01-01",
+      "discoveredBy": "youtube-niche-fixture",
+      "scores": {
+        "relevance": 1,
+        "authority": 1,
+        "freshness": 1,
+        "diversity": 1,
+        "extractionValue": 1
+      },
+      "claims": [
+        "Forum discussions may contain anecdotes but lack structured niche analysis."
+      ]
+    }
+  ]
+}

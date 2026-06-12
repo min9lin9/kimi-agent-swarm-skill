@@ -32,6 +32,7 @@ This skill is unofficial. It is not affiliated with Moonshot AI, Kimi, or the up
    - readable answer first
    - evidence paths such as run ledger, source ledger, claim ledger, transcript, or synthesis
    - verification result
+   - usage metrics: number of subagents, provider/API calls, estimated tokens/quota, and any paid provider usage
    - unresolved risks or human checks
 
 ## Capability Boundary

@@ -4,6 +4,7 @@ export type ExecutionProfile =
   | "fixture"
   | "fixture-asset-mgmt"
   | "fixture-sellside-research"
+  | "fixture-youtube-niche"
   | "local-command"
   | "web-search";
 
@@ -43,12 +44,20 @@ export interface Claim {
   freshness: ClaimFreshness;
 }
 
+export interface UsageMetrics {
+  providerCalls: number;
+  apiCalls: number;
+  estimatedTokens?: number;
+  notes?: string;
+}
+
 export interface Run {
   runId: string;
   objective: string;
   executionProfile: ExecutionProfile;
   status: "completed" | "failed";
   createdAt: string;
+  usageMetrics: UsageMetrics;
 }
 
 export interface ResearchPlan {
@@ -105,6 +114,7 @@ export interface LoadSourcesOptions {
   providerArgs?: string[];
   providerName?: string;
   searchDepth?: SearchDepth;
+  metrics?: UsageMetrics;
 }
 
 export interface VerifyRunOptions {

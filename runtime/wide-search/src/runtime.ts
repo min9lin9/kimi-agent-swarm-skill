@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import { loadCommandSources } from "./command-provider";
 import { createSearchProvider } from "./providers";
+import { scoreSource } from "./scorer";
 import { verifyRun } from "./verifier";
 import type {
   Claim,
@@ -16,6 +17,7 @@ import type {
   RunWideSearchOptions,
   RunWideSearchResult,
   Source,
+  UsageMetrics,
   VerificationReport,
 } from "./types";
 
@@ -23,15 +25,6 @@ function makeRunId(): string {
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const suffix = Math.random().toString(36).slice(2, 8);
   return `${stamp}-${suffix}`;
-}
-
-function scoreDecision(source: Source): Pick<EnrichedSource, "decision" | "reason"> {
-  const scores = source.scores ?? {};
-  const accepted = (scores.relevance ?? 0) >= 3 && (scores.authority ?? 0) >= 2;
-  return {
-    decision: accepted ? "accepted" : "rejected",
-    reason: accepted ? "meets relevance and authority threshold" : "duplicate or low-value source",
-  };
 }
 
 function claimConfidence(source: Source): ClaimConfidence {
@@ -50,6 +43,7 @@ const FIXTURE_FILE_MAP: Record<string, string> = {
   fixture: "basic-sources.json",
   "fixture-asset-mgmt": "asset-mgmt-roles.json",
   "fixture-sellside-research": "sellside-research-roles.json",
+  "fixture-youtube-niche": "youtube-niche.json",
 };
 
 async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {
@@ -69,6 +63,7 @@ async function loadSources({
   providerArgs,
   providerName,
   searchDepth,
+  metrics,
 }: LoadSourcesOptions): Promise<Source[]> {
   if (profile.startsWith("fixture")) {
     return loadFixtureSources(profile);
@@ -79,7 +74,7 @@ async function loadSources({
   }
 
   if (profile === "web-search") {
-    const provider = createSearchProvider(providerName ?? "mock");
+    const provider = createSearchProvider(providerName ?? "mock", metrics);
     return provider.search({
       objective,
       depth: searchDepth ?? "standard",
@@ -171,6 +166,11 @@ export async function runWideSearch({
   const runDir = join(workDir, ".runs", "wide-search", runId);
   await mkdir(runDir, { recursive: true });
 
+  const usageMetrics: UsageMetrics = {
+    providerCalls: 0,
+    apiCalls: 0,
+  };
+
   const rawSources = await loadSources({
     profile,
     objective,
@@ -178,11 +178,9 @@ export async function runWideSearch({
     providerArgs,
     providerName,
     searchDepth,
+    metrics: usageMetrics,
   });
-  const sources: EnrichedSource[] = rawSources.map((source) => ({
-    ...source,
-    ...scoreDecision(source),
-  }));
+  const sources: EnrichedSource[] = rawSources.map((source) => scoreSource(source));
 
   const claims: Claim[] = [];
   for (const source of sources.filter((item) => item.decision === "accepted")) {
@@ -203,6 +201,7 @@ export async function runWideSearch({
     executionProfile: profile,
     status: "completed",
     createdAt: new Date().toISOString(),
+    usageMetrics,
   };
 
   const researchPlan: ResearchPlan = {

@@ -75,6 +75,26 @@ describe("runWideSearch", () => {
     expect(sourceLedger).toInclude('"decision":"rejected"');
   });
 
+  test("fixture-youtube-niche run processes YouTube niche fixture", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-youtube-niche-"));
+
+    const result = await runWideSearch({
+      objective: "Discover YouTube niche opportunities with evidence",
+      profile: "fixture-youtube-niche",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-youtube-niche");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("YT-NICHE-001");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+    expect(sourceLedger).toInclude('"decision":"rejected"');
+  });
+
   test("local-command run ingests JSONL source candidates from command provider", async () => {
     const workDir = await mkdtemp(join(tmpdir(), "wide-search-local-command-"));
     const providerCommand = process.execPath;

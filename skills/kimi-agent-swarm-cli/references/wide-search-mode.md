@@ -105,6 +105,12 @@ Return the synthesis in this order:
 - Synthesis:
 - Verification:
 
+## Usage / Cost
+- AgentSwarm subagents launched:
+- Provider/API calls:
+- Estimated tokens or quota used:
+- Paid provider (e.g., Serper) calls:
+
 ## Next Human Check
 - <what the user should inspect before acting>
 ```
