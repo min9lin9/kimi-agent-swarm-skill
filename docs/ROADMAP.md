@@ -2,35 +2,46 @@
 
 This roadmap tracks the path from Codex prompt skill to evidence-backed wide-search product.
 
-## Current State: v0.1
+## Current State: v0.3+ (post-migration)
 
 Strengths:
 
-- Codex-only skill packaging
-- prompt refinement before execution
-- wide-search mode documentation
-- third-party prompt-engineering references bundled with notices
-- install and release checklists
+- Kimi Code CLI skill using built-in `AgentSwarm` and subagents
+- Bun + TypeScript wide-search runtime
+- fixture, fixture-asset-mgmt, fixture-sellside-research, fixture-youtube-niche profiles
+- local-command and web-search profiles
+- mock + Serper providers
+- source scorer with weighted scoring, domain authority, and freshness penalties
+- verifier with duplicate, conflict, freshness, confidence, broken-reference, and coverage-gap checks
+- usage metrics in `run.json`
+- GitHub Actions quality gate passing
 
 Limits:
 
-- no built-in wide-search runtime
-- no benchmark pack
-- no distributed execution profile
-- no hosted Kimi Agent Swarm handoff
+- only 2 live providers (mock, serper)
+- benchmark pack partially complete (3 of 6 planned fixtures)
+- no single-entry CLI product (`bin/kasw`)
+- no cost estimator or budget enforcement
+- no replay / caching / distributed execution
+- TUI `/swarm` usage not yet validated with real users
 
-## Target: 9.3+ Full Swarm Product Candidate
+## Target: 9.8+ Repeatable Open Source Product
 
-A 9.3+ candidate must provide:
+See [9.8+ Product Excellence Plan](product/9.8-plus-product-excellence-plan.md) for the full strategy.
 
-- executable wide-search runtime
-- readable report first, audit files second
-- source and claim ledgers
-- relevance, authority, freshness, diversity, and dedupe checks
-- deterministic verification
-- fixture and recorded benchmarks
-- visible execution profile
-- honest non-parity boundary unless hosted Kimi Agent Swarm is actually used
+North star metric: **Weekly Active Users running at least 3 wide-search runs (WAU3)**.
+
+A 9.8+ product must provide:
+
+- zero-config first run with mock provider
+- transparent cost estimation and budget enforcement
+- 5+ stable search providers
+- complete benchmark suite with golden answers
+- reproducible runs and replay
+- shareable output formats (Markdown, JSON, CSV, Notion)
+- community-driven provider registry
+- distributed execution profile for large jobs
+- reliable CI/CD and documentation
 
 ## Sequence
 
@@ -39,25 +50,35 @@ A 9.3+ candidate must provide:
    - [docs/product/2026-06-01-wide-search-runtime-prd.md](product/2026-06-01-wide-search-runtime-prd.md)
    - [docs/product/2026-06-01-wide-search-benchmark-spec.md](product/2026-06-01-wide-search-benchmark-spec.md)
    - [docs/product/2026-06-01-v0.3-implementation-plan.md](product/2026-06-01-v0.3-implementation-plan.md)
-2. v0.2 hardening
+   - [docs/product/9.8-plus-product-excellence-plan.md](product/9.8-plus-product-excellence-plan.md)
+2. v0.2 hardening ✓
    - GitHub Actions quality gate
    - README and skill docs aligned around user-first wide-search
    - release checklist updated
-3. v0.3 local runtime
-   - fixture profile: started
-   - local-command profile: started
-   - source and claim ledgers: started
-   - synthesis and verification: started
-4. v0.4 benchmark pack
-   - YouTube niche fixture
+3. v0.3 local runtime ✓
+   - fixture profiles
+   - local-command profile
+   - source and claim ledgers
+   - synthesis and verification
+   - scorer and usage metrics
+4. v0.4 benchmark pack (in progress)
+   - YouTube niche fixture ✓
    - Paul Graham corpus fixture
    - GitHub repo landscape fixture
    - market scan fixture
-5. v0.5 execution routing
-   - Kimi CLI handoff where useful
-   - hosted Kimi Agent Swarm handoff if available
-6. v1.0 distributed profile
+5. v0.5 product packaging
+   - single-entry CLI (`bin/kasw`)
+   - first-run wizard
+   - cost estimator and budget enforcement
+   - Tavily + Brave + GitHub providers
+6. v0.6-v0.8 scale & integrations
+   - replay and caching
+   - in-process then Redis-backed distributed queue
+   - JSON/CSV/Notion export
+   - benchmark scoring and leaderboards
+7. v1.0 distributed profile
    - worker queue
    - retries and resume
    - caching and budgets
    - recorded/live benchmark reporting
+   - community provider registry
