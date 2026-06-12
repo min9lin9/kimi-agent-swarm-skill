@@ -1,30 +1,39 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import type { Claim, EnrichedSource, VerificationReport } from "./types";
 
-async function readJsonl(path) {
+async function readJsonl<T>(path: string): Promise<T[] | null> {
   try {
     const text = await readFile(path, "utf8");
     return text
       .split(/\r?\n/)
       .filter(Boolean)
-      .map((line) => JSON.parse(line));
+      .map((line) => JSON.parse(line) as T);
   } catch (error) {
-    if (error.code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       return null;
     }
     throw error;
   }
 }
 
-export async function verifyRun({ runDir, minAcceptedSources = 1 } = {}) {
+export interface VerifyRunOptions {
+  runDir?: string;
+  minAcceptedSources?: number;
+}
+
+export async function verifyRun({
+  runDir,
+  minAcceptedSources = 1,
+}: VerifyRunOptions = {}): Promise<VerificationReport> {
   if (!runDir) {
     throw new Error("verifyRun requires runDir");
   }
 
-  const failures = [];
-  const warnings = [];
-  const sources = await readJsonl(join(runDir, "source-ledger.jsonl"));
-  const claims = await readJsonl(join(runDir, "claim-ledger.jsonl"));
+  const failures: string[] = [];
+  const warnings: string[] = [];
+  const sources = await readJsonl<EnrichedSource>(join(runDir, "source-ledger.jsonl"));
+  const claims = await readJsonl<Claim>(join(runDir, "claim-ledger.jsonl"));
 
   if (!sources) {
     failures.push("missing source ledger");
@@ -38,10 +47,12 @@ export async function verifyRun({ runDir, minAcceptedSources = 1 } = {}) {
   const rejectedSources = sources?.filter((source) => source.decision === "rejected") ?? [];
 
   if (sources && acceptedSources.length < minAcceptedSources) {
-    failures.push(`accepted source count ${acceptedSources.length} below minimum ${minAcceptedSources}`);
+    failures.push(
+      `accepted source count ${acceptedSources.length} below minimum ${minAcceptedSources}`,
+    );
   }
 
-  const unsupportedClaims = [];
+  const unsupportedClaims: string[] = [];
   for (const claim of claims ?? []) {
     if (!Array.isArray(claim.sourceIds) || claim.sourceIds.length === 0) {
       unsupportedClaims.push(claim.id ?? claim.claim ?? "unknown claim");
@@ -52,18 +63,19 @@ export async function verifyRun({ runDir, minAcceptedSources = 1 } = {}) {
     failures.push(`unsupported claims: ${unsupportedClaims.join(", ")}`);
   }
 
-  const duplicateSources = sources?.filter((source) => source.reason === "duplicate or low-value source") ?? [];
+  const duplicateSources =
+    sources?.filter((source) => source.reason === "duplicate or low-value source") ?? [];
   if (sources && duplicateSources.length / Math.max(sources.length, 1) > 0.5) {
     warnings.push("duplicate or low-value source ratio is high");
   }
 
-  const report = {
+  const report: VerificationReport = {
     status: failures.length === 0 ? "passed" : "failed",
     acceptedSources: acceptedSources.length,
     rejectedSources: rejectedSources.length,
     unsupportedClaims: unsupportedClaims.length,
     failures,
-    warnings
+    warnings,
   };
 
   await writeFile(join(runDir, "verification-report.json"), `${JSON.stringify(report, null, 2)}\n`);

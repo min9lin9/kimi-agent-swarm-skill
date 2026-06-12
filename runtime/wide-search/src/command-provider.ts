@@ -1,6 +1,23 @@
 import { spawn } from "node:child_process";
+import type { Source } from "./types";
 
-export async function loadCommandSources({ providerCommand, providerArgs = [], objective } = {}) {
+export interface LoadCommandSourcesOptions {
+  providerCommand?: string;
+  providerArgs?: string[];
+  objective?: string;
+}
+
+interface ProviderEvent {
+  type?: string;
+  source?: Source;
+  message?: string;
+}
+
+export async function loadCommandSources({
+  providerCommand,
+  providerArgs = [],
+  objective,
+}: LoadCommandSourcesOptions = {}): Promise<Source[]> {
   if (!providerCommand) {
     throw new Error("local-command profile requires providerCommand");
   }
@@ -9,14 +26,19 @@ export async function loadCommandSources({ providerCommand, providerArgs = [], o
   return parseProviderJsonl(output);
 }
 
-function runProviderCommand({ providerCommand, providerArgs, objective }) {
+function runProviderCommand({
+  providerCommand,
+  providerArgs,
+  objective,
+}: Required<Pick<LoadCommandSourcesOptions, "providerCommand" | "providerArgs">> &
+  Pick<LoadCommandSourcesOptions, "objective">): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn(providerCommand, providerArgs, {
       env: {
         ...process.env,
-        WIDE_SEARCH_OBJECTIVE: objective
+        WIDE_SEARCH_OBJECTIVE: objective,
       },
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
     });
 
     let stdout = "";
@@ -24,10 +46,10 @@ function runProviderCommand({ providerCommand, providerArgs, objective }) {
 
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (chunk) => {
+    child.stdout.on("data", (chunk: string) => {
       stdout += chunk;
     });
-    child.stderr.on("data", (chunk) => {
+    child.stderr.on("data", (chunk: string) => {
       stderr += chunk;
     });
     child.on("error", reject);
@@ -41,15 +63,15 @@ function runProviderCommand({ providerCommand, providerArgs, objective }) {
   });
 }
 
-function parseProviderJsonl(output) {
-  const sources = [];
-  const errors = [];
+function parseProviderJsonl(output: string): Source[] {
+  const sources: Source[] = [];
+  const errors: string[] = [];
 
   for (const [index, line] of output.split(/\r?\n/).entries()) {
     if (!line.trim()) continue;
-    let event;
+    let event: ProviderEvent;
     try {
-      event = JSON.parse(line);
+      event = JSON.parse(line) as ProviderEvent;
     } catch {
       errors.push(`line ${index + 1} is not valid JSON`);
       continue;

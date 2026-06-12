@@ -2,11 +2,16 @@
 
 [![quality](https://github.com/min9lin9/kimi-agent-swarm-skill/actions/workflows/quality.yml/badge.svg)](https://github.com/min9lin9/kimi-agent-swarm-skill/actions/workflows/quality.yml)
 
-Codex-only skill for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
+Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
 Status: `v0.1.0`
 
-This repository is **Codex-only**. It is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
+Includes:
+
+- `kimi-agent-swarm-prompt`: Codex-only skill.
+- `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
+
+This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
 This project is unofficial and is not affiliated with Moonshot AI, Kimi, or `treylom/prompt-engineering-skills`.
 
@@ -84,6 +89,23 @@ mkdir -p ~/.codex/skills
 cp -R skills/kimi-agent-swarm-prompt ~/.codex/skills/
 ```
 
+## Install For Kimi Code CLI
+
+```bash
+git clone https://github.com/min9lin9/kimi-agent-swarm-skill.git
+cd kimi-agent-swarm-skill
+./scripts/install-kimi-code-skill.sh
+```
+
+Manual install:
+
+```bash
+mkdir -p ~/.kimi-code/skills
+cp -R skills/kimi-agent-swarm-cli ~/.kimi-code/skills/
+```
+
+Restart Kimi Code CLI or start a new session to load the skill.
+
 ## Use In Codex
 
 Prompt refinement plus workflow routing:
@@ -102,6 +124,26 @@ Hybrid mode:
 
 ```text
 $kimi-agent-swarm-prompt "먼저 시장 조사를 하고, 승인 후 로컬 repo에서 README와 skill 패키징을 개선해줘"
+```
+
+## Use In Kimi Code CLI
+
+Prompt refinement plus AgentSwarm execution:
+
+```text
+/skill:kimi-agent-swarm-cli "AI browser agent open-source repos를 조사하고 비교해줘"
+```
+
+Prompt-only mode:
+
+```text
+/skill:kimi-agent-swarm-cli "프롬프트만 고도화하고 실행은 하지 마: YouTube niche 100개를 찾는 리서치 프롬프트"
+```
+
+Hybrid mode:
+
+```text
+/skill:kimi-agent-swarm-cli "먼저 시장 조사를 하고, 승인 후 로컬 repo에서 README와 skill 패키징을 개선해줘"
 ```
 
 ## Workflow
@@ -144,10 +186,10 @@ export KIMI_SWARM_HARNESS_DIR=/absolute/path/to/search-swarm-plus
 Expected commands:
 
 ```bash
-npm run doctor
-npm run run -- "research objective"
-npm run verify
-npm run inspect
+bun run doctor
+bun run src/cli.ts run -- "research objective"
+bun run src/cli.ts verify
+bun run src/cli.ts inspect
 ```
 
 Provider, JSONL, and adapter details are intentionally kept out of the main README. They are for harness authors, not normal skill users.
@@ -167,7 +209,7 @@ Example:
 
 ```bash
 cd runtime/wide-search
-npm run run -- --objective "Map evidence-backed research workflow requirements"
+bun run src/cli.ts run -- --objective "Map evidence-backed research workflow requirements"
 ```
 
 The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, and `verification-report.json`.
@@ -183,18 +225,24 @@ The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan
 |   |-- CODE_QUALITY.md
 |   |-- CODE_REVIEW.md
 |   `-- GITHUB_RELEASE.md
+|-- runtime/
+|   `-- wide-search/
 |-- scripts/
 |   |-- install-codex-skill.sh
+|   |-- install-kimi-code-skill.sh
 |   `-- sync-prompt-engineering-upstream.sh
 `-- skills/
-    `-- kimi-agent-swarm-prompt/
+    |-- kimi-agent-swarm-prompt/
+    |   |-- SKILL.md
+    |   |-- agents/openai.yaml
+    |   |-- references/
+    |   `-- vendor/prompt-engineering-skills/
+    `-- kimi-agent-swarm-cli/
         |-- SKILL.md
-        |-- agents/openai.yaml
-        |-- references/
-        `-- vendor/prompt-engineering-skills/
+        `-- references/
 ```
 
-The vendored prompt-engineering snapshot lives inside the skill folder so the Codex install is self-contained.
+The vendored prompt-engineering snapshot lives inside the Codex skill folder so the Codex install is self-contained. The Kimi Code CLI skill references the same contract shapes without duplicating the upstream vendor snapshot.
 
 ## Third-Party Prompt Engineering References
 
@@ -229,9 +277,11 @@ Before publishing:
 
 - No local absolute paths in the repo.
 - `skills/kimi-agent-swarm-prompt/agents/openai.yaml` parses as YAML.
+- `skills/kimi-agent-swarm-cli/SKILL.md` frontmatter parses as YAML.
 - `scripts/install-codex-skill.sh` installs into a temp `CODEX_HOME`.
+- `scripts/install-kimi-code-skill.sh` installs into a temp `KIMI_CODE_HOME`.
 - `THIRD_PARTY_NOTICES.md` names upstream repo, license, snapshot commit, and included files.
-- README says Codex-only and unofficial.
+- README says unofficial and does not claim hosted Kimi Agent Swarm parity.
 - [docs/CODE_QUALITY.md](docs/CODE_QUALITY.md) quality gates pass.
 - [docs/CODE_REVIEW.md](docs/CODE_REVIEW.md) review checklist passes.
 - GitHub authentication is valid for the target owner.

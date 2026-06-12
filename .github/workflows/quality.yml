@@ -14,6 +14,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Check whitespace
         run: git diff --check
 
@@ -36,7 +41,12 @@ jobs:
       - name: Check shell scripts
         run: |
           bash -n scripts/install-codex-skill.sh
+          bash -n scripts/install-kimi-code-skill.sh
           bash -n scripts/sync-prompt-engineering-upstream.sh
+
+      - name: Parse Kimi Code CLI skill metadata
+        run: |
+          ruby -e 'require "yaml"; front=File.read("skills/kimi-agent-swarm-cli/SKILL.md")[/\A---\n(.*?)\n---/m,1]; YAML.load(front)'
 
       - name: Smoke install Codex skill
         run: |
@@ -46,17 +56,33 @@ jobs:
           test -f "$tmpdir/skills/kimi-agent-swarm-prompt/references/wide-search-mode.md"
           test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
 
+      - name: Smoke install Kimi Code CLI skill
+        run: |
+          tmpdir="$(mktemp -d)"
+          KIMI_CODE_HOME="$tmpdir" scripts/install-kimi-code-skill.sh
+          test -f "$tmpdir/skills/kimi-agent-swarm-cli/SKILL.md"
+          test -f "$tmpdir/skills/kimi-agent-swarm-cli/references/agent-swarm-tool.md"
+          test -f "$tmpdir/skills/kimi-agent-swarm-cli/references/wide-search-mode.md"
+
+      - name: Install runtime dependencies
+        working-directory: runtime/wide-search
+        run: bun install
+
+      - name: Type-check runtime
+        working-directory: runtime/wide-search
+        run: bun run typecheck
+
       - name: Run wide-search runtime tests
         working-directory: runtime/wide-search
-        run: npm test
+        run: bun test
 
       - name: Smoke wide-search runtime CLI
         working-directory: runtime/wide-search
         run: |
           tmpdir="$(mktemp -d)"
-          node src/cli.mjs run \
+          bun run src/cli.ts run \
             --profile local-command \
-            --provider-command node \
-            --provider-args fixtures/jsonl-provider.mjs \
+            --provider-command bun \
+            --provider-args fixtures/jsonl-provider.ts \
             --objective "Evaluate command-backed source ingestion" \
             --work-dir "$tmpdir"

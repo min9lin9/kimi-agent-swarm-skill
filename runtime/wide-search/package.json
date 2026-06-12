@@ -4,9 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test",
-    "run": "node src/cli.mjs run",
-    "verify": "node src/cli.mjs verify",
-    "inspect": "node src/cli.mjs inspect"
+    "test": "bun test",
+    "run": "bun run src/cli.ts run",
+    "verify": "bun run src/cli.ts verify",
+    "inspect": "bun run src/cli.ts inspect",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.0"
   }
 }

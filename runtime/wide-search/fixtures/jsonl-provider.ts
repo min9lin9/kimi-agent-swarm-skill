@@ -1,6 +1,7 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
+import type { Source } from "../src/types";
 
-const sources = [
+const sources: Source[] = [
   {
     id: "L001",
     url: "https://example.com/local-command-primary",
@@ -13,9 +14,9 @@ const sources = [
       authority: 4,
       freshness: 4,
       diversity: 3,
-      extractionValue: 4
+      extractionValue: 4,
     },
-    claims: ["Local command providers can feed replayable source candidates into the runtime."]
+    claims: ["Local command providers can feed replayable source candidates into the runtime."],
   },
   {
     id: "L002",
@@ -29,10 +30,10 @@ const sources = [
       authority: 1,
       freshness: 1,
       diversity: 1,
-      extractionValue: 1
+      extractionValue: 1,
     },
-    claims: ["Low quality command output should be rejected."]
-  }
+    claims: ["Low quality command output should be rejected."],
+  },
 ];
 
 for (const source of sources) {
