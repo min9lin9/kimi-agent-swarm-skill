@@ -66,6 +66,13 @@ export interface DuplicateClaimGroup {
   similarityReason: string;
 }
 
+export interface ConflictingClaimPair {
+  claimIdA: string;
+  claimIdB: string;
+  entity: string;
+  reason: string;
+}
+
 export interface VerificationReport {
   status: "passed" | "failed";
   acceptedSources: number;
@@ -75,6 +82,7 @@ export interface VerificationReport {
   unknownFreshnessClaims: number;
   lowConfidenceClaims: number;
   duplicateClaimGroups: DuplicateClaimGroup[];
+  conflictingClaimPairs: ConflictingClaimPair[];
   coverageGaps: string[];
   failures: string[];
   warnings: string[];

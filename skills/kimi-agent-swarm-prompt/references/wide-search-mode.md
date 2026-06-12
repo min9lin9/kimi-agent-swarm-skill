@@ -140,6 +140,21 @@ Acceptance guideline:
 - Treat community posts, comments, and social signals as sentiment unless independently verified.
 - Reject duplicates unless they add new data or reveal disagreement.
 
+## Verification Checks
+
+After synthesis, run deterministic verification on the ledgers:
+
+- **Minimum accepted sources**: at least one accepted source by default.
+- **Unsupported claims**: every claim must reference at least one source id.
+- **Broken source references**: every claim's `sourceIds` must exist in the source ledger.
+- **Duplicate claims**: flag near-duplicate claims (Jaccard similarity ≥ 0.7 or substring containment).
+- **Conflicting claims**: flag claim pairs that share an entity but express opposite polarity (e.g., "X increases" vs "X decreases").
+- **Stale claim ratio**: warn if too many claims are stale; fail if the ratio exceeds the threshold.
+- **Low-confidence claim ratio**: warn if too many claims are low-confidence; fail if the ratio exceeds the threshold.
+- **Coverage gaps**: warn if accepted sources lack primary analysis or if the acceptance ratio is very low.
+
+Verification failures block a "passed" status but still produce the synthesis for human review.
+
 ## Common Workload Recipes
 
 ### YouTube or Niche Discovery

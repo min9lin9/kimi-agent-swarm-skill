@@ -215,6 +215,12 @@ Supported profiles:
 - `fixture-asset-mgmt`: buyside asset management roles benchmark
 - `fixture-sellside-research`: sell-side research organization roles benchmark
 - `local-command`: reads source candidates from a local JSONL command
+- `web-search`: live web search via a configured provider
+
+Providers:
+
+- `mock`: deterministic demo/CI provider (default)
+- `serper`: Serper.dev Google Search API (requires `SERPER_API_KEY` environment variable)
 
 Examples:
 
@@ -233,6 +239,14 @@ bun run src/cli.ts run \
 bun run src/cli.ts run \
   --profile fixture-sellside-research \
   --objective "Analyze sell-side research organization roles"
+
+# Live web search with Serper (requires SERPER_API_KEY)
+bun run src/cli.ts run \
+  --profile web-search \
+  --provider-name serper \
+  --depth standard \
+  --objective "AI browser agent open-source repos" \
+  --work-dir .
 ```
 
 The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, and `verification-report.json`.

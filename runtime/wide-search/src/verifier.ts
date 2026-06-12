@@ -4,6 +4,7 @@ import type {
   Claim,
   ClaimConfidence,
   ClaimFreshness,
+  ConflictingClaimPair,
   DuplicateClaimGroup,
   EnrichedSource,
   VerificationReport,
@@ -81,6 +82,120 @@ function findDuplicateClaims(claims: Claim[]): DuplicateClaimGroup[] {
   }
 
   return groups;
+}
+
+const POSITIVE_POLARITY = [
+  "increase",
+  "increases",
+  "increased",
+  "rising",
+  "rises",
+  "rose",
+  "grows",
+  "grew",
+  "growth",
+  "up",
+  "higher",
+  "more",
+  "positive",
+  "good",
+  "bullish",
+  "strong",
+  "buy",
+  "outperform",
+  "above",
+  "exceeds",
+];
+
+const NEGATIVE_POLARITY = [
+  "decrease",
+  "decreases",
+  "decreased",
+  "falling",
+  "falls",
+  "fell",
+  "shrinks",
+  "shrank",
+  "shrunk",
+  "down",
+  "lower",
+  "less",
+  "negative",
+  "bad",
+  "bearish",
+  "weak",
+  "sell",
+  "underperform",
+  "below",
+  "misses",
+];
+
+function extractEntities(claim: string): string[] {
+  const entities: string[] = [];
+
+  // Quoted phrases
+  const quoted = claim.match(/"([^"]{3,80})"/g) ?? [];
+  entities.push(...quoted.map((m) => m.slice(1, -1)));
+
+  // Capitalized phrases (1-4 words) - likely proper nouns or product names
+  const capitalized = claim.match(/\b[A-Z][a-zA-Z0-9]*(?:\s+[A-Z][a-zA-Z0-9]*){0,3}\b/g) ?? [];
+  entities.push(...capitalized);
+
+  // Numbers with units
+  const numbers =
+    claim.match(
+      /\d+(?:\.\d+)?\s*(?:%|percent|bp|basis points|million|billion|trillion|KRW|USD|EUR|GBP)/gi,
+    ) ?? [];
+  entities.push(...numbers);
+
+  return [...new Set(entities.map((e) => e.toLowerCase().trim()))].filter((e) => e.length > 2);
+}
+
+function detectPolarity(claim: string): "positive" | "negative" | "neutral" {
+  const normalized = normalizeClaimText(claim);
+  const positiveHits = POSITIVE_POLARITY.filter((word) => normalized.includes(word)).length;
+  const negativeHits = NEGATIVE_POLARITY.filter((word) => normalized.includes(word)).length;
+
+  if (positiveHits > 0 && negativeHits === 0) return "positive";
+  if (negativeHits > 0 && positiveHits === 0) return "negative";
+  return "neutral";
+}
+
+function findConflictingClaims(claims: Claim[]): ConflictingClaimPair[] {
+  const pairs: ConflictingClaimPair[] = [];
+  const seen = new Set<string>();
+
+  for (let i = 0; i < claims.length; i++) {
+    const claimA = claims[i];
+    const polarityA = detectPolarity(claimA.claim);
+    if (polarityA === "neutral") continue;
+
+    const entitiesA = extractEntities(claimA.claim);
+    if (entitiesA.length === 0) continue;
+
+    for (let j = i + 1; j < claims.length; j++) {
+      const claimB = claims[j];
+      const polarityB = detectPolarity(claimB.claim);
+      if (polarityB === "neutral" || polarityA === polarityB) continue;
+
+      const entitiesB = extractEntities(claimB.claim);
+      const sharedEntities = entitiesA.filter((entity) => entitiesB.includes(entity));
+      if (sharedEntities.length === 0) continue;
+
+      const pairKey = [claimA.id, claimB.id].sort().join("::");
+      if (seen.has(pairKey)) continue;
+      seen.add(pairKey);
+
+      pairs.push({
+        claimIdA: claimA.id,
+        claimIdB: claimB.id,
+        entity: sharedEntities[0],
+        reason: `opposing polarity (${polarityA} vs ${polarityB}) on shared entity "${sharedEntities[0]}"`,
+      });
+    }
+  }
+
+  return pairs;
 }
 
 function countByFreshness(claims: Claim[], freshness: ClaimFreshness): number {
@@ -216,6 +331,13 @@ export async function verifyRun({
     warnings.push(`${duplicateClaimGroups.length} duplicate claim groups detected`);
   }
 
+  const conflictingClaimPairs = findConflictingClaims(claims ?? []);
+  if (conflictingClaimPairs.length > 0) {
+    warnings.push(
+      `${conflictingClaimPairs.length} conflicting claim pairs detected; review needed`,
+    );
+  }
+
   const coverageGaps = findCoverageGaps(sources ?? [], acceptedSources);
   if (coverageGaps.length > 0) {
     warnings.push(`coverage gaps: ${coverageGaps.join("; ")}`);
@@ -236,6 +358,7 @@ export async function verifyRun({
     unknownFreshnessClaims,
     lowConfidenceClaims,
     duplicateClaimGroups,
+    conflictingClaimPairs,
     coverageGaps,
     failures,
     warnings,

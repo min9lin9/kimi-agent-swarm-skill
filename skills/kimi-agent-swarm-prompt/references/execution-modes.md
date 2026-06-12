@@ -44,10 +44,27 @@ Notes:
 
 Do not expose these command details in the normal user answer unless the user asks how to configure the harness.
 
-Built-in runtime profiles:
+Built-in runtime profiles (Search Swarm+ or Kimi Code CLI `runtime/wide-search`):
 
 - `fixture`: deterministic test profile
+- `fixture-asset-mgmt`: buyside asset management roles benchmark
+- `fixture-sellside-research`: sell-side research organization roles benchmark
 - `local-command`: local JSONL command profile
+- `web-search`: live web search via a configured provider (e.g., `serper` with `SERPER_API_KEY`)
+
+When using the Kimi Code CLI `runtime/wide-search` harness:
+
+```bash
+cd runtime/wide-search
+bun run src/cli.ts run \
+  --profile web-search \
+  --provider-name serper \
+  --depth standard \
+  --objective "<refined objective>" \
+  --work-dir <work-dir>
+```
+
+If no harness or runtime is available, stop after producing the refined prompt contract and approval card.
 
 ## Mode: kimi-code
 

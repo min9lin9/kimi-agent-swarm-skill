@@ -48,7 +48,7 @@ Default local Search Swarm+ harness:
 
 `$KIMI_SWARM_HARNESS_DIR`
 
-If the variable is not set, locate a directory containing `search-swarm-plus/package.json`. If no harness is available, stop after producing the prompt contract and approval card.
+If the variable is not set, locate a directory containing `search-swarm-plus/package.json`, or the Kimi Code CLI `runtime/wide-search` harness in this repository. If no harness is available, stop after producing the prompt contract and approval card.
 
 Keep provider, JSONL, and adapter details out of the user-facing answer unless the user is configuring the harness.
 

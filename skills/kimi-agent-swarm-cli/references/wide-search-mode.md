@@ -124,6 +124,21 @@ Filter each source before accepting it:
 
 Accept sources that are directly relevant and at least reasonably authoritative. For time-sensitive facts, require dates or mark the claim as stale.
 
+## Verification Checks
+
+After synthesis, run deterministic verification on the ledgers:
+
+- **Minimum accepted sources**: at least one accepted source by default.
+- **Unsupported claims**: every claim must reference at least one source id.
+- **Broken source references**: every claim's `sourceIds` must exist in the source ledger.
+- **Duplicate claims**: flag near-duplicate claims (Jaccard similarity ≥ 0.7 or substring containment).
+- **Conflicting claims**: flag claim pairs that share an entity but express opposite polarity (e.g., "X increases" vs "X decreases").
+- **Stale claim ratio**: warn if too many claims are stale; fail if the ratio exceeds the threshold.
+- **Low-confidence claim ratio**: warn if too many claims are low-confidence; fail if the ratio exceeds the threshold.
+- **Coverage gaps**: warn if accepted sources lack primary analysis or if the acceptance ratio is very low.
+
+Verification failures block a "passed" status but still produce the synthesis for human review.
+
 ## Evidence Files
 
 When a harness is available, keep machine-readable evidence behind the readable answer:

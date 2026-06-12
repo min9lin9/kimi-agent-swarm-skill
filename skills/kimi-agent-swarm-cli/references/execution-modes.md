@@ -47,6 +47,24 @@ The local wide-search runtime lives under `runtime/wide-search` in this reposito
 
 1. `${KIMI_SKILL_DIR}/../../runtime/wide-search`
 2. `runtime/wide-search` relative to the current working directory
-3. The `KIMI_SWARM_HARNESS_DIR` environment variable
+3. The `KIMI_SWARM_HARNESS_DIR` environment variable (legacy Search Swarm+ harness)
 
 If no runtime is available, stop after producing the prompt contract and approval card.
+
+## Web-Search Providers
+
+The `web-search` profile connects to external search providers:
+
+- `mock`: deterministic demo/CI provider (default)
+- `serper`: Serper.dev Google Search API (requires `SERPER_API_KEY`)
+
+Provider selection is intentionally manual so the user controls API cost and quota.
+
+```bash
+bun run src/cli.ts run \
+  --profile web-search \
+  --provider-name serper \
+  --depth standard \
+  --objective "AI browser agent open-source repos" \
+  --work-dir .
+```

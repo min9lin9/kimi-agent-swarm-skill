@@ -224,4 +224,27 @@ describe("verifyRun", () => {
     expect(verification.lowConfidenceClaims).toBe(1);
     expect(verification.unknownFreshnessClaims).toBe(1);
   });
+
+  test("detects conflicting claims", async () => {
+    const runDir = await mkdtemp(join(tmpdir(), "wide-search-conflict-run-"));
+    await mkdir(runDir, { recursive: true });
+    await writeFile(
+      join(runDir, "source-ledger.jsonl"),
+      '{"id":"S001","decision":"accepted","sourceClass":"primary-analysis"}\n',
+    );
+    await writeFile(
+      join(runDir, "claim-ledger.jsonl"),
+      [
+        '{"id":"C001","claim":"Tesla stock will increase next quarter","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+        '{"id":"C002","claim":"Tesla stock will decrease next quarter","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+        '{"id":"C003","claim":"Tesla opened a new factory","sourceIds":["S001"],"confidence":"high","freshness":"current"}',
+      ].join("\n") + "\n",
+    );
+
+    const verification = await verifyRun({ runDir });
+
+    expect(verification.status).toBe("passed");
+    expect(verification.conflictingClaimPairs.length).toBe(1);
+    expect(verification.warnings.some((w) => w.includes("conflicting"))).toBeTrue();
+  });
 });
