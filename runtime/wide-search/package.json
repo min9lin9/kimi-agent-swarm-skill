@@ -1,17 +1,45 @@
 {
-  "name": "@kimi-agent-swarm-skill/wide-search-runtime",
-  "version": "0.3.0",
-  "private": true,
+  "name": "@kimi-agent-swarm-skill/cli",
+  "version": "0.7.0",
+  "description": "Evidence-backed wide-search CLI for Kimi Agent Swarm",
   "type": "module",
+  "bin": {
+    "kasw": "src/cli.ts"
+  },
+  "files": [
+    "src",
+    "fixtures",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "bun": ">=1.0.0"
+  },
   "scripts": {
     "test": "bun test",
-    "run": "bun run src/cli.ts run",
-    "verify": "bun run src/cli.ts verify",
-    "inspect": "bun run src/cli.ts inspect",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run typecheck && bun test",
+    "pack": "npm pack"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.8.0"
+  },
+  "optionalDependencies": {
+    "ioredis": "^5.4.0"
+  },
+  "keywords": [
+    "kimi",
+    "agent",
+    "swarm",
+    "wide-search",
+    "research",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/min9lin9/kimi-agent-swarm-skill.git",
+    "directory": "runtime/wide-search"
   }
 }

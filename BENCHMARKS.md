@@ -10,6 +10,8 @@ A benchmark run executes:
 ./bin/kasw benchmark --profile <fixture>
 ```
 
+Every run is automatically recorded to `~/.kasw/leaderboard.jsonl`. View the live leaderboard with `kasw leaderboard` or generate an HTML report with `kasw leaderboard --html --out report.html`.
+
 Scoring:
 
 - **Precision**: accepted claims matching golden claims / total accepted claims

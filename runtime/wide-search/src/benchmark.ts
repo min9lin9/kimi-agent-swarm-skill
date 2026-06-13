@@ -1,5 +1,6 @@
 import { join } from "node:path";
 
+import { getGitCommit, recordEntry } from "./leaderboard";
 import { runWideSearch } from "./runtime";
 import type { BenchmarkResult, Claim, EnrichedSource, GoldenAnswer } from "./types";
 
@@ -47,28 +48,39 @@ export async function runBenchmark(
   workDir: string = process.cwd(),
 ): Promise<BenchmarkResult> {
   const objective = `Benchmark: ${profile}`;
-  const result = await runWideSearch({
+  const runResult = await runWideSearch({
     objective,
     profile: profile as "fixture-paul-graham-corpus",
     workDir,
   });
 
-  const { acceptedSources = 0 } = result.verification;
+  const { acceptedSources = 0 } = runResult.verification;
   if (acceptedSources === 0) {
-    return {
+    const failed: BenchmarkResult = {
       profile,
+      runId: runResult.runId,
+      runDir: runResult.runDir,
       precision: 0,
       recall: 0,
       citationAccuracy: 0,
       f1: 0,
       passed: false,
     };
+    await recordEntry({
+      runId: failed.runId,
+      profile,
+      runDir: failed.runDir,
+      timestamp: new Date().toISOString(),
+      gitCommit: await getGitCommit(),
+      scores: failed,
+    });
+    return failed;
   }
 
   // We only have verification summary here, but the actual claims live in the ledger.
   // Re-read ledger files for scoring.
-  const ledgerPath = join(result.runDir, "claim-ledger.jsonl");
-  const sourceLedgerPath = join(result.runDir, "source-ledger.jsonl");
+  const ledgerPath = join(runResult.runDir, "claim-ledger.jsonl");
+  const sourceLedgerPath = join(runResult.runDir, "source-ledger.jsonl");
 
   const claimModule = await import("node:fs/promises");
   const claimText = await claimModule.readFile(ledgerPath, "utf8");
@@ -114,12 +126,26 @@ export async function runBenchmark(
     }
   }
 
-  return {
+  const benchmarkResult: BenchmarkResult = {
     profile,
+    runId: runResult.runId,
+    runDir: runResult.runDir,
     precision: Number(precision.toFixed(4)),
     recall: Number(recall.toFixed(4)),
     citationAccuracy: Number(citationAccuracy.toFixed(4)),
     f1: Number(f1.toFixed(4)),
     passed: recall >= 0.5 && citationAccuracy >= 0.8,
   };
+
+  const gitCommit = await getGitCommit();
+  await recordEntry({
+    runId: benchmarkResult.runId,
+    profile,
+    runDir: benchmarkResult.runDir,
+    timestamp: new Date().toISOString(),
+    gitCommit,
+    scores: benchmarkResult,
+  });
+
+  return benchmarkResult;
 }

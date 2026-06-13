@@ -9,6 +9,12 @@ import { getInitInstructions, runInit } from "./init";
 import { MemoryQueueAdapter } from "./distributed/memory-adapter";
 import { RedisQueueAdapter } from "./distributed/redis-adapter";
 import { workerLoop } from "./distributed/runner";
+import {
+  clearLeaderboard,
+  compareRuns,
+  generateHtmlReport,
+  getLeaderboard,
+} from "./leaderboard";
 import { runWideSearch } from "./runtime";
 import { verifyRun } from "./verifier";
 import type {
@@ -182,6 +188,38 @@ async function handleBenchmark(args: string[]): Promise<void> {
   console.log(JSON.stringify(result, null, 2));
 }
 
+async function handleLeaderboard(args: string[]): Promise<void> {
+  const profile = readFlag(args, "--profile");
+  const compareRaw = readFlag(args, "--compare");
+  const html = readBooleanFlag(args, "--html");
+  const outPath = readFlag(args, "--out");
+  const shouldClear = readBooleanFlag(args, "--clear");
+
+  if (shouldClear) {
+    await clearLeaderboard();
+    console.log(JSON.stringify({ cleared: true }, null, 2));
+    return;
+  }
+
+  if (compareRaw) {
+    const runIds = compareRaw.split(",").map((id) => id.trim());
+    const comparison = await compareRuns(runIds);
+    console.log(JSON.stringify(comparison, null, 2));
+    return;
+  }
+
+  const entries = await getLeaderboard(profile);
+
+  if (html) {
+    const destination = outPath ?? "leaderboard-report.html";
+    await generateHtmlReport(entries, destination);
+    console.log(JSON.stringify({ report: destination }, null, 2));
+    return;
+  }
+
+  console.log(JSON.stringify(entries, null, 2));
+}
+
 async function handleInit(args: string[]): Promise<void> {
   const nonInteractive = readBooleanFlag(args, "--non-interactive");
   const local = readBooleanFlag(args, "--local");
@@ -239,7 +277,7 @@ function handleProviders(): void {
 }
 
 function printUsage(): void {
-  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers|init|worker>");
+  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|leaderboard|providers|init|worker>");
   console.error("");
   console.error("  research|run <objective> [options]");
   console.error("    --profile <profile>           fixture | fixture-asset-mgmt | fixture-sellside-research |");
@@ -267,6 +305,11 @@ function printUsage(): void {
   console.error("  inspect --run-dir <dir>");
   console.error("  export --run-dir <dir> --format json|csv [--out <path>]");
   console.error("  benchmark --profile <fixture> [--work-dir <dir>]");
+  console.error("  leaderboard [options]");
+  console.error("    --profile <fixture>           filter by profile");
+  console.error("    --compare <run-id-1>,<run-id-2>  compare specific runs");
+  console.error("    --html [--out <path>]         generate HTML report");
+  console.error("    --clear                       clear all leaderboard entries");
   console.error("  providers                      list available providers and required env vars");
   process.exitCode = 1;
 }
@@ -296,6 +339,11 @@ async function main(): Promise<void> {
 
   if (command === "benchmark") {
     await handleBenchmark(args);
+    return;
+  }
+
+  if (command === "leaderboard") {
+    await handleLeaderboard(args);
     return;
   }
 

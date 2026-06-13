@@ -212,11 +212,22 @@ export interface GoldenAnswer {
 
 export interface BenchmarkResult {
   profile: string;
+  runId: string;
+  runDir: string;
   precision: number;
   recall: number;
   citationAccuracy: number;
   f1: number;
   passed: boolean;
+}
+
+export interface LeaderboardEntry {
+  runId: string;
+  profile: string;
+  runDir: string;
+  timestamp: string;
+  gitCommit?: string;
+  scores: BenchmarkResult;
 }
 
 export interface CostEstimate {

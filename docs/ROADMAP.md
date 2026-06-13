@@ -81,10 +81,10 @@ A 9.8+ product must provide:
    - retries and resume ✓
    - JSON/CSV export ✓
 8. v1.0 community & polish
-   - benchmark leaderboard
+   - benchmark leaderboard ✓
+   - npm package ✓
    - Notion/Slack export
    - community provider registry
-   - npm package
 7. v1.0 distributed profile
    - worker queue
    - retries and resume

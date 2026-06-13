@@ -4,14 +4,15 @@
 
 Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.6.0`
+Status: `v0.7.0`
 
 Includes:
 
 - `kimi-agent-swarm-prompt`: Codex-only skill.
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
-- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, replay, and distributed execution.
-- `bin/kasw`: single-entry CLI for research, export, benchmark, init, and distributed worker workflows.
+- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, replay, distributed execution, and benchmark leaderboard.
+- `bin/kasw`: single-entry CLI for research, export, benchmark, leaderboard, init, and distributed worker workflows.
+- Published on npm as `@kimi-agent-swarm-skill/cli`.
 
 This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -231,6 +232,23 @@ Provider, JSONL, and adapter details are intentionally kept out of the main READ
 
 Detailed integration expectations are in [docs/HARNESS_INTEGRATION.md](docs/HARNESS_INTEGRATION.md). The skill-level wide-search operating contract is in [skills/kimi-agent-swarm-prompt/references/wide-search-mode.md](skills/kimi-agent-swarm-prompt/references/wide-search-mode.md).
 
+## Install
+
+Requires [Bun](https://bun.sh) 1.0 or later.
+
+```bash
+npm install -g @kimi-agent-swarm-skill/cli
+# or
+bun install -g @kimi-agent-swarm-skill/cli
+```
+
+Then run:
+
+```bash
+kasw init
+kasw benchmark --profile fixture-paul-graham-corpus
+```
+
 ## Local Wide-Search Runtime
 
 This repo now includes an early local runtime under `runtime/wide-search`. A single entry script at `bin/kasw` lets you run it from the repo root without `cd`.
@@ -365,7 +383,23 @@ Distributed execution:
 
 The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, `distributed-job.json`, and optionally `export.json`/`export.csv`.
 
-Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md).
+Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md) and the live leaderboard:
+
+```bash
+# Show all recorded benchmark runs
+kasw leaderboard
+
+# Filter by profile
+kasw leaderboard --profile fixture-paul-graham-corpus
+
+# Compare specific runs
+kasw leaderboard --compare <run-id-1>,<run-id-2>
+
+# Generate an HTML report with trend charts
+kasw leaderboard --html --out leaderboard-report.html
+```
+
+Every `kasw benchmark` run is automatically recorded to `~/.kasw/leaderboard.jsonl`.
 
 Contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
