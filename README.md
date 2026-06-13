@@ -4,14 +4,14 @@
 
 Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.4.0`
+Status: `v0.5.0`
 
 Includes:
 
 - `kimi-agent-swarm-prompt`: Codex-only skill.
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
-- `runtime/wide-search`: local wide-search runtime with scorer, verifier, and provider registry.
-- `bin/kasw`: single-entry CLI for research, export, and benchmark workflows.
+- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, and replay.
+- `bin/kasw`: single-entry CLI for research, export, benchmark, and init workflows.
 
 This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -327,9 +327,33 @@ RUN_DIR=$(ls -d .runs/wide-search/* | tail -1)
 ./bin/kasw export --run-dir "$RUN_DIR" --format csv
 ```
 
+First-run setup:
+
+```bash
+./bin/kasw init
+# or non-interactively using existing env vars
+./bin/kasw init --non-interactive
+```
+
+Configuration cascade: `~/.kasw/config.json` → project `.kasw.json` → env vars → CLI flags.
+
+Caching and replay:
+
+```bash
+# Cache provider responses for faster/cheaper reruns
+./bin/kasw research "AI browser agent repos" \
+  --profile web-search --provider tavily --use-cache
+
+# Replay a previous run with the same inputs
+RUN_ID=$(ls -d .runs/wide-search/* | tail -1 | xargs basename)
+./bin/kasw research --replay "$RUN_ID"
+```
+
 The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, and optionally `export.json`/`export.csv`.
 
 Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md).
+
+Contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Repo Structure
 
@@ -337,7 +361,12 @@ Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md).
 .
 |-- README.md
 |-- LICENSE
+|-- CONTRIBUTING.md
 |-- THIRD_PARTY_NOTICES.md
+|-- .github/
+|   |-- workflows/
+|   |-- ISSUE_TEMPLATE/
+|   `-- PULL_REQUEST_TEMPLATE.md
 |-- docs/
 |   |-- CODE_QUALITY.md
 |   |-- CODE_REVIEW.md

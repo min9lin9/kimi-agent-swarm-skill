@@ -13,32 +13,34 @@ export { MockSearchProvider } from "./mock-search-provider";
 export { SerperSearchProvider } from "./serper-provider";
 export { TavilySearchProvider } from "./tavily-provider";
 
+export interface CreateSearchProviderOptions {
+  credential?: string;
+  metrics?: UsageMetrics;
+}
+
 export function createSearchProvider(
   name: string,
-  metrics?: UsageMetrics,
+  options: CreateSearchProviderOptions = {},
 ): SearchProvider {
+  const { credential, metrics } = options;
+
   switch (name) {
     case "mock":
       return new MockSearchProvider(metrics);
     case "serper": {
-      const apiKey = process.env.SERPER_API_KEY;
-      if (!apiKey) {
-        throw new Error(
-          "SERPER_API_KEY environment variable is required for the serper provider",
-        );
-      }
+      const apiKey = credential ?? process.env.SERPER_API_KEY ?? "";
       return new SerperSearchProvider(apiKey, metrics);
     }
     case "tavily": {
-      const apiKey = process.env.TAVILY_API_KEY ?? "";
+      const apiKey = credential ?? process.env.TAVILY_API_KEY ?? "";
       return new TavilySearchProvider(apiKey, metrics);
     }
     case "brave": {
-      const apiKey = process.env.BRAVE_API_KEY ?? "";
+      const apiKey = credential ?? process.env.BRAVE_API_KEY ?? "";
       return new BraveSearchProvider(apiKey, metrics);
     }
     case "github": {
-      const token = process.env.GITHUB_TOKEN ?? "";
+      const token = credential ?? process.env.GITHUB_TOKEN ?? "";
       return new GitHubSearchProvider(token, metrics);
     }
     default:

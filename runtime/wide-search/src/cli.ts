@@ -3,7 +3,9 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { runBenchmark } from "./benchmark";
+import { loadConfig } from "./config";
 import { exportRun, supportedExportFormats } from "./export";
+import { getInitInstructions, runInit } from "./init";
 import { runWideSearch } from "./runtime";
 import { verifyRun } from "./verifier";
 import type { BudgetOptions, ExecutionProfile, ExportFormat, RunWideSearchResult } from "./types";
@@ -25,10 +27,6 @@ function readNumberFlag(args: string[], name: string): number | undefined {
 }
 
 function readBooleanFlag(args: string[], name: string): boolean {
-  return args.includes(name);
-}
-
-function hasFlag(args: string[], name: string): boolean {
   return args.includes(name);
 }
 
@@ -64,21 +62,26 @@ async function inspectRun(runDir: string): Promise<{
 }
 
 async function handleRun(args: string[]): Promise<void> {
-  const objective = readFlag(args, "--objective") ?? args.join(" ");
   const workDir = readFlag(args, "--work-dir", process.cwd());
-  const profile = (readFlag(args, "--profile", "fixture") ?? "fixture") as ExecutionProfile;
+  const config = await loadConfig(workDir);
+
+  const objective = readFlag(args, "--objective") ?? args.join(" ");
+  const profile = (readFlag(args, "--profile", config.defaults.profile) ?? "fixture") as ExecutionProfile;
   const providerCommand = readFlag(args, "--provider-command");
   const providerArgsRaw = readFlag(args, "--provider-args", "");
   const providerArgs = providerArgsRaw ? providerArgsRaw.split(" ").filter(Boolean) : [];
-  const providerName = readFlag(args, "--provider") ?? readFlag(args, "--provider-name");
-  const searchDepth = (readFlag(args, "--depth", "standard") ?? "standard") as
+  const providerName = readFlag(args, "--provider") ?? readFlag(args, "--provider-name", config.defaults.provider);
+  const searchDepth = (readFlag(args, "--depth", config.defaults.depth) ?? "standard") as
     | "light"
     | "standard"
     | "deep"
     | "maximum";
 
-  if (!objective) {
-    throw new Error("run command requires --objective or a positional objective");
+  const replayRunId = readFlag(args, "--replay");
+  const useCache = readBooleanFlag(args, "--use-cache");
+
+  if (!objective && !replayRunId) {
+    throw new Error("run command requires --objective, a positional objective, or --replay");
   }
 
   const budget: BudgetOptions = {
@@ -97,6 +100,8 @@ async function handleRun(args: string[]): Promise<void> {
     providerName,
     searchDepth,
     budget,
+    useCache,
+    replayRunId,
   });
   console.log(JSON.stringify(result, null, 2));
 }
@@ -151,6 +156,21 @@ async function handleBenchmark(args: string[]): Promise<void> {
   console.log(JSON.stringify(result, null, 2));
 }
 
+async function handleInit(args: string[]): Promise<void> {
+  const nonInteractive = readBooleanFlag(args, "--non-interactive");
+  const local = readBooleanFlag(args, "--local");
+  const workDir = readFlag(args, "--work-dir", process.cwd());
+
+  const result = await runInit({
+    nonInteractive,
+    global: !local,
+    workDir,
+  });
+
+  console.log(JSON.stringify({ configPath: result.configPath, configured: result.wrote }, null, 2));
+  console.log(getInitInstructions());
+}
+
 function handleProviders(): void {
   const providers = [
     { name: "mock", env: "none", note: "deterministic demo/CI" },
@@ -163,7 +183,7 @@ function handleProviders(): void {
 }
 
 function printUsage(): void {
-  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers>");
+  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers|init>");
   console.error("");
   console.error("  research|run <objective> [options]");
   console.error("    --profile <profile>           fixture | fixture-asset-mgmt | fixture-sellside-research |");
@@ -177,7 +197,10 @@ function printUsage(): void {
   console.error("    --max-provider-calls <n>      abort if provider calls exceed budget");
   console.error("    --max-api-calls <n>           abort if API calls exceed budget");
   console.error("    --dry-run                     print cost estimate without executing");
+  console.error("    --use-cache                   reuse cached provider responses when available");
+  console.error("    --replay <run-id>             rerun a previous run with the same inputs");
   console.error("");
+  console.error("  init [--non-interactive] [--local] [--work-dir <dir>]");
   console.error("  verify --run-dir <dir>");
   console.error("  inspect --run-dir <dir>");
   console.error("  export --run-dir <dir> --format json|csv [--out <path>]");
@@ -211,6 +234,11 @@ async function main(): Promise<void> {
 
   if (command === "benchmark") {
     await handleBenchmark(args);
+    return;
+  }
+
+  if (command === "init") {
+    await handleInit(args);
     return;
   }
 

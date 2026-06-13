@@ -65,18 +65,21 @@ A 9.8+ product must provide:
    - Paul Graham corpus fixture ✓
    - GitHub repo landscape fixture ✓
    - market scan fixture ✓
-5. v0.5 product packaging (in progress)
+5. v0.5 product packaging ✓
    - single-entry CLI (`bin/kasw`) ✓
-   - first-run wizard
+   - first-run wizard (`kasw init`) ✓
    - cost estimator and budget enforcement ✓
+   - config cascade (`~/.kasw/config.json`) ✓
    - Tavily provider ✓
    - Brave provider ✓
    - GitHub provider ✓
-6. v0.6-v0.8 scale & integrations
-   - replay and caching
+6. v0.6 scale & reproducibility ✓
+   - replay and caching ✓
+7. v0.7-v0.8 integrations & distributed
    - in-process then Redis-backed distributed queue
    - JSON/CSV/Notion export
    - benchmark scoring and leaderboards
+   - community provider registry
 7. v1.0 distributed profile
    - worker queue
    - retries and resume

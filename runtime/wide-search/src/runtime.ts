@@ -1,7 +1,9 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import { getCachedSources, setCachedSources } from "./cache";
 import { loadCommandSources } from "./command-provider";
+import { loadConfig, resolveProviderCredential } from "./config";
 import {
   calculateActualCost,
   checkBudget,
@@ -83,6 +85,7 @@ async function loadSources({
   providerName,
   searchDepth,
   metrics,
+  useCache,
 }: LoadSourcesOptions): Promise<Source[]> {
   if (profile.startsWith("fixture")) {
     return loadFixtureSources(profile);
@@ -93,12 +96,34 @@ async function loadSources({
   }
 
   if (profile === "web-search") {
-    const provider = createSearchProvider(providerName ?? "mock", metrics);
-    return provider.search({
+    const depth = searchDepth ?? "standard";
+    const maxResults = maxResultsForDepth(depth);
+    const cacheKey = { provider: providerName ?? "mock", objective, depth, maxResults };
+
+    if (useCache && providerName && providerName !== "mock") {
+      const cached = await getCachedSources(cacheKey);
+      if (cached) {
+        if (metrics) {
+          metrics.notes = metrics.notes ? `${metrics.notes}; cache hit` : "cache hit";
+        }
+        return cached;
+      }
+    }
+
+    const config = await loadConfig();
+    const credential = resolveProviderCredential(config, providerName ?? "mock");
+    const provider = createSearchProvider(providerName ?? "mock", { credential, metrics });
+    const sources = await provider.search({
       objective,
-      depth: searchDepth ?? "standard",
-      maxResults: maxResultsForDepth(searchDepth ?? "standard"),
+      depth,
+      maxResults,
     });
+
+    if (useCache && providerName && providerName !== "mock") {
+      await setCachedSources(cacheKey, sources);
+    }
+
+    return sources;
   }
 
   throw new Error(`unsupported execution profile: ${profile}`);
@@ -170,7 +195,24 @@ export async function runWideSearch({
   searchDepth = "standard",
   workDir = process.cwd(),
   budget = {},
+  useCache = false,
+  replayRunId,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
+  let replayedFrom: string | undefined;
+
+  if (replayRunId) {
+    const previousRunDir = join(workDir, ".runs", "wide-search", replayRunId);
+    const previousRun = JSON.parse(await readFile(join(previousRunDir, "run.json"), "utf8")) as Run;
+    const previousPlan = JSON.parse(
+      await readFile(join(previousRunDir, "research-plan.json"), "utf8"),
+    ) as ResearchPlan;
+    objective = objective ?? previousRun.objective;
+    profile = previousRun.executionProfile;
+    providerName = providerName ?? resolveProviderName(previousRun.executionProfile);
+    searchDepth = previousPlan.searchDepth ?? searchDepth;
+    replayedFrom = replayRunId;
+  }
+
   if (!objective) {
     throw new Error("runWideSearch requires objective");
   }
@@ -229,6 +271,7 @@ export async function runWideSearch({
     providerName,
     searchDepth,
     metrics: usageMetrics,
+    useCache,
   });
   const sources: EnrichedSource[] = rawSources.map((source) => scoreSource(source));
 
@@ -255,6 +298,8 @@ export async function runWideSearch({
     status: "completed",
     createdAt: new Date().toISOString(),
     usageMetrics,
+    replayedFrom,
+    cached: useCache && profile === "web-search" && effectiveProviderName !== "mock",
   };
 
   const researchPlan: ResearchPlan = {

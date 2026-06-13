@@ -63,6 +63,8 @@ export interface Run {
   status: "completed" | "failed";
   createdAt: string;
   usageMetrics: UsageMetrics;
+  replayedFrom?: string;
+  cached?: boolean;
 }
 
 export interface ResearchPlan {
@@ -111,6 +113,8 @@ export interface RunWideSearchOptions {
   searchDepth?: SearchDepth;
   workDir?: string;
   budget?: BudgetOptions;
+  useCache?: boolean;
+  replayRunId?: string;
 }
 
 export interface LoadSourcesOptions {
@@ -121,6 +125,7 @@ export interface LoadSourcesOptions {
   providerName?: string;
   searchDepth?: SearchDepth;
   metrics?: UsageMetrics;
+  useCache?: boolean;
 }
 
 export interface VerifyRunOptions {
@@ -174,4 +179,11 @@ export interface CostEstimate {
   estimatedProviderCalls: number;
   estimatedApiCalls: number;
   estimatedCostUsd: number;
+}
+
+export interface CacheKey {
+  provider: string;
+  objective: string;
+  depth: SearchDepth;
+  maxResults: number;
 }
