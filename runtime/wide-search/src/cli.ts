@@ -6,9 +6,19 @@ import { runBenchmark } from "./benchmark";
 import { loadConfig } from "./config";
 import { exportRun, supportedExportFormats } from "./export";
 import { getInitInstructions, runInit } from "./init";
+import { MemoryQueueAdapter } from "./distributed/memory-adapter";
+import { RedisQueueAdapter } from "./distributed/redis-adapter";
+import { workerLoop } from "./distributed/runner";
 import { runWideSearch } from "./runtime";
 import { verifyRun } from "./verifier";
-import type { BudgetOptions, ExecutionProfile, ExportFormat, RunWideSearchResult } from "./types";
+import type {
+  BudgetOptions,
+  DistributedRunOptions,
+  ExecutionProfile,
+  ExportFormat,
+  RunWideSearchResult,
+  UsageMetrics,
+} from "./types";
 
 function readFlag(args: string[], name: string, fallback: string | undefined = undefined): string | undefined {
   const index = args.indexOf(name);
@@ -79,9 +89,14 @@ async function handleRun(args: string[]): Promise<void> {
 
   const replayRunId = readFlag(args, "--replay");
   const useCache = readBooleanFlag(args, "--use-cache");
+  const distributedEnabled = readBooleanFlag(args, "--distributed");
+  const workers = readNumberFlag(args, "--workers");
+  const maxRetries = readNumberFlag(args, "--max-retries");
+  const queueType = readFlag(args, "--queue-type") as "memory" | "redis" | undefined;
+  const resumeJobId = readFlag(args, "--resume-job-id");
 
-  if (!objective && !replayRunId) {
-    throw new Error("run command requires --objective, a positional objective, or --replay");
+  if (!objective && !replayRunId && !resumeJobId) {
+    throw new Error("run command requires --objective, a positional objective, --replay, or --resume-job-id");
   }
 
   const budget: BudgetOptions = {
@@ -90,6 +105,16 @@ async function handleRun(args: string[]): Promise<void> {
     maxApiCalls: readNumberFlag(args, "--max-api-calls"),
     dryRun: readBooleanFlag(args, "--dry-run"),
   };
+
+  const distributed: DistributedRunOptions | undefined = distributedEnabled
+    ? {
+        enabled: true,
+        workers,
+        maxRetries,
+        queueType,
+        resumeJobId,
+      }
+    : undefined;
 
   const result: RunWideSearchResult = await runWideSearch({
     objective,
@@ -102,6 +127,7 @@ async function handleRun(args: string[]): Promise<void> {
     budget,
     useCache,
     replayRunId,
+    distributed,
   });
   console.log(JSON.stringify(result, null, 2));
 }
@@ -171,6 +197,36 @@ async function handleInit(args: string[]): Promise<void> {
   console.log(getInitInstructions());
 }
 
+async function handleWorker(args: string[]): Promise<void> {
+  const jobId = readFlag(args, "--job-id");
+  const workerId = readFlag(args, "--worker-id") ?? "cli-worker";
+  const workDir = readFlag(args, "--work-dir", process.cwd());
+
+  if (!jobId) {
+    throw new Error("worker command requires --job-id");
+  }
+
+  const memoryAdapter = new MemoryQueueAdapter({ workDir });
+  const job = await memoryAdapter.getJob(jobId);
+  if (!job) {
+    throw new Error(`Job not found: ${jobId}`);
+  }
+
+  const adapter = job.queueType === "redis" ? new RedisQueueAdapter() : memoryAdapter;
+  const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
+
+  await workerLoop(
+    adapter,
+    jobId,
+    workerId,
+    job.executionProfile,
+    job.providerName,
+    job.searchDepth,
+    metrics,
+  );
+  console.log(JSON.stringify({ workerId, done: true, metrics }, null, 2));
+}
+
 function handleProviders(): void {
   const providers = [
     { name: "mock", env: "none", note: "deterministic demo/CI" },
@@ -183,7 +239,7 @@ function handleProviders(): void {
 }
 
 function printUsage(): void {
-  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers|init>");
+  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers|init|worker>");
   console.error("");
   console.error("  research|run <objective> [options]");
   console.error("    --profile <profile>           fixture | fixture-asset-mgmt | fixture-sellside-research |");
@@ -199,7 +255,13 @@ function printUsage(): void {
   console.error("    --dry-run                     print cost estimate without executing");
   console.error("    --use-cache                   reuse cached provider responses when available");
   console.error("    --replay <run-id>             rerun a previous run with the same inputs");
+  console.error("    --distributed                 execute using distributed worker tasks");
+  console.error("    --workers <n>                 number of in-process workers (default: 4)");
+  console.error("    --max-retries <n>             max retries per task (default: 3)");
+  console.error("    --queue-type <memory|redis>   distributed queue backend (default: memory)");
+  console.error("    --resume-job-id <id>          resume a previous distributed job");
   console.error("");
+  console.error("  worker --job-id <id> [--worker-id <id>] [--work-dir <dir>]");
   console.error("  init [--non-interactive] [--local] [--work-dir <dir>]");
   console.error("  verify --run-dir <dir>");
   console.error("  inspect --run-dir <dir>");
@@ -239,6 +301,11 @@ async function main(): Promise<void> {
 
   if (command === "init") {
     await handleInit(args);
+    return;
+  }
+
+  if (command === "worker") {
+    await handleWorker(args);
     return;
   }
 

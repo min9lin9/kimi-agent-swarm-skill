@@ -4,14 +4,14 @@
 
 Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.5.0`
+Status: `v0.6.0`
 
 Includes:
 
 - `kimi-agent-swarm-prompt`: Codex-only skill.
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
-- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, and replay.
-- `bin/kasw`: single-entry CLI for research, export, benchmark, and init workflows.
+- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, replay, and distributed execution.
+- `bin/kasw`: single-entry CLI for research, export, benchmark, init, and distributed worker workflows.
 
 This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -349,7 +349,21 @@ RUN_ID=$(ls -d .runs/wide-search/* | tail -1 | xargs basename)
 ./bin/kasw research --replay "$RUN_ID"
 ```
 
-The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, and optionally `export.json`/`export.csv`.
+Distributed execution:
+
+```bash
+# In-process distributed run with 4 workers
+./bin/kasw research "AI browser agent landscape" \
+  --profile web-search --provider tavily --distributed --workers 4
+
+# External worker (for multi-machine setups with Redis)
+./bin/kasw worker --job-id <job-id> --worker-id machine-1
+
+# Resume a previous distributed job
+./bin/kasw research --resume-job-id <job-id> --distributed
+```
+
+The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, `distributed-job.json`, and optionally `export.json`/`export.csv`.
 
 Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md).
 

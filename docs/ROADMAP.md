@@ -75,11 +75,16 @@ A 9.8+ product must provide:
    - GitHub provider ✓
 6. v0.6 scale & reproducibility ✓
    - replay and caching ✓
-7. v0.7-v0.8 integrations & distributed
-   - in-process then Redis-backed distributed queue
-   - JSON/CSV/Notion export
-   - benchmark scoring and leaderboards
+7. v0.7-v0.8 distributed & integrations ✓
+   - in-process distributed worker queue ✓
+   - Redis-backed distributed queue adapter ✓
+   - retries and resume ✓
+   - JSON/CSV export ✓
+8. v1.0 community & polish
+   - benchmark leaderboard
+   - Notion/Slack export
    - community provider registry
+   - npm package
 7. v1.0 distributed profile
    - worker queue
    - retries and resume

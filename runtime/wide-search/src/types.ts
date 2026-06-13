@@ -115,6 +115,52 @@ export interface RunWideSearchOptions {
   budget?: BudgetOptions;
   useCache?: boolean;
   replayRunId?: string;
+  distributed?: DistributedRunOptions;
+}
+
+export interface DistributedRunOptions {
+  enabled: boolean;
+  workers?: number;
+  maxRetries?: number;
+  resumeJobId?: string;
+  queueType?: "memory" | "redis";
+}
+
+export interface DistributedJob {
+  jobId: string;
+  objective: string;
+  executionProfile: ExecutionProfile;
+  providerName: string;
+  searchDepth: SearchDepth;
+  queueType: "memory" | "redis";
+  status: DistributedJobStatus;
+  tasks: DistributedTask[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type DistributedJobStatus = "pending" | "running" | "completed" | "failed";
+
+export interface DistributedTask {
+  taskId: string;
+  jobId: string;
+  queryFamily: string;
+  query: string;
+  status: DistributedTaskStatus;
+  attempts: number;
+  maxRetries: number;
+  workerId?: string;
+  result?: WorkerResult;
+  error?: string;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+export type DistributedTaskStatus = "pending" | "running" | "completed" | "failed";
+
+export interface WorkerResult {
+  sources: Source[];
+  usageMetrics: UsageMetrics;
 }
 
 export interface LoadSourcesOptions {

@@ -12,6 +12,7 @@ import {
   formatCostReport,
   maxResultsForDepth,
 } from "./costs";
+import { runDistributedWideSearch } from "./distributed/runner";
 import { createSearchProvider } from "./providers";
 import { scoreSource } from "./scorer";
 import { verifyRun } from "./verifier";
@@ -197,6 +198,7 @@ export async function runWideSearch({
   budget = {},
   useCache = false,
   replayRunId,
+  distributed,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   let replayedFrom: string | undefined;
 
@@ -215,6 +217,17 @@ export async function runWideSearch({
 
   if (!objective) {
     throw new Error("runWideSearch requires objective");
+  }
+
+  if (distributed?.enabled) {
+    return runDistributedWideSearch({
+      objective,
+      profile,
+      providerName,
+      searchDepth,
+      workDir,
+      distributed,
+    });
   }
 
   const runId = makeRunId();
