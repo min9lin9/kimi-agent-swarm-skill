@@ -1,5 +1,5 @@
 {
-  "name": "@kimi-agent-swarm-skill/cli",
+  "name": "kimi-agent-swarm-cli",
   "version": "0.7.0",
   "description": "Evidence-backed wide-search CLI for Kimi Agent Swarm",
   "type": "module",

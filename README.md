@@ -12,7 +12,7 @@ Includes:
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
 - `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, replay, distributed execution, and benchmark leaderboard.
 - `bin/kasw`: single-entry CLI for research, export, benchmark, leaderboard, init, and distributed worker workflows.
-- Published on npm as `@kimi-agent-swarm-skill/cli`.
+- Published on npm as `kimi-agent-swarm-cli`.
 
 This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
 
@@ -237,9 +237,9 @@ Detailed integration expectations are in [docs/HARNESS_INTEGRATION.md](docs/HARN
 Requires [Bun](https://bun.sh) 1.0 or later.
 
 ```bash
-npm install -g @kimi-agent-swarm-skill/cli
+npm install -g kimi-agent-swarm-cli
 # or
-bun install -g @kimi-agent-swarm-skill/cli
+bun install -g kimi-agent-swarm-cli
 ```
 
 Then run:

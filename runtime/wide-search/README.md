@@ -7,9 +7,9 @@ Evidence-backed wide-search CLI for Kimi Agent Swarm.
 Requires [Bun](https://bun.sh) 1.0 or later.
 
 ```bash
-npm install -g @kimi-agent-swarm-skill/cli
+npm install -g kimi-agent-swarm-cli
 # or
-bun install -g @kimi-agent-swarm-skill/cli
+bun install -g kimi-agent-swarm-cli
 ```
 
 ## Quick Start
