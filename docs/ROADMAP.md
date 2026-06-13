@@ -18,8 +18,8 @@ Strengths:
 
 Limits:
 
-- only 3 live providers (mock, serper, tavily)
-- benchmark pack partially complete (4 of 6 planned fixtures)
+- 5 providers (mock, serper, tavily, brave, github) but no arXiv yet
+- benchmark pack complete for 6 planned fixtures
 - cost estimator exists but no first-run wizard yet
 - no replay / caching / distributed execution
 - TUI `/swarm` usage not yet validated with real users
@@ -60,17 +60,18 @@ A 9.8+ product must provide:
    - source and claim ledgers
    - synthesis and verification
    - scorer and usage metrics
-4. v0.4 benchmark pack (in progress)
+4. v0.4 benchmark pack ✓
    - YouTube niche fixture ✓
    - Paul Graham corpus fixture ✓
-   - GitHub repo landscape fixture
-   - market scan fixture
+   - GitHub repo landscape fixture ✓
+   - market scan fixture ✓
 5. v0.5 product packaging (in progress)
    - single-entry CLI (`bin/kasw`) ✓
    - first-run wizard
    - cost estimator and budget enforcement ✓
    - Tavily provider ✓
-   - Brave + GitHub providers
+   - Brave provider ✓
+   - GitHub provider ✓
 6. v0.6-v0.8 scale & integrations
    - replay and caching
    - in-process then Redis-backed distributed queue

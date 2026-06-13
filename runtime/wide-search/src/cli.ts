@@ -151,12 +151,26 @@ async function handleBenchmark(args: string[]): Promise<void> {
   console.log(JSON.stringify(result, null, 2));
 }
 
+function handleProviders(): void {
+  const providers = [
+    { name: "mock", env: "none", note: "deterministic demo/CI" },
+    { name: "serper", env: "SERPER_API_KEY", note: "Google Search via Serper.dev" },
+    { name: "tavily", env: "TAVILY_API_KEY", note: "AI-native search" },
+    { name: "brave", env: "BRAVE_API_KEY", note: "Brave Search API" },
+    { name: "github", env: "GITHUB_TOKEN", note: "GitHub repository search" },
+  ];
+  console.log(JSON.stringify(providers, null, 2));
+}
+
 function printUsage(): void {
-  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark>");
+  console.error("Usage: kasw <research|run|verify|inspect|export|benchmark|providers>");
   console.error("");
   console.error("  research|run <objective> [options]");
-  console.error("    --profile <profile>           fixture | fixture-asset-mgmt | fixture-sellside-research | fixture-youtube-niche | fixture-paul-graham-corpus | local-command | web-search");
-  console.error("    --provider|--provider-name    mock (default) | serper | tavily");
+  console.error("    --profile <profile>           fixture | fixture-asset-mgmt | fixture-sellside-research |");
+  console.error("                                  fixture-youtube-niche | fixture-paul-graham-corpus |");
+  console.error("                                  fixture-github-repo-landscape | fixture-market-scan |");
+  console.error("                                  local-command | web-search");
+  console.error("    --provider|--provider-name    mock (default) | serper | tavily | brave | github");
   console.error("    --depth <depth>               light | standard (default) | deep | maximum");
   console.error("    --work-dir <dir>              working directory (default: cwd)");
   console.error("    --max-cost-usd <n>            abort if estimated/actual cost exceeds budget");
@@ -168,6 +182,7 @@ function printUsage(): void {
   console.error("  inspect --run-dir <dir>");
   console.error("  export --run-dir <dir> --format json|csv [--out <path>]");
   console.error("  benchmark --profile <fixture> [--work-dir <dir>]");
+  console.error("  providers                      list available providers and required env vars");
   process.exitCode = 1;
 }
 
@@ -196,6 +211,11 @@ async function main(): Promise<void> {
 
   if (command === "benchmark") {
     await handleBenchmark(args);
+    return;
+  }
+
+  if (command === "providers") {
+    handleProviders();
     return;
   }
 

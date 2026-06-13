@@ -155,6 +155,44 @@ describe("runWideSearch", () => {
     expect(runJson.usageMetrics.estimatedCostUsd).toBe(0);
     expect(runJson.usageMetrics.notes).toInclude("Dry run");
   });
+
+  test("fixture-github-repo-landscape run processes AI repo fixture", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-github-landscape-"));
+
+    const result = await runWideSearch({
+      objective: "Map AI browser agent and agent framework repos",
+      profile: "fixture-github-repo-landscape",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-github-repo-landscape");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("GH-001");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+  });
+
+  test("fixture-market-scan run processes AI coding assistant market fixture", async () => {
+    const workDir = await mkdtemp(join(tmpdir(), "wide-search-market-scan-"));
+
+    const result = await runWideSearch({
+      objective: "Analyze AI coding assistant market landscape",
+      profile: "fixture-market-scan",
+      workDir,
+    });
+
+    expect(result.verification.status).toBe("passed");
+
+    const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
+    expect(runJson.executionProfile).toBe("fixture-market-scan");
+
+    const sourceLedger = await readFile(join(result.runDir, "source-ledger.jsonl"), "utf8");
+    expect(sourceLedger).toInclude("MS-001");
+    expect(sourceLedger).toInclude('"decision":"accepted"');
+  });
 });
 
 describe("verifyRun", () => {

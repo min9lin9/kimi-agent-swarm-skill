@@ -242,6 +242,8 @@ Supported profiles:
 - `fixture-sellside-research`: sell-side research organization roles benchmark
 - `fixture-youtube-niche`: YouTube niche opportunities benchmark
 - `fixture-paul-graham-corpus`: Paul Graham essays benchmark
+- `fixture-github-repo-landscape`: AI repo landscape benchmark
+- `fixture-market-scan`: market landscape benchmark
 - `local-command`: reads source candidates from a local JSONL command
 - `web-search`: live web search via a configured provider
 
@@ -250,6 +252,8 @@ Providers:
 - `mock`: deterministic demo/CI provider (default)
 - `serper`: Serper.dev Google Search API (requires `SERPER_API_KEY`)
 - `tavily`: Tavily AI search API (requires `TAVILY_API_KEY`, or `TAVILY_MOCK=1` for CI)
+- `brave`: Brave Search API (requires `BRAVE_API_KEY`, or `BRAVE_MOCK=1` for CI)
+- `github`: GitHub repository search (requires `GITHUB_TOKEN`, or `GITHUB_MOCK=1` for CI)
 
 Examples:
 
@@ -268,6 +272,15 @@ Examples:
 # Paul Graham benchmark
 ./bin/kasw benchmark --profile fixture-paul-graham-corpus
 
+# GitHub repo landscape benchmark
+./bin/kasw benchmark --profile fixture-github-repo-landscape
+
+# Market scan benchmark
+./bin/kasw benchmark --profile fixture-market-scan
+
+# List available providers
+./bin/kasw providers
+
 # Live web search with Serper (requires SERPER_API_KEY)
 ./bin/kasw research "AI browser agent open-source repos" \
   --profile web-search \
@@ -279,6 +292,18 @@ Examples:
   --profile web-search \
   --provider tavily \
   --depth light
+
+# Live web search with Brave (requires BRAVE_API_KEY)
+./bin/kasw research "AI browser agent open-source repos" \
+  --profile web-search \
+  --provider brave \
+  --depth light
+
+# GitHub repo search (requires GITHUB_TOKEN)
+./bin/kasw research "AI browser agent repos" \
+  --profile web-search \
+  --provider github \
+  --depth standard
 ```
 
 Cost control:

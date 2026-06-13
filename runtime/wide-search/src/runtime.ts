@@ -61,6 +61,8 @@ const FIXTURE_FILE_MAP: Record<string, string> = {
   "fixture-sellside-research": "sellside-research-roles.json",
   "fixture-youtube-niche": "youtube-niche.json",
   "fixture-paul-graham-corpus": "paul-graham-corpus.json",
+  "fixture-github-repo-landscape": "github-repo-landscape.json",
+  "fixture-market-scan": "market-scan.json",
 };
 
 async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {

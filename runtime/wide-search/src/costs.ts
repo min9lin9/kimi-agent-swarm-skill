@@ -9,6 +9,8 @@ export const PROVIDER_PRICING: Record<string, ProviderPricing> = {
   mock: { perCallUsd: 0 },
   serper: { perCallUsd: 0.001 }, // approx $1 per 1,000 searches
   tavily: { perCallUsd: 0.005 }, // starter tier approx
+  brave: { perCallUsd: 0.003 }, // approx based on paid tier volume
+  github: { perCallUsd: 0 }, // free tier, token raises rate limit only
 };
 
 export function maxResultsForDepth(depth: SearchDepth): number {

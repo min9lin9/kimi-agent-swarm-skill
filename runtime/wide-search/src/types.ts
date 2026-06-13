@@ -6,6 +6,8 @@ export type ExecutionProfile =
   | "fixture-sellside-research"
   | "fixture-youtube-niche"
   | "fixture-paul-graham-corpus"
+  | "fixture-github-repo-landscape"
+  | "fixture-market-scan"
   | "local-command"
   | "web-search";
 

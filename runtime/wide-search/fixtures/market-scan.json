@@ -1,0 +1,246 @@
+{
+  "sources": [
+    {
+      "id": "MS-001",
+      "url": "https://github.com/features/copilot",
+      "title": "GitHub Copilot Official",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "GitHub Copilot is the most widely adopted AI coding assistant by installed base.",
+        "It offers code completion, chat, and multi-file editing features."
+      ]
+    },
+    {
+      "id": "MS-002",
+      "url": "https://www.cursor.com/",
+      "title": "Cursor by Anysphere",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "Cursor is an AI-first code editor built on top of VS Code.",
+        "It emphasizes context-aware editing and agentic coding workflows."
+      ]
+    },
+    {
+      "id": "MS-003",
+      "url": "https://codeium.com/windsurf",
+      "title": "Windsurf by Codeium",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 4, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "Windsurf is an agentic IDE from Codeium with cascade-style task execution."
+      ]
+    },
+    {
+      "id": "MS-004",
+      "url": "https://www.anthropic.com/claude-code",
+      "title": "Claude Code by Anthropic",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "Claude Code is a terminal-based agentic coding assistant."
+      ]
+    },
+    {
+      "id": "MS-005",
+      "url": "https://cloud.google.com/products/gemini/code-assist",
+      "title": "Gemini Code Assist by Google",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Gemini Code Assist is integrated into Google Cloud and enterprise IDEs."
+      ]
+    },
+    {
+      "id": "MS-006",
+      "url": "https://aws.amazon.com/q/developer/",
+      "title": "Amazon Q Developer",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Amazon Q Developer provides code generation, transformation, and operational assistance."
+      ]
+    },
+    {
+      "id": "MS-007",
+      "url": "https://www.jetbrains.com/ai/",
+      "title": "JetBrains AI Assistant",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "JetBrains AI Assistant is embedded across JetBrains IDEs."
+      ]
+    },
+    {
+      "id": "MS-008",
+      "url": "https://www.tabnine.com/",
+      "title": "Tabnine",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Tabnine focuses on enterprise-ready, privacy-preserving code completion."
+      ]
+    },
+    {
+      "id": "MS-009",
+      "url": "https://replit.com/agent",
+      "title": "Replit Agent",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Replit Agent builds full applications from natural language prompts inside Replit."
+      ]
+    },
+    {
+      "id": "MS-010",
+      "url": "https://sourcegraph.com/cody",
+      "title": "Sourcegraph Cody",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Sourcegraph Cody uses code intelligence and search context to answer codebase questions."
+      ]
+    },
+    {
+      "id": "MS-011",
+      "url": "https://www.continue.dev/",
+      "title": "Continue.dev",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Continue.dev is an open-source AI coding assistant plugin for VS Code."
+      ]
+    },
+    {
+      "id": "MS-012",
+      "url": "https://www.augmentcode.com/",
+      "title": "Augment Code",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Augment Code targets large-scale enterprise codebases with deep context understanding."
+      ]
+    },
+    {
+      "id": "MS-013",
+      "url": "https://supermaven.com/",
+      "title": "Supermaven",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 3, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Supermaven offers a fast, context-aware code completion experience."
+      ]
+    },
+    {
+      "id": "MS-014",
+      "url": "https://coderabbit.ai/",
+      "title": "CodeRabbit",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 3, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "CodeRabbit provides AI-driven code review automation for pull requests."
+      ]
+    },
+    {
+      "id": "MS-015",
+      "url": "https://gerrit.googlesource.com/plugins/coder-gerrit/",
+      "title": "Coder Gerrit Plugin",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 2, "authority": 2, "freshness": 3, "diversity": 3, "extractionValue": 2 },
+      "claims": [
+        "A niche code review assistant plugin with limited market presence."
+      ]
+    },
+    {
+      "id": "MS-016",
+      "url": "https://www.reddit.com/r/LocalLLaMA/comments/example/",
+      "title": "Reddit comparison of AI coding assistants",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 3, "authority": 2, "freshness": 5, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "Community discussions highlight Cursor and Claude Code as leading tools in 2026."
+      ]
+    },
+    {
+      "id": "MS-017",
+      "url": "https://news.ycombinator.com/item?id=example",
+      "title": "HN thread on agentic coding",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 3, "authority": 2, "freshness": 5, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "Developers report that agentic IDEs reduce boilerplate writing time significantly."
+      ]
+    },
+    {
+      "id": "MS-018",
+      "url": "https://www.gartner.com/en/newsroom/example",
+      "title": "Gartner market guide for AI coding assistants",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Enterprise adoption of AI coding assistants is accelerating in regulated industries."
+      ]
+    },
+    {
+      "id": "MS-019",
+      "url": "https://www.forrester.com/report/example",
+      "title": "Forrester Wave on generative coding tools",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Forrester ranks vendors on security, context awareness, and enterprise integration."
+      ]
+    },
+    {
+      "id": "MS-020",
+      "url": "https://techcrunch.com/2026/01/01/ai-coding-market/",
+      "title": "TechCrunch AI coding market overview",
+      "sourceClass": "secondary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "market-scan",
+      "scores": { "relevance": 3, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "The AI coding assistant market is consolidating around a few vertically integrated players."
+      ]
+    }
+  ]
+}

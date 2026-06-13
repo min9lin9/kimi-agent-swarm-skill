@@ -1,0 +1,308 @@
+{
+  "sources": [
+    {
+      "id": "GH-001",
+      "url": "https://github.com/browser-use/browser-use",
+      "title": "browser-use/browser-use",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "Browser-use connects AI agents directly to browser UI elements for task automation.",
+        "It is one of the most starred AI browser agent repositories."
+      ]
+    },
+    {
+      "id": "GH-002",
+      "url": "https://github.com/browserbase/stagehand",
+      "title": "browserbase/stagehand",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 5, "authority": 4, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "claims": [
+        "Stagehand provides an AI-driven browser automation framework with act/extract/observe primitives.",
+        "It is built on top of Playwright."
+      ]
+    },
+    {
+      "id": "GH-003",
+      "url": "https://github.com/antiwork/shortest",
+      "title": "antiwork/shortest",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 5, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Shortest is a natural-language AI testing framework that converts prompts into browser tests."
+      ]
+    },
+    {
+      "id": "GH-004",
+      "url": "https://github.com/nanobrowser/nanobrowser",
+      "title": "nanobrowser/nanobrowser",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 5, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Nanobrowser is an open-source AI web agent that runs directly in the browser as an extension."
+      ]
+    },
+    {
+      "id": "GH-005",
+      "url": "https://github.com/Significant-Gravitas/AutoGPT",
+      "title": "Significant-Gravitas/AutoGPT",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "AutoGPT was one of the first open-source projects to popularize autonomous AI agents.",
+        "It focuses on goal-oriented autonomous task execution."
+      ]
+    },
+    {
+      "id": "GH-006",
+      "url": "https://github.com/langchain-ai/langchain",
+      "title": "langchain-ai/langchain",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "LangChain provides abstractions for chaining LLM calls, tools, and memory.",
+        "It is widely used as a foundation for agent frameworks."
+      ]
+    },
+    {
+      "id": "GH-007",
+      "url": "https://github.com/crewAIInc/crewAI",
+      "title": "crewAIInc/crewAI",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "CrewAI structures agents into role-based crews that collaborate on tasks."
+      ]
+    },
+    {
+      "id": "GH-008",
+      "url": "https://github.com/microsoft/autogen",
+      "title": "microsoft/autogen",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "AutoGen from Microsoft enables multi-agent conversations and tool use."
+      ]
+    },
+    {
+      "id": "GH-009",
+      "url": "https://github.com/pydantic/pydantic-ai",
+      "title": "pydantic/pydantic-ai",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Pydantic AI is an agent framework built around type-safe structured outputs."
+      ]
+    },
+    {
+      "id": "GH-010",
+      "url": "https://github.com/huggingface/smolagents",
+      "title": "huggingface/smolagents",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "Smolagents from Hugging Face emphasizes small, efficient agent code execution."
+      ]
+    },
+    {
+      "id": "GH-011",
+      "url": "https://github.com/run-llama/llama_index",
+      "title": "run-llama/llama_index",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "LlamaIndex focuses on data ingestion and retrieval for LLM applications."
+      ]
+    },
+    {
+      "id": "GH-012",
+      "url": "https://github.com/deepset-ai/haystack",
+      "title": "deepset-ai/haystack",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "Haystack is an end-to-end NLP framework for building search and question-answering systems."
+      ]
+    },
+    {
+      "id": "GH-013",
+      "url": "https://github.com/ScrapeGraphAI/Scrapegraph-ai",
+      "title": "ScrapeGraphAI/Scrapegraph-ai",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "ScrapeGraphAI uses LLMs to generate scraping pipelines from natural language prompts."
+      ]
+    },
+    {
+      "id": "GH-014",
+      "url": "https://github.com/scrapy/scrapy",
+      "title": "scrapy/scrapy",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "Scrapy is a mature Python framework for large-scale web scraping."
+      ]
+    },
+    {
+      "id": "GH-015",
+      "url": "https://github.com/microsoft/playwright",
+      "title": "microsoft/playwright",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "claims": [
+        "Playwright is a cross-browser automation library widely used by AI agent projects."
+      ]
+    },
+    {
+      "id": "GH-016",
+      "url": "https://github.com/SeleniumHQ/selenium",
+      "title": "SeleniumHQ/selenium",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 3, "extractionValue": 3 },
+      "claims": [
+        "Selenium is the legacy standard for browser automation."
+      ]
+    },
+    {
+      "id": "GH-017",
+      "url": "https://github.com/OpenInterpreter/open-interpreter",
+      "title": "OpenInterpreter/open-interpreter",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "Open Interpreter lets LLMs run code locally to accomplish tasks."
+      ]
+    },
+    {
+      "id": "GH-018",
+      "url": "https://github.com/OpenAI-Swarm/community",
+      "title": "OpenAI-Swarm/community",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 3, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "OpenAI Swarm demonstrated lightweight multi-agent orchestration patterns."
+      ]
+    },
+    {
+      "id": "GH-019",
+      "url": "https://github.com/reworkd/AgentGPT",
+      "title": "reworkd/AgentGPT",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 3, "freshness": 3, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "AgentGPT provided a browser-based interface for running autonomous agents."
+      ]
+    },
+    {
+      "id": "GH-020",
+      "url": "https://github.com/TransformerOptimus/SuperAGI",
+      "title": "TransformerOptimus/SuperAGI",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 3, "freshness": 3, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "SuperAGI aimed to be a production-ready autonomous agent framework with tools and memory."
+      ]
+    },
+    {
+      "id": "GH-021",
+      "url": "https://github.com/langchain-ai/langgraph",
+      "title": "langchain-ai/langgraph",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "claims": [
+        "LangGraph enables building stateful, multi-actor agent workflows as graphs."
+      ]
+    },
+    {
+      "id": "GH-022",
+      "url": "https://github.com/e2b-dev/E2B",
+      "title": "e2b-dev/E2B",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 3, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 3 },
+      "claims": [
+        "E2B provides sandboxed cloud environments for running AI-generated code."
+      ]
+    },
+    {
+      "id": "GH-023",
+      "url": "https://github.com/vectara/py-vectara",
+      "title": "vectara/py-vectara",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 2, "authority": 3, "freshness": 4, "diversity": 4, "extractionValue": 2 },
+      "claims": [
+        "Vectara offers RAG-as-a-service with retrieval and summarization APIs."
+      ]
+    },
+    {
+      "id": "GH-024",
+      "url": "https://github.com/jina-ai/jina",
+      "title": "jina-ai/jina",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 2, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 2 },
+      "claims": [
+        "Jina is a neural search framework for building multimodal AI applications."
+      ]
+    },
+    {
+      "id": "GH-025",
+      "url": "https://github.com/weaviate/weaviate",
+      "title": "weaviate/weaviate",
+      "sourceClass": "primary",
+      "publishedAt": "2026-01-01",
+      "discoveredBy": "github-repo-landscape",
+      "scores": { "relevance": 2, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 2 },
+      "claims": [
+        "Weaviate is an open-source vector database for AI-native applications."
+      ]
+    }
+  ]
+}
