@@ -1,4 +1,4 @@
-# @kimi-agent-swarm-skill/cli
+# kimi-agent-swarm-cli
 
 Evidence-backed wide-search CLI for Kimi Agent Swarm.
 

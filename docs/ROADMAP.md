@@ -2,27 +2,30 @@
 
 This roadmap tracks the path from Codex prompt skill to evidence-backed wide-search product.
 
-## Current State: v0.3+ (post-migration)
+## Current State: v0.7.0
 
 Strengths:
 
 - Kimi Code CLI skill using built-in `AgentSwarm` and subagents
 - Bun + TypeScript wide-search runtime
-- fixture, fixture-asset-mgmt, fixture-sellside-research, fixture-youtube-niche profiles
-- local-command and web-search profiles
-- mock + Serper providers
+- 6 benchmark fixtures with golden answers
+- 5 search providers (mock, serper, tavily, brave, github)
 - source scorer with weighted scoring, domain authority, and freshness penalties
 - verifier with duplicate, conflict, freshness, confidence, broken-reference, and coverage-gap checks
-- usage metrics in `run.json`
+- cost estimator, budget enforcement, and dry-run mode
+- config cascade (`~/.kasw/config.json`)
+- provider response caching and run replay
+- in-process and Redis-backed distributed execution
+- benchmark leaderboard with HTML reports
+- published on npm as `kimi-agent-swarm-cli`
 - GitHub Actions quality gate passing
 
 Limits:
 
-- 5 providers (mock, serper, tavily, brave, github) but no arXiv yet
-- benchmark pack complete for 6 planned fixtures
-- cost estimator exists but no first-run wizard yet
-- no replay / caching / distributed execution
+- no arXiv provider yet
 - TUI `/swarm` usage not yet validated with real users
+- no Notion/Slack export
+- no community provider registry
 
 ## Target: 9.8+ Repeatable Open Source Product
 
@@ -84,10 +87,4 @@ A 9.8+ product must provide:
    - benchmark leaderboard ✓
    - npm package ✓
    - Notion/Slack export
-   - community provider registry
-7. v1.0 distributed profile
-   - worker queue
-   - retries and resume
-   - caching and budgets
-   - recorded/live benchmark reporting
    - community provider registry

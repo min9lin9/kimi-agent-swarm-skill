@@ -54,12 +54,17 @@ Claim matching uses Jaccard token similarity with a threshold of 0.6.
 | F1 | 0.3846 |
 | Passed | ✅ |
 
+### fixture-youtube-niche
+
+| Metric | Value |
+|--------|-------|
+| Precision | 0.0571 |
+| Recall | 1.0000 |
+| Citation accuracy | 1.0000 |
+| F1 | 0.1081 |
+| Passed | ✅ |
+
 The relatively low precision across benchmarks reflects a high number of accepted claims from rich corpora; recall and citation accuracy are perfect. Future work will add claim clustering to reduce redundancy and improve precision.
-
-## Fixtures in Progress
-
-- `fixture-github-repo-landscape`
-- `fixture-market-scan`
 
 ## CI
 

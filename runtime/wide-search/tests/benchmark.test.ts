@@ -40,4 +40,16 @@ describe("runBenchmark", () => {
     expect(result.f1).toBeGreaterThan(0);
     expect(result.passed).toBe(true);
   });
+
+  test("fixture-youtube-niche scores above threshold", async () => {
+    const golden = goldenAnswers["fixture-youtube-niche"];
+    const result = await runBenchmark("fixture-youtube-niche", golden);
+
+    expect(result.profile).toBe("fixture-youtube-niche");
+    expect(result.precision).toBeGreaterThan(0);
+    expect(result.recall).toBeGreaterThan(0);
+    expect(result.citationAccuracy).toBe(1);
+    expect(result.f1).toBeGreaterThan(0);
+    expect(result.passed).toBe(true);
+  });
 });

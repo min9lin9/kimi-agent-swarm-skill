@@ -53,4 +53,16 @@ export const goldenAnswers: Record<string, GoldenAnswer> = {
       "https://www.gartner.com/en/newsroom/example",
     ],
   },
+  "fixture-youtube-niche": {
+    expectedClaims: [
+      "Niche: Personal finance for Gen Z and young millennials.",
+      "Niche: Tutorials and reviews of AI tools for writers, designers, and video creators.",
+      "Audience: 18-28 year olds entering the workforce with student debt and first salaries.",
+      "Monetization angle: Affiliate links to neobanks, investment apps, budgeting tools, and digital courses.",
+    ],
+    expectedSourceUrls: [
+      "https://example.com/youtube-niche/personal-finance-for-gen-z",
+      "https://example.com/youtube-niche/ai-tools-for-creators",
+    ],
+  },
 };

@@ -1,6 +1,6 @@
 # Code Quality Guide
 
-This repository is a Codex-only skill package. Quality checks focus on installability, prompt-safety, licensing, and reproducible packaging rather than application runtime tests.
+This repository started as a Codex-only skill package and has grown into an evidence-backed wide-search runtime product. Quality checks cover both skill packaging and runtime correctness.
 
 ## Quality Gates
 

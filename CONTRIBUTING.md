@@ -50,6 +50,29 @@ To add a new benchmark fixture:
 4. Add runtime and benchmark tests.
 5. Record results in `BENCHMARKS.md`.
 
+## Distributed Execution Development
+
+To extend the distributed execution system:
+
+1. Implement new queue adapters in `runtime/wide-search/src/distributed/`.
+2. Follow the `QueueAdapter` interface for job/task lifecycle.
+3. Ensure failed tasks are retried up to `maxRetries`.
+4. Add tests in `runtime/wide-search/tests/distributed/`.
+
+## NPM Package Release
+
+The CLI is published from `runtime/wide-search` as `kimi-agent-swarm-cli`.
+
+```bash
+cd runtime/wide-search
+bun run typecheck
+bun test
+npm pack --dry-run
+npm publish --access public
+```
+
+Update `runtime/wide-search/package.json` version and both README files before publishing.
+
 ## Code Style
 
 - TypeScript with strict mode enabled.

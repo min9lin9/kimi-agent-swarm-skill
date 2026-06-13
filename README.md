@@ -14,9 +14,7 @@ Includes:
 - `bin/kasw`: single-entry CLI for research, export, benchmark, leaderboard, init, and distributed worker workflows.
 - Published on npm as `kimi-agent-swarm-cli`.
 
-This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone.
-
-This project is unofficial and is not affiliated with Moonshot AI, Kimi, or `treylom/prompt-engineering-skills`.
+This project is unofficial and is not a Claude Code skill pack, ChatGPT GPT, Gemini Gem, or hosted Kimi Agent Swarm clone. It is not affiliated with Moonshot AI, Kimi, or `treylom/prompt-engineering-skills`.
 
 ## What It Does
 
