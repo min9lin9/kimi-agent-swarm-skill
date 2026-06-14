@@ -197,7 +197,7 @@ export interface BudgetOptions {
   dryRun?: boolean;
 }
 
-export type ExportFormat = "json" | "csv";
+export type ExportFormat = "json" | "csv" | "html" | "svg";
 
 export interface ExportOptions {
   runDir: string;

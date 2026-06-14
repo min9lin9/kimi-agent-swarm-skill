@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { loadConfig, resolveProviderCredential } from "../config";
+import { renderMarkdownSynthesis } from "../markdown";
 import { createSearchProvider } from "../providers";
 import { scoreSource } from "../scorer";
 import { verifyRun } from "../verifier";
@@ -29,6 +30,7 @@ import type {
   SearchDepth,
   Source,
   UsageMetrics,
+  VerificationReport,
   WorkerResult,
 } from "../types";
 
@@ -52,41 +54,6 @@ function claimFreshness(source: EnrichedSource): ClaimFreshness {
     .toISOString()
     .split("T")[0];
   return source.publishedAt >= oneYearAgo ? "current" : "stale";
-}
-
-function renderSynthesis({
-  objective,
-  profile,
-  sources,
-  claims,
-  verification,
-}: {
-  objective: string;
-  profile: ExecutionProfile;
-  sources: EnrichedSource[];
-  claims: Claim[];
-  verification: { status: string; acceptedSources: number; rejectedSources: number };
-}): string {
-  const acceptedSources = sources.filter((s) => s.decision === "accepted");
-  const acceptedClaims = claims;
-  const lines = [
-    `# Synthesis: ${objective}`,
-    "",
-    `**Profile:** ${profile}`,
-    `**Accepted sources:** ${acceptedSources.length} | **Rejected sources:** ${sources.length - acceptedSources.length}`,
-    `**Accepted claims:** ${acceptedClaims.length}`,
-    `**Verification:** ${verification.status}`,
-    "",
-    "## Accepted sources",
-    ...acceptedSources.map((source) => `- [${source.sourceClass}] [${source.title}](${source.url}) (${source.decision})`),
-    "",
-    "## Claims",
-    ...acceptedClaims.map((claim) => `- ${claim.claim} [confidence: ${claim.confidence}, freshness: ${claim.freshness}]`),
-    "",
-    "## Method notes",
-    "This run used distributed execution. Results were aggregated from multiple worker tasks.",
-  ];
-  return lines.join("\n");
 }
 
 function createQueueAdapter(
@@ -313,8 +280,8 @@ export async function runDistributedWideSearch({
   );
   await writeFile(join(runDir, "distributed-job.json"), `${JSON.stringify(completedJob, null, 2)}\n`);
 
-  const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
-  const synthesis = renderSynthesis({ objective: objective ?? "", profile, sources, claims, verification });
+  const verification: VerificationReport = await verifyRun({ runDir, minAcceptedSources: 1 });
+  const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
   await writeFile(join(runDir, "synthesis.md"), synthesis);
 
   return {

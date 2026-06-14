@@ -162,7 +162,7 @@ async function handleExport(args: string[]): Promise<void> {
     throw new Error("export command requires --run-dir");
   }
   if (!format || !supportedExportFormats().includes(format)) {
-    throw new Error(`export command requires --format json|csv`);
+    throw new Error(`export command requires --format json|csv|html|svg`);
   }
 
   const destination = await exportRun({ runDir, format, outPath });
@@ -303,7 +303,7 @@ function printUsage(): void {
   console.error("  init [--non-interactive] [--local] [--work-dir <dir>]");
   console.error("  verify --run-dir <dir>");
   console.error("  inspect --run-dir <dir>");
-  console.error("  export --run-dir <dir> --format json|csv [--out <path>]");
+  console.error("  export --run-dir <dir> --format json|csv|html|svg [--out <path>]");
   console.error("  benchmark --profile <fixture> [--work-dir <dir>]");
   console.error("  leaderboard [options]");
   console.error("    --profile <fixture>           filter by profile");

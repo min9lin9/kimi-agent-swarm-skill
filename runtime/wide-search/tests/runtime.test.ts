@@ -23,8 +23,14 @@ describe("runWideSearch", () => {
     expect(result.runDir).toInclude(".runs/wide-search/");
 
     const synthesis = await readFile(join(result.runDir, "synthesis.md"), "utf8");
-    expect(synthesis).toInclude("## Answer");
-    expect(synthesis).toInclude("## Evidence");
+    expect(synthesis).toInclude("Map evidence-backed research workflow requirements");
+    expect(synthesis).toInclude(result.runId);
+    expect(synthesis).toInclude("## Accepted sources");
+    expect(synthesis).toInclude("| Source | Class | Decision | Relevance | Authority | Freshness | Diversity | Extraction |");
+    expect(synthesis).toInclude("## Claims");
+    expect(synthesis).toInclude("| Claim | Sources | Confidence | Freshness |");
+    expect(synthesis).toInclude("## Verification details");
+    expect(synthesis).toInclude("**Verification status:** passed");
     expect(synthesis).toInclude("S001");
 
     const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));

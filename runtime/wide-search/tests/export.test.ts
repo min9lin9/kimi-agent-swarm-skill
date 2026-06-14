@@ -66,6 +66,32 @@ describe("exportRun", () => {
     expect(content).toInclude("https://example.com/source");
   });
 
+  test("exports HTML synthesis report", async () => {
+    const runDir = await createRunDir();
+    const outPath = await exportRun({ runDir, format: "html" });
+
+    expect(outPath).toEndWith("export.html");
+    const content = await readFile(outPath, "utf8");
+    expect(content).toInclude("<!DOCTYPE html>");
+    expect(content).toInclude("Test export");
+    expect(content).toInclude("Exported claim");
+    expect(content).toInclude("Source");
+  });
+
+  test("exports SVG source-claim graph", async () => {
+    const runDir = await createRunDir();
+    const outPath = await exportRun({ runDir, format: "svg" });
+
+    expect(outPath).toEndWith("export.svg");
+    const content = await readFile(outPath, "utf8");
+    expect(content).toStartWith("<?xml version=\"1.0\"");
+    expect(content).toInclude("<svg");
+    expect(content).toInclude("Test export");
+    expect(content).toInclude("Source");
+    expect(content).toInclude("Exported claim");
+    expect(content).toInclude("Source ↔ Claim Graph");
+  });
+
   test("throws for unsupported format", async () => {
     const runDir = await createRunDir();
     await expect(

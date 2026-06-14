@@ -23,6 +23,16 @@ describe("runDistributedWideSearch", () => {
     const runJson = JSON.parse(await readFile(join(result.runDir, "run.json"), "utf8"));
     expect(runJson.executionProfile).toBe("fixture-paul-graham-corpus");
 
+    const synthesis = await readFile(join(result.runDir, "synthesis.md"), "utf8");
+    expect(synthesis).toInclude("Summarize Paul Graham essays");
+    expect(synthesis).toInclude(result.runId);
+    expect(synthesis).toInclude("## Accepted sources");
+    expect(synthesis).toInclude("| Source | Class | Decision | Relevance | Authority | Freshness | Diversity | Extraction |");
+    expect(synthesis).toInclude("## Claims");
+    expect(synthesis).toInclude("| Claim | Sources | Confidence | Freshness |");
+    expect(synthesis).toInclude("## Verification details");
+    expect(synthesis).toInclude("**Verification status:** passed");
+
     const jobJson = JSON.parse(await readFile(join(result.runDir, "distributed-job.json"), "utf8"));
     expect(jobJson.status).toBe("completed");
     expect(jobJson.tasks.every((t: { status: string }) => t.status === "completed")).toBe(true);

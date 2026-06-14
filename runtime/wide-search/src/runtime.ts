@@ -13,6 +13,7 @@ import {
   maxResultsForDepth,
 } from "./costs";
 import { runDistributedWideSearch } from "./distributed/runner";
+import { renderMarkdownSynthesis } from "./markdown";
 import { createSearchProvider } from "./providers";
 import { scoreSource } from "./scorer";
 import { verifyRun } from "./verifier";
@@ -31,7 +32,6 @@ import type {
   SearchDepth,
   Source,
   UsageMetrics,
-  VerificationReport,
 } from "./types";
 
 function makeRunId(): string {
@@ -130,55 +130,6 @@ async function loadSources({
   throw new Error(`unsupported execution profile: ${profile}`);
 }
 
-
-function renderSynthesis({
-  objective,
-  profile,
-  sources,
-  claims,
-  verification,
-}: {
-  objective: string;
-  profile: ExecutionProfile;
-  sources: EnrichedSource[];
-  claims: Claim[];
-  verification: VerificationReport;
-}): string {
-  const accepted = sources.filter((source) => source.decision === "accepted");
-  const rejected = sources.filter((source) => source.decision === "rejected");
-  const topRows = claims
-    .map(
-      (claim) =>
-        `| ${claim.claim} | ${claim.sourceIds.join(", ")} | ${claim.confidence} |`,
-    )
-    .join("\n");
-
-  return `# Wide-Search Synthesis
-
-## Answer
-${objective}
-
-The ${profile} run found ${accepted.length} accepted source(s) and ${rejected.length} rejected source(s). The accepted evidence supports ${claims.length} claim(s).
-
-## Top Findings
-| Finding | Evidence | Confidence |
-| --- | --- | --- |
-${topRows}
-
-## Source Coverage
-- Accepted sources: ${accepted.length}
-- Rejected sources: ${rejected.length}
-- Verification status: ${verification.status}
-
-## Evidence
-- Source ledger: source-ledger.jsonl
-- Claim ledger: claim-ledger.jsonl
-- Verification: verification-report.json
-
-## Next Human Check
-- Review the accepted sources and rerun with a broader search profile before making production decisions.
-`;
-}
 
 function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
   if (profile === "web-search") {
@@ -336,7 +287,7 @@ export async function runWideSearch({
   );
 
   const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
-  const synthesis = renderSynthesis({ objective, profile, sources, claims, verification });
+  const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
   await writeFile(join(runDir, "synthesis.md"), synthesis);
 
   console.log(formatCostReport(effectiveProviderName, usageMetrics));
