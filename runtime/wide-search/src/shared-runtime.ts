@@ -1,20 +1,36 @@
+import { writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+
 import { getCachedSources, setCachedSources } from './cache';
 import { loadCommandSources } from './command-provider';
 import { loadConfig, resolveProviderCredential } from './config';
-import { calculateActualCost, checkBudget, maxResultsForDepth } from './costs';
-import { createSearchProvider } from './providers';
+import {
+  calculateActualCost,
+  checkBudget,
+  checkEstimatedBudget,
+  formatCostReport,
+  maxResultsForDepth,
+} from './costs';
+import { defaultLogger } from './logger';
+import { renderMarkdownSynthesis } from './markdown';
+import { createSearchProvider, getProviderDescriptor } from './providers';
 import { scoreSource } from './scorer';
 import { claimConfidence, claimFreshness, loadFixtureSources } from './shared';
 import type {
   BudgetOptions,
   Claim,
+  CostEstimate,
   EnrichedSource,
   ExecutionProfile,
   LoadSourcesOptions,
+  ResearchPlan,
+  Run,
   SearchDepth,
   Source,
   UsageMetrics,
+  VerificationReport,
 } from './types';
+import { verifyRun } from './verifier';
 
 export interface RunWideSearchTaskOptions {
   objective: string;
@@ -36,6 +52,22 @@ export interface RunWideSearchTaskResult {
   sources: EnrichedSource[];
   claims: Claim[];
   usageMetrics: UsageMetrics;
+}
+
+export interface FinalizeRunOptions {
+  run: Run;
+  objective: string;
+  profile: ExecutionProfile;
+  sources: EnrichedSource[];
+  claims: Claim[];
+  plan?: ResearchPlan;
+  usageMetrics: UsageMetrics;
+  runDir: string;
+  budget?: BudgetOptions;
+  isDryRun?: boolean;
+  distributed?: boolean;
+  providerName: string;
+  estimate?: CostEstimate;
 }
 
 export function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
@@ -72,8 +104,12 @@ export async function loadSources({
 
   if (profile === 'web-search') {
     const depth = searchDepth ?? 'standard';
-    const resolvedMaxResults = maxResults ?? maxResultsForDepth(depth);
     const effectiveProvider = providerName ?? 'mock';
+    const providerMaxResults = getProviderDescriptor(effectiveProvider)?.defaultMaxResults ?? 100;
+    const resolvedMaxResults = Math.min(
+      maxResults ?? maxResultsForDepth(depth),
+      providerMaxResults
+    );
     const cacheKey = {
       provider: effectiveProvider,
       objective,
@@ -165,4 +201,71 @@ export async function runWideSearchTask({
   }
 
   return { sources, claims, usageMetrics };
+}
+
+export async function finalizeRun({
+  run,
+  objective,
+  profile,
+  sources,
+  claims,
+  plan,
+  usageMetrics,
+  runDir,
+  budget = {},
+  isDryRun = false,
+  distributed = false,
+  providerName,
+  estimate,
+}: FinalizeRunOptions): Promise<{ run: Run; verification: VerificationReport }> {
+  if (isDryRun) {
+    if (estimate) {
+      checkEstimatedBudget(estimate, budget);
+    }
+    usageMetrics.notes =
+      usageMetrics.notes ??
+      `Dry run: no ${distributed ? 'distributed tasks' : 'provider'} executed.`;
+    defaultLogger.info(formatCostReport(providerName, usageMetrics));
+    return {
+      run,
+      verification: {
+        status: 'passed',
+        acceptedSources: 0,
+        rejectedSources: 0,
+        unsupportedClaims: 0,
+        staleClaims: 0,
+        unknownFreshnessClaims: 0,
+        lowConfidenceClaims: 0,
+        duplicateClaimGroups: [],
+        conflictingClaimPairs: [],
+        coverageGaps: [],
+        failures: [],
+        warnings: ['dry-run: no sources or claims evaluated'],
+      },
+    };
+  }
+
+  usageMetrics.actualCostUsd = calculateActualCost(providerName, usageMetrics);
+  checkBudget(providerName, usageMetrics, budget);
+
+  await writeFile(join(runDir, 'run.json'), `${JSON.stringify(run, null, 2)}\n`);
+  if (plan) {
+    await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(plan, null, 2)}\n`);
+  }
+  await writeFile(
+    join(runDir, 'source-ledger.jsonl'),
+    `${sources.map((source) => JSON.stringify(source)).join('\n')}\n`
+  );
+  await writeFile(
+    join(runDir, 'claim-ledger.jsonl'),
+    `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
+  );
+
+  const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
+  const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
+  await writeFile(join(runDir, 'synthesis.md'), synthesis);
+
+  defaultLogger.info(formatCostReport(providerName, usageMetrics));
+
+  return { run, verification };
 }

@@ -1,17 +1,18 @@
-import type { BudgetOptions, CostEstimate, SearchDepth, UsageMetrics } from './types';
+import { getProviderDescriptor, listProviderNames } from './providers/registry';
+import type {
+  BudgetOptions,
+  CostEstimate,
+  ProviderPricing,
+  SearchDepth,
+  UsageMetrics,
+} from './types';
 
-export interface ProviderPricing {
-  perCallUsd: number;
-  per1kTokensUsd?: number;
-}
-
-export const PROVIDER_PRICING: Record<string, ProviderPricing> = {
-  mock: { perCallUsd: 0 },
-  serper: { perCallUsd: 0.001 }, // approx $1 per 1,000 searches
-  tavily: { perCallUsd: 0.005 }, // starter tier approx
-  brave: { perCallUsd: 0.003 }, // approx based on paid tier volume
-  github: { perCallUsd: 0 }, // free tier, token raises rate limit only
-};
+export const PROVIDER_PRICING: Record<string, ProviderPricing> = Object.fromEntries(
+  listProviderNames().map((name) => {
+    const descriptor = getProviderDescriptor(name);
+    return [name, descriptor?.pricing ?? { perCallUsd: 0 }];
+  })
+);
 
 export function maxResultsForDepth(depth: SearchDepth): number {
   switch (depth) {

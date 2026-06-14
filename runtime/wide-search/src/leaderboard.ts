@@ -2,6 +2,7 @@ import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
+import { escapeHtml } from './html-utils';
 import type { BenchmarkResult, LeaderboardEntry } from './types';
 
 export interface ComparisonResult {
@@ -51,15 +52,6 @@ export async function compareRuns(runIds: string[]): Promise<ComparisonResult> {
 
 export async function clearLeaderboard(): Promise<void> {
   await writeFile(getLeaderboardPath(), '');
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
 }
 
 function formatTimestamp(iso: string): string {

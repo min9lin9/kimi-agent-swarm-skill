@@ -1,12 +1,10 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { checkEstimatedBudget, estimateRunCost, formatCostReport } from './costs';
+import { checkEstimatedBudget, estimateRunCost } from './costs';
 import { runDistributedWideSearch } from './distributed/runner';
-import { defaultLogger } from './logger';
-import { renderMarkdownSynthesis } from './markdown';
 import { makeRunId } from './shared';
-import { resolveProviderName, runWideSearchTask } from './shared-runtime';
+import { finalizeRun, resolveProviderName, runWideSearchTask } from './shared-runtime';
 import type {
   BudgetOptions,
   ResearchPlan,
@@ -15,7 +13,6 @@ import type {
   RunWideSearchResult,
   UsageMetrics,
 } from './types';
-import { verifyRun } from './verifier';
 
 export async function runWideSearch({
   objective,
@@ -77,10 +74,7 @@ export async function runWideSearch({
     estimatedCostUsd: estimate.estimatedCostUsd,
   };
 
-  checkEstimatedBudget(estimate, budget);
-
   if (budget.dryRun) {
-    usageMetrics.notes = 'Dry run: no provider executed.';
     const dryRun: Run = {
       runId,
       objective,
@@ -89,26 +83,23 @@ export async function runWideSearch({
       createdAt: new Date().toISOString(),
       usageMetrics,
     };
-    await writeFile(join(runDir, 'run.json'), `${JSON.stringify(dryRun, null, 2)}\n`);
-    return {
-      runId,
+    const { verification } = await finalizeRun({
+      run: dryRun,
+      objective,
+      profile,
+      sources: [],
+      claims: [],
+      usageMetrics,
       runDir,
-      verification: {
-        status: 'passed',
-        acceptedSources: 0,
-        rejectedSources: 0,
-        unsupportedClaims: 0,
-        staleClaims: 0,
-        unknownFreshnessClaims: 0,
-        lowConfidenceClaims: 0,
-        duplicateClaimGroups: [],
-        conflictingClaimPairs: [],
-        coverageGaps: [],
-        failures: [],
-        warnings: ['dry-run: no sources or claims evaluated'],
-      },
-    };
+      budget,
+      isDryRun: true,
+      providerName: effectiveProviderName,
+      estimate,
+    });
+    return { runId, runDir, verification };
   }
+
+  checkEstimatedBudget(estimate, budget);
 
   const {
     sources,
@@ -125,6 +116,7 @@ export async function runWideSearch({
     useCache,
     workDir,
     metrics: usageMetrics,
+    checkBudget: false,
   });
 
   const run: Run = {
@@ -151,22 +143,18 @@ export async function runWideSearch({
     ],
   };
 
-  await writeFile(join(runDir, 'run.json'), `${JSON.stringify(run, null, 2)}\n`);
-  await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(researchPlan, null, 2)}\n`);
-  await writeFile(
-    join(runDir, 'source-ledger.jsonl'),
-    `${sources.map((source) => JSON.stringify(source)).join('\n')}\n`
-  );
-  await writeFile(
-    join(runDir, 'claim-ledger.jsonl'),
-    `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
-  );
-
-  const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
-  const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
-  await writeFile(join(runDir, 'synthesis.md'), synthesis);
-
-  defaultLogger.info(formatCostReport(effectiveProviderName, taskMetrics));
+  const { verification } = await finalizeRun({
+    run,
+    objective,
+    profile,
+    sources,
+    claims,
+    plan: researchPlan,
+    usageMetrics: taskMetrics,
+    runDir,
+    budget,
+    providerName: effectiveProviderName,
+  });
 
   return {
     runId,

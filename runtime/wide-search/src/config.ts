@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
+import { PROVIDER_REGISTRY } from './providers/registry';
 import type { ExecutionProfile, SearchDepth } from './types';
 
 export interface ProviderConfig {
@@ -98,18 +99,19 @@ export async function writeConfig(
   return path;
 }
 
-const PROVIDER_ENV_VARS: Record<string, string> = {
-  serper: 'SERPER_API_KEY',
-  tavily: 'TAVILY_API_KEY',
-  brave: 'BRAVE_API_KEY',
-  github: 'GITHUB_TOKEN',
-};
+const PROVIDER_ENV_VARS: Record<string, string> = Object.fromEntries(
+  PROVIDER_REGISTRY.filter((descriptor) => descriptor.envVar).map((descriptor) => [
+    descriptor.name,
+    descriptor.envVar!,
+  ])
+);
 
 export function resolveProviderCredential(
   config: KaswConfig,
   providerName: string
 ): string | undefined {
-  const envVar = PROVIDER_ENV_VARS[providerName];
+  const descriptor = PROVIDER_REGISTRY.find((d) => d.name === providerName);
+  const envVar = descriptor?.envVar;
   const envValue = envVar ? process.env[envVar] : undefined;
   if (envValue) {
     return envValue;

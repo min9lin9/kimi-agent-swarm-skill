@@ -13,6 +13,7 @@ import { exportRun, supportedExportFormats } from './export';
 import { getInitInstructions, runInit } from './init';
 import { clearLeaderboard, compareRuns, generateHtmlReport, getLeaderboard } from './leaderboard';
 import { defaultLogger, setDefaultLoggerLevel } from './logger';
+import { PROVIDER_REGISTRY, listProviderNames } from './providers';
 import { runWideSearch } from './runtime';
 import type {
   BudgetOptions,
@@ -39,8 +40,7 @@ const EXECUTION_PROFILES: ExecutionProfile[] = [
 
 const SEARCH_DEPTHS: SearchDepth[] = ['light', 'standard', 'deep', 'maximum'];
 
-const PROVIDER_NAMES = ['mock', 'serper', 'tavily', 'brave', 'github'] as const;
-type ProviderName = (typeof PROVIDER_NAMES)[number];
+const PROVIDER_NAMES = listProviderNames();
 
 const QUEUE_TYPES: Array<'memory' | 'redis'> = ['memory', 'redis'];
 
@@ -169,6 +169,19 @@ async function handleRun(args: string[]): Promise<void> {
   const providerCommand = getFlag(parsed, 'provider-command');
   const providerArgsRaw = getFlag(parsed, 'provider-args') ?? '';
   const providerArgs = providerArgsRaw ? providerArgsRaw.split(' ').filter(Boolean) : [];
+
+  if (profile === 'local-command' && !providerCommand) {
+    throw new Error('local-command profile requires --provider-command');
+  }
+
+  if (profile !== 'local-command' && providerCommand) {
+    throw new Error('--provider-command is only valid with --profile local-command');
+  }
+
+  if (profile !== 'local-command' && providerArgsRaw) {
+    throw new Error('--provider-args is only valid with --profile local-command');
+  }
+
   const providerName =
     validateEnum(
       'provider',
@@ -386,13 +399,12 @@ async function handleWorker(args: string[]): Promise<void> {
 }
 
 function handleProviders(): void {
-  const providers = [
-    { name: 'mock', env: 'none', note: 'deterministic demo/CI' },
-    { name: 'serper', env: 'SERPER_API_KEY', note: 'Google Search via Serper.dev' },
-    { name: 'tavily', env: 'TAVILY_API_KEY', note: 'AI-native search' },
-    { name: 'brave', env: 'BRAVE_API_KEY', note: 'Brave Search API' },
-    { name: 'github', env: 'GITHUB_TOKEN', note: 'GitHub repository search' },
-  ];
+  const providers = PROVIDER_REGISTRY.map((descriptor) => ({
+    name: descriptor.name,
+    env: descriptor.envVar || 'none',
+    credential: descriptor.credentialTypeLabel,
+    note: descriptor.description,
+  }));
   console.log(JSON.stringify(providers, null, 2));
 }
 
@@ -416,7 +428,7 @@ function printUsage(): void {
   );
   defaultLogger.error('                                  local-command | web-search');
   defaultLogger.error(
-    '    --provider|--provider-name    mock (default) | serper | tavily | brave | github'
+    `    --provider|--provider-name    ${listProviderNames().join(' | ')} (default: mock)`
   );
   defaultLogger.error(
     '    --depth <depth>               light | standard (default) | deep | maximum'
@@ -436,7 +448,7 @@ function printUsage(): void {
   );
   defaultLogger.error('    --distributed                 execute using distributed worker tasks');
   defaultLogger.error(
-    '    --workers <n>                 number of in-process workers (default: 4)'
+    '    --workers <n>                 number of in-process workers; use 0 for external-only (default: 4)'
   );
   defaultLogger.error('    --max-retries <n>             max retries per task (default: 3)');
   defaultLogger.error(

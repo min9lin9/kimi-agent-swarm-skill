@@ -1,7 +1,7 @@
 {
   "name": "kimi-agent-swarm-cli",
-  "version": "0.7.0",
-  "description": "Evidence-backed wide-search CLI for Kimi Agent Swarm",
+  "version": "1.0.0",
+  "description": "Evidence-backed wide-search CLI with provider registry, distributed execution, and benchmark leaderboard",
   "type": "module",
   "bin": {
     "kasw": "src/cli.ts"
@@ -27,7 +27,17 @@
   "optionalDependencies": {
     "ioredis": "^5.11.1"
   },
-  "keywords": ["kimi", "agent", "swarm", "wide-search", "research", "cli"],
+  "keywords": [
+    "kimi",
+    "agent",
+    "swarm",
+    "wide-search",
+    "research",
+    "cli",
+    "registry",
+    "benchmark",
+    "distributed"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

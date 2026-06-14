@@ -1,6 +1,7 @@
 import { type Interface, createInterface } from 'node:readline/promises';
 
 import { type KaswConfig, type ProviderConfig, getGlobalConfigPath, writeConfig } from './config';
+import { PROVIDER_REGISTRY, type ProviderCredentialType } from './providers/registry';
 
 export interface InitOptions {
   nonInteractive?: boolean;
@@ -11,21 +12,18 @@ export interface InitOptions {
 interface ProviderPrompt {
   name: string;
   label: string;
-  credentialType: 'apiKey' | 'token';
+  credentialType: ProviderCredentialType;
   envVar: string;
 }
 
-const PROVIDERS: ProviderPrompt[] = [
-  {
-    name: 'serper',
-    label: 'Serper.dev (Google Search)',
-    credentialType: 'apiKey',
-    envVar: 'SERPER_API_KEY',
-  },
-  { name: 'tavily', label: 'Tavily', credentialType: 'apiKey', envVar: 'TAVILY_API_KEY' },
-  { name: 'brave', label: 'Brave Search', credentialType: 'apiKey', envVar: 'BRAVE_API_KEY' },
-  { name: 'github', label: 'GitHub', credentialType: 'token', envVar: 'GITHUB_TOKEN' },
-];
+const PROVIDERS: ProviderPrompt[] = PROVIDER_REGISTRY.filter(
+  (descriptor): descriptor is typeof descriptor & { envVar: string } => Boolean(descriptor.envVar)
+).map((descriptor) => ({
+  name: descriptor.name,
+  label: descriptor.description,
+  credentialType: descriptor.credentialType,
+  envVar: descriptor.envVar,
+}));
 
 async function prompt(question: string, reader?: Interface): Promise<string> {
   if (!reader) {
@@ -134,10 +132,11 @@ export async function runInit(
 
 export function getInitInstructions(): string {
   const configPath = getGlobalConfigPath();
+  const envVarList = PROVIDERS.map((provider) => provider.envVar).join(', ');
   return `Configuration written to ${configPath}.
 
 You can also set API keys via environment variables:
-  SERPER_API_KEY, TAVILY_API_KEY, BRAVE_API_KEY, GITHUB_TOKEN
+  ${envVarList}
 
 Run a quick demo:
   kasw research "AI browser agent repos" --profile fixture

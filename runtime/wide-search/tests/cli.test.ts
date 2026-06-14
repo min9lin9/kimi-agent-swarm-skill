@@ -80,7 +80,7 @@ describe('CLI integration', () => {
     expect(providers.some((p: { name: string }) => p.name === 'serper')).toBe(true);
   });
 
-  test('run with objective parses it correctly and returns dry-run cost JSON', async () => {
+  test('run with objective parses it correctly and returns dry-run result', async () => {
     const { exitCode, stdout } = await runCli([
       'run',
       'test objective',
@@ -92,12 +92,11 @@ describe('CLI integration', () => {
     ]);
 
     expect(exitCode).toBe(0);
-    const result = parseCliJson(stdout) as { runDir: string };
+    const result = parseCliJson(stdout) as { runDir: string; verification: { status: string } };
     expect(result.runDir).toBeDefined();
+    expect(result.verification.status).toBe('passed');
 
-    const runJson = JSON.parse(await readFile(join(result.runDir, 'run.json'), 'utf8'));
-    expect(runJson.objective).toBe('test objective');
-    expect(runJson.usageMetrics.notes).toInclude('Dry run');
+    await expect(readFile(join(result.runDir, 'run.json'))).rejects.toThrow('ENOENT');
   });
 
   test('run with -- terminator treats remaining args as the objective', async () => {

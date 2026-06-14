@@ -146,7 +146,7 @@ describe('runWideSearch', () => {
     expect(sourceLedger).toInclude('"decision":"accepted"');
   });
 
-  test('dry-run writes cost estimate without executing', async () => {
+  test('dry-run returns passed verification without writing run artifacts', async () => {
     const workDir = await mkdtemp(join(tmpdir(), 'wide-search-dry-run-'));
 
     const result = await runWideSearch({
@@ -157,11 +157,12 @@ describe('runWideSearch', () => {
     });
 
     expect(result.verification.status).toBe('passed');
+    expect(result.verification.acceptedSources).toBe(0);
+    expect(result.verification.rejectedSources).toBe(0);
     expect(result.verification.warnings.some((w) => w.includes('dry-run'))).toBeTrue();
+    expect(result.runDir).toInclude('.runs/wide-search/');
 
-    const runJson = JSON.parse(await readFile(join(result.runDir, 'run.json'), 'utf8'));
-    expect(runJson.usageMetrics.estimatedCostUsd).toBe(0);
-    expect(runJson.usageMetrics.notes).toInclude('Dry run');
+    await expect(readFile(join(result.runDir, 'run.json'))).rejects.toThrow('ENOENT');
   });
 
   test('fixture-github-repo-landscape run processes AI repo fixture', async () => {

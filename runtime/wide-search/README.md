@@ -276,7 +276,7 @@ kasw research "..." --profile web-search --provider tavily --distributed --queue
 kasw worker --job-id <job-id> --queue-type redis --redis-url redis://localhost:6379
 ```
 
-If `--workers 0` is not supported directly, omit `--distributed` from the controller and use the internal flow; external workers are typically used with Redis.
+Use `--workers 0` with `--queue-type redis` when you want only external worker processes and no in-process workers.
 
 ### Redis setup
 
@@ -331,11 +331,9 @@ Errors print a concise message to `stderr`. Common error cases:
 ## Adding a new provider
 
 1. Implement `SearchProvider` in `src/providers/<name>-provider.ts`.
-2. Export it from `src/providers/index.ts` and add it to `createSearchProvider()`.
-3. Add pricing to `src/costs.ts` `PROVIDER_PRICING`.
-4. Add the required env var mapping in `src/config.ts` `PROVIDER_ENV_VARS`.
-5. Register the provider name in `src/cli.ts` `PROVIDER_NAMES` and in the `providers` command table.
-6. Add tests in `tests/<name>-provider.test.ts`.
+2. Add a descriptor entry to `src/providers/registry.ts` with the factory, env var, credential type, pricing, and max-results cap.
+3. Export the provider from `src/providers/index.ts`.
+4. Add tests in `tests/<name>-provider.test.ts`.
 
 ## License
 

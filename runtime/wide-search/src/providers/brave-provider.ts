@@ -1,3 +1,4 @@
+import { inferSourceClass, parsePublishedAt } from '../provider-utils';
 import type { Source, SourceScores, UsageMetrics } from '../types';
 import { fetchWithRetry } from './fetch-utils';
 import type { SearchOptions, SearchProvider } from './search-provider';
@@ -14,40 +15,6 @@ interface BraveResponse {
   web?: {
     results?: BraveResult[];
   };
-}
-
-function inferSourceClass(url: string): 'primary' | 'secondary' {
-  try {
-    const hostname = new URL(url).hostname.toLowerCase();
-    if (
-      hostname === 'github.com' ||
-      hostname.endsWith('.github.io') ||
-      hostname === 'arxiv.org' ||
-      hostname.endsWith('.gov') ||
-      hostname.endsWith('.edu') ||
-      hostname.endsWith('.ac.uk')
-    ) {
-      return 'primary';
-    }
-  } catch {
-    // invalid URL, fall through to secondary
-  }
-  return 'secondary';
-}
-
-function parsePublishedAt(dateText?: string): string {
-  if (!dateText) return new Date().toISOString().split('T')[0];
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
-    return dateText;
-  }
-
-  const parsed = new Date(dateText);
-  if (!Number.isNaN(parsed.getTime())) {
-    return parsed.toISOString().split('T')[0];
-  }
-
-  return new Date().toISOString().split('T')[0];
 }
 
 function buildScores(sourceClass: 'primary' | 'secondary', rank: number): SourceScores {

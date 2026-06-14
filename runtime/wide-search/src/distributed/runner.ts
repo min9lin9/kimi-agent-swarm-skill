@@ -2,19 +2,16 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import {
-  calculateActualCost,
+  BudgetExceededError,
   checkBudget,
   checkEstimatedBudget,
   estimateRunCost,
-  formatCostReport,
   getProviderPricing,
   maxResultsForDepth,
 } from '../costs';
-import { defaultLogger } from '../logger';
-import { renderMarkdownSynthesis } from '../markdown';
 import { scoreSource } from '../scorer';
 import { claimConfidence, claimFreshness, makeRunId } from '../shared';
-import { resolveProviderName, runWideSearchTask } from '../shared-runtime';
+import { finalizeRun, resolveProviderName, runWideSearchTask } from '../shared-runtime';
 import type {
   Claim,
   DistributedJob,
@@ -29,10 +26,8 @@ import type {
   SearchDepth,
   Source,
   UsageMetrics,
-  VerificationReport,
   WorkerResult,
 } from '../types';
-import { verifyRun } from '../verifier';
 import { MemoryQueueAdapter } from './memory-adapter';
 import type { QueueAdapter } from './queue-adapter';
 import { type RedisAdapterOptions, RedisQueueAdapter } from './redis-adapter';
@@ -135,8 +130,12 @@ export async function workerLoop(
         budget,
         metrics
       );
+      checkBudget(providerName, metrics, budget);
       await adapter.completeTask(task.taskId, result);
     } catch (error) {
+      if (error instanceof BudgetExceededError) {
+        throw error;
+      }
       const message = error instanceof Error ? error.message : String(error);
       await adapter.failTask(task.taskId, message);
     }
@@ -183,6 +182,10 @@ export async function runDistributedWideSearch({
   const maxRetries = distributed.maxRetries ?? 3;
   const workers = distributed.workers ?? 4;
 
+  if (workers === 0 && distributed.queueType !== 'redis') {
+    throw new Error('--workers 0 requires --queue-type redis with external worker processes');
+  }
+
   const plans = profile.startsWith('fixture')
     ? await splitFixtureTasks(profile, join(import.meta.dir, '../../fixtures'))
     : splitWebSearchTasks(objective);
@@ -205,10 +208,7 @@ export async function runDistributedWideSearch({
     estimatedCostUsd: estimate.estimatedCostUsd,
   };
 
-  checkEstimatedBudget(estimate, budget);
-
   if (budget.dryRun) {
-    usageMetrics.notes = 'Dry run: no distributed tasks executed.';
     const dryRun: Run = {
       runId,
       objective,
@@ -225,27 +225,25 @@ export async function runDistributedWideSearch({
       sourceTargets: ['official', 'community', 'secondary'],
       stopConditions: ['dry-run: all distributed tasks planned but not executed'],
     };
-    await writeFile(join(runDir, 'run.json'), `${JSON.stringify(dryRun, null, 2)}\n`);
-    await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(dryPlan, null, 2)}\n`);
-    return {
-      runId,
+    const { verification } = await finalizeRun({
+      run: dryRun,
+      objective,
+      profile,
+      sources: [],
+      claims: [],
+      plan: dryPlan,
+      usageMetrics,
       runDir,
-      verification: {
-        status: 'passed',
-        acceptedSources: 0,
-        rejectedSources: 0,
-        unsupportedClaims: 0,
-        staleClaims: 0,
-        unknownFreshnessClaims: 0,
-        lowConfidenceClaims: 0,
-        duplicateClaimGroups: [],
-        conflictingClaimPairs: [],
-        coverageGaps: [],
-        failures: [],
-        warnings: ['dry-run: no sources or claims evaluated'],
-      },
-    };
+      budget,
+      isDryRun: true,
+      distributed: true,
+      providerName: effectiveProviderName,
+      estimate,
+    });
+    return { runId, runDir, verification };
   }
+
+  checkEstimatedBudget(estimate, budget);
 
   const adapter = createQueueAdapter(distributed, workDir);
 
@@ -338,8 +336,6 @@ export async function runDistributedWideSearch({
     }),
     { providerCalls: 0, apiCalls: 0, estimatedCostUsd: estimate.estimatedCostUsd }
   );
-  totalMetrics.actualCostUsd = calculateActualCost(effectiveProviderName, totalMetrics);
-  checkBudget(effectiveProviderName, totalMetrics, budget);
 
   const run: Run = {
     runId,
@@ -361,29 +357,24 @@ export async function runDistributedWideSearch({
     stopConditions: ['all distributed tasks completed'],
   };
 
-  await writeFile(join(runDir, 'run.json'), `${JSON.stringify(run, null, 2)}\n`);
-  await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(researchPlan, null, 2)}\n`);
-  await writeFile(
-    join(runDir, 'source-ledger.jsonl'),
-    `${sources.map((source) => JSON.stringify(source)).join('\n')}\n`
-  );
-  await writeFile(
-    join(runDir, 'claim-ledger.jsonl'),
-    `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
-  );
   await writeFile(
     join(runDir, 'distributed-job.json'),
     `${JSON.stringify(completedJob, null, 2)}\n`
   );
 
-  const verification: VerificationReport = await verifyRun({
+  const { verification } = await finalizeRun({
+    run,
+    objective,
+    profile,
+    sources,
+    claims,
+    plan: researchPlan,
+    usageMetrics: totalMetrics,
     runDir,
-    minAcceptedSources: 1,
+    budget,
+    distributed: true,
+    providerName: effectiveProviderName,
   });
-  const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
-  await writeFile(join(runDir, 'synthesis.md'), synthesis);
-
-  defaultLogger.info(formatCostReport(effectiveProviderName, totalMetrics));
 
   if (adapter.quit) {
     await adapter.quit();

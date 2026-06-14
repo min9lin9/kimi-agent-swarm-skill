@@ -15,7 +15,7 @@ export function splitWebSearchTasks(objective: string): TaskPlan[] {
     { queryFamily: 'best-of', query: `best ${objective}` },
     { queryFamily: 'comparison', query: `${objective} comparison` },
     { queryFamily: 'github', query: `${objective} github` },
-    { queryFamily: 'latest', query: `${objective} 2026` },
+    { queryFamily: 'latest', query: `${objective} ${new Date().getFullYear()}` },
   ];
 
   // Deduplicate while preserving order.

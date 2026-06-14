@@ -46,11 +46,17 @@ function domainAuthorityBonus(url: string): number {
   return 0;
 }
 
+function dateDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().split('T')[0];
+}
+
 function freshnessPenalty(publishedAt?: string): number {
   if (!publishedAt || publishedAt === 'unknown') return -0.3;
-  if (publishedAt >= '2026-01-01') return 0;
-  if (publishedAt >= '2025-01-01') return -0.2;
-  if (publishedAt >= '2024-01-01') return -0.5;
+  if (publishedAt >= dateDaysAgo(365)) return 0;
+  if (publishedAt >= dateDaysAgo(365 * 2)) return -0.2;
+  if (publishedAt >= dateDaysAgo(365 * 3)) return -0.5;
   return -0.8;
 }
 

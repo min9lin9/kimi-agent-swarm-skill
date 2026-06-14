@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+import { escapeHtml } from './html-utils';
 import type {
   Claim,
   EnrichedSource,
@@ -33,15 +34,6 @@ function escapeCsvField(field: string): string {
     return `"${field.replace(/"/g, '""')}"`;
   }
   return field;
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
 }
 
 function sourceUrlForClaim(claim: Claim, sources: EnrichedSource[]): string {

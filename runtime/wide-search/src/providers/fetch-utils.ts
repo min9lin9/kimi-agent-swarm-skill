@@ -4,6 +4,17 @@ export interface FetchWithRetryOptions extends RequestInit {
   retryDelayMs?: number;
 }
 
+export class FetchTimeoutError extends Error {
+  constructor(
+    message: string,
+    public readonly url: string,
+    public readonly timeoutMs: number
+  ) {
+    super(message);
+    this.name = 'FetchTimeoutError';
+  }
+}
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -40,10 +51,14 @@ export async function fetchWithRetry(
     }
   }
 
-  const reason =
-    lastError?.name === 'AbortError'
-      ? `timed out after ${timeoutMs}ms`
-      : (lastError?.message ?? 'unknown error');
+  const isTimeout = lastError?.name === 'AbortError';
+  const reason = isTimeout
+    ? `timed out after ${timeoutMs}ms`
+    : (lastError?.message ?? 'unknown error');
+
+  if (isTimeout) {
+    throw new FetchTimeoutError(`Request to ${url} timed out after ${timeoutMs}ms`, url, timeoutMs);
+  }
 
   throw new Error(`Request to ${url} failed after ${retries + 1} attempt(s): ${reason}`);
 }
