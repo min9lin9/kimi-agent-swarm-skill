@@ -1,8 +1,10 @@
 import { readFile } from 'node:fs/promises';
 
 import type {
+  Claim,
   ClaimConfidence,
   ClaimFreshness,
+  EnrichedSource,
   ExecutionProfile,
   Source,
   SourceScores,
@@ -52,4 +54,20 @@ export function claimFreshness(publishedAt?: string): ClaimFreshness {
     .split('T')[0];
 
   return publishedAt >= oneYearAgo ? 'current' : 'stale';
+}
+
+export function extractClaims(sources: EnrichedSource[]): Claim[] {
+  const claims: Claim[] = [];
+  for (const source of sources.filter((item) => item.decision === 'accepted')) {
+    for (const claim of source.claims ?? []) {
+      claims.push({
+        id: `C${String(claims.length + 1).padStart(3, '0')}`,
+        claim,
+        sourceIds: [source.id],
+        confidence: claimConfidence(source.scores),
+        freshness: claimFreshness(source.publishedAt),
+      });
+    }
+  }
+  return claims;
 }

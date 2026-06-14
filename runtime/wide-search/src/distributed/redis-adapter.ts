@@ -12,6 +12,7 @@ export interface RedisAdapterOptions {
 interface RedisClient {
   on(event: 'error', listener: (err: Error) => void): this;
   on(event: 'reconnecting', listener: () => void): this;
+  connect(): Promise<void>;
   quit(): Promise<'OK'>;
   get(key: string): Promise<string | null>;
   set(key: string, value: string): Promise<'OK'>;
@@ -42,14 +43,14 @@ export class RedisQueueAdapter implements QueueAdapter {
 
   private async getClient(): Promise<RedisClient> {
     if (!this.client) {
-      let Redis: (new (url: string) => RedisClient) | undefined;
+      let Redis: (new (url: string, options?: Record<string, unknown>) => RedisClient) | undefined;
       try {
         // ioredis is an optional dependency. Use a variable module name so
         // TypeScript does not require it at compile time.
         const moduleName = 'ioredis';
         const mod = (await import(moduleName)) as unknown as {
-          default?: new (url: string) => RedisClient;
-          Redis?: new (url: string) => RedisClient;
+          default?: new (url: string, options?: Record<string, unknown>) => RedisClient;
+          Redis?: new (url: string, options?: Record<string, unknown>) => RedisClient;
         };
         Redis = mod.default ?? mod.Redis;
         if (!Redis) {
@@ -67,13 +68,29 @@ export class RedisQueueAdapter implements QueueAdapter {
         url.password = this.password;
       }
 
-      this.client = new Redis(url.toString());
+      const connectTimeout = 10000;
+      this.client = new Redis(url.toString(), {
+        lazyConnect: true,
+        connectTimeout,
+        maxRetriesPerRequest: 1,
+        enableOfflineQueue: false,
+      });
       this.client.on('error', (err: Error) => {
         defaultLogger.error(`Redis adapter connection error: ${err.message}`);
       });
       this.client.on('reconnecting', () => {
         defaultLogger.error('Redis adapter reconnecting...');
       });
+
+      await Promise.race([
+        this.client.connect(),
+        new Promise<void>((_, reject) => {
+          setTimeout(
+            () => reject(new Error(`Redis connection timed out after ${connectTimeout}ms`)),
+            connectTimeout
+          );
+        }),
+      ]);
     }
     return this.client;
   }

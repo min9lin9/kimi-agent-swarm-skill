@@ -67,6 +67,7 @@ export interface Run {
   usageMetrics: UsageMetrics;
   replayedFrom?: string;
   cached?: boolean;
+  providerName?: string;
 }
 
 export interface ResearchPlan {

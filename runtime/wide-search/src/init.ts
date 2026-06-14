@@ -130,10 +130,14 @@ export async function runInit(
   }
 }
 
-export function getInitInstructions(): string {
-  const configPath = getGlobalConfigPath();
+export function getInitInstructions(configPath: string): string {
   const envVarList = PROVIDERS.map((provider) => provider.envVar).join(', ');
-  return `Configuration written to ${configPath}.
+  const scopeHint = configPath.endsWith('.kasw.json')
+    ? 'Local configuration written to the current working directory.'
+    : 'Global configuration written to your home directory.';
+  return `${scopeHint}
+
+Path: ${configPath}
 
 You can also set API keys via environment variables:
   ${envVarList}

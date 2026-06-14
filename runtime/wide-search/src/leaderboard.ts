@@ -1,6 +1,6 @@
 import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { escapeHtml } from './html-utils';
 import type { BenchmarkResult, LeaderboardEntry } from './types';
@@ -10,23 +10,43 @@ export interface ComparisonResult {
   entries: LeaderboardEntry[];
 }
 
-export function getLeaderboardDir(): string {
-  return join(homedir(), '.kasw');
+export function getLeaderboardDir(
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): string {
+  if (leaderboardPath) {
+    return dirname(leaderboardPath);
+  }
+  return join(workDir, '.runs');
 }
 
-export function getLeaderboardPath(): string {
-  return join(getLeaderboardDir(), 'leaderboard.jsonl');
+export function getLeaderboardPath(
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): string {
+  if (leaderboardPath) {
+    return leaderboardPath;
+  }
+  return join(getLeaderboardDir(workDir), 'leaderboard.jsonl');
 }
 
-export async function recordEntry(entry: LeaderboardEntry): Promise<void> {
-  const dir = getLeaderboardDir();
-  await mkdir(dir, { recursive: true });
-  await appendFile(getLeaderboardPath(), `${JSON.stringify(entry)}\n`);
+export async function recordEntry(
+  entry: LeaderboardEntry,
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): Promise<void> {
+  const path = getLeaderboardPath(workDir, leaderboardPath);
+  await mkdir(dirname(path), { recursive: true });
+  await appendFile(path, `${JSON.stringify(entry)}\n`);
 }
 
-export async function getLeaderboard(profile?: string): Promise<LeaderboardEntry[]> {
+export async function getLeaderboard(
+  profile?: string,
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): Promise<LeaderboardEntry[]> {
   try {
-    const text = await readFile(getLeaderboardPath(), 'utf8');
+    const text = await readFile(getLeaderboardPath(workDir, leaderboardPath), 'utf8');
     const entries = text
       .split(/\r?\n/)
       .filter(Boolean)
@@ -44,14 +64,21 @@ export async function getLeaderboard(profile?: string): Promise<LeaderboardEntry
   }
 }
 
-export async function compareRuns(runIds: string[]): Promise<ComparisonResult> {
-  const all = await getLeaderboard();
+export async function compareRuns(
+  runIds: string[],
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): Promise<ComparisonResult> {
+  const all = await getLeaderboard(undefined, workDir, leaderboardPath);
   const entries = all.filter((e) => runIds.includes(e.runId));
   return { runIds, entries };
 }
 
-export async function clearLeaderboard(): Promise<void> {
-  await writeFile(getLeaderboardPath(), '');
+export async function clearLeaderboard(
+  workDir: string = process.cwd(),
+  leaderboardPath?: string
+): Promise<void> {
+  await writeFile(getLeaderboardPath(workDir, leaderboardPath), '');
 }
 
 function formatTimestamp(iso: string): string {

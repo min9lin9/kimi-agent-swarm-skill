@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rmdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import {
@@ -10,10 +10,9 @@ import {
   maxResultsForDepth,
 } from '../costs';
 import { scoreSource } from '../scorer';
-import { claimConfidence, claimFreshness, makeRunId } from '../shared';
+import { extractClaims, makeRunId } from '../shared';
 import { finalizeRun, resolveProviderName, runWideSearchTask } from '../shared-runtime';
 import type {
-  Claim,
   DistributedJob,
   DistributedRunOptions,
   DistributedTask,
@@ -54,7 +53,8 @@ async function executeTask(
   maxResults: number | undefined,
   useCache: boolean,
   budget: import('../types').BudgetOptions,
-  metrics: UsageMetrics
+  metrics: UsageMetrics,
+  workDir: string
 ): Promise<WorkerResult> {
   if (profile.startsWith('fixture')) {
     const sourceIds = task.query.split(',').map((id) => id.trim());
@@ -66,6 +66,7 @@ async function executeTask(
       useCache,
       metrics,
       sourceIds,
+      workDir,
       checkBudget: false,
     });
     return {
@@ -83,6 +84,7 @@ async function executeTask(
     useCache,
     metrics,
     maxResults,
+    workDir,
     checkBudget: false,
   });
   return {
@@ -102,7 +104,8 @@ export async function workerLoop(
   perTaskMaxResults: number | undefined,
   useCache: boolean,
   budget: import('../types').BudgetOptions,
-  metrics: UsageMetrics
+  metrics: UsageMetrics,
+  workDir: string
 ): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -128,7 +131,8 @@ export async function workerLoop(
         perTaskMaxResults,
         useCache,
         budget,
-        metrics
+        metrics,
+        workDir
       );
       checkBudget(providerName, metrics, budget);
       await adapter.completeTask(task.taskId, result);
@@ -140,6 +144,26 @@ export async function workerLoop(
       await adapter.failTask(task.taskId, message);
     }
   }
+}
+
+async function pollJobToCompletion(
+  adapter: QueueAdapter,
+  jobId: string,
+  timeoutMs = 30 * 60 * 1000,
+  pollIntervalMs = 1000
+): Promise<DistributedJob> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const current = await adapter.getJob(jobId);
+    if (!current) {
+      throw new Error('Job disappeared during distributed run');
+    }
+    if (current.status === 'completed' || current.status === 'failed') {
+      return current;
+    }
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+  }
+  throw new Error('Timed out waiting for external workers to complete the job');
 }
 
 export async function runDistributedWideSearch({
@@ -165,7 +189,8 @@ export async function runDistributedWideSearch({
     ) as ResearchPlan;
     objective = objective ?? previousRun.objective;
     profile = previousRun.executionProfile;
-    providerName = providerName ?? resolveProviderName(previousRun.executionProfile);
+    providerName =
+      providerName ?? previousRun.providerName ?? resolveProviderName(previousRun.executionProfile);
     searchDepth = previousPlan.searchDepth ?? searchDepth;
     replayedFrom = replayRunId;
   }
@@ -176,7 +201,6 @@ export async function runDistributedWideSearch({
 
   const runId = makeRunId();
   const runDir = join(workDir, '.runs', 'wide-search', runId);
-  await mkdir(runDir, { recursive: true });
 
   const effectiveProviderName = resolveProviderName(profile, providerName);
   const maxRetries = distributed.maxRetries ?? 3;
@@ -202,6 +226,8 @@ export async function runDistributedWideSearch({
     estimatedCostUsd: getProviderPricing(effectiveProviderName).perCallUsd * estimatedProviderCalls,
   };
 
+  await mkdir(runDir, { recursive: true });
+
   const usageMetrics: UsageMetrics = {
     providerCalls: 0,
     apiCalls: 0,
@@ -216,6 +242,7 @@ export async function runDistributedWideSearch({
       status: 'completed',
       createdAt: new Date().toISOString(),
       usageMetrics,
+      providerName: effectiveProviderName,
     };
     const dryPlan: ResearchPlan = {
       objective,
@@ -240,6 +267,7 @@ export async function runDistributedWideSearch({
       providerName: effectiveProviderName,
       estimate,
     });
+    await rmdir(runDir).catch(() => {});
     return { runId, runDir, verification };
   }
 
@@ -247,142 +275,146 @@ export async function runDistributedWideSearch({
 
   const adapter = createQueueAdapter(distributed, workDir);
 
-  let job: DistributedJob;
-  if (distributed.resumeJobId) {
-    const loaded = await adapter.getJob(distributed.resumeJobId);
-    if (!loaded) {
-      throw new Error(`Job not found for resume: ${distributed.resumeJobId}`);
-    }
-    job = loaded;
-  } else {
-    const tasks = buildTasksFromPlans('placeholder', plans, maxRetries);
-    job = await adapter.createJob({
-      objective,
-      executionProfile: profile,
-      providerName: effectiveProviderName,
-      searchDepth,
-      queueType: distributed.queueType ?? 'memory',
-      status: 'pending',
-      tasks: tasks.map((t) => ({ ...t, taskId: `${runId}-${t.taskId}` })),
-      useCache,
-      budget,
-      workDir,
-      perTaskMaxResults,
-    });
-  }
-
-  job.status = 'running';
-  await adapter.saveJob(job);
-
-  const workerMetrics: UsageMetrics[] = [];
-  const workerPromises: Promise<void>[] = [];
-  for (let i = 0; i < workers; i += 1) {
-    const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
-    workerMetrics.push(metrics);
-    workerPromises.push(
-      workerLoop(
-        adapter,
-        job.jobId,
-        `worker-${i + 1}`,
-        profile,
-        effectiveProviderName,
+  try {
+    let job: DistributedJob;
+    if (distributed.resumeJobId) {
+      const loaded = await adapter.getJob(distributed.resumeJobId);
+      if (!loaded) {
+        throw new Error(`Job not found for resume: ${distributed.resumeJobId}`);
+      }
+      job = loaded;
+    } else {
+      const tasks = buildTasksFromPlans('placeholder', plans, maxRetries);
+      job = await adapter.createJob({
+        objective,
+        executionProfile: profile,
+        providerName: effectiveProviderName,
         searchDepth,
-        perTaskMaxResults,
+        queueType: distributed.queueType ?? 'memory',
+        status: 'pending',
+        tasks: tasks.map((t) => ({ ...t, taskId: `${runId}-${t.taskId}` })),
         useCache,
         budget,
-        metrics
-      )
-    );
-  }
-
-  await Promise.all(workerPromises);
-
-  const completedJob = await adapter.getJob(job.jobId);
-  if (!completedJob) {
-    throw new Error('Job disappeared during distributed run');
-  }
-
-  const aggregatedSources: Source[] = [];
-  for (const task of completedJob.tasks) {
-    if (task.status === 'completed' && task.result) {
-      aggregatedSources.push(...task.result.sources);
-    }
-  }
-
-  if (aggregatedSources.length === 0) {
-    throw new Error('Distributed run produced no accepted sources');
-  }
-
-  const sources: EnrichedSource[] = aggregatedSources.map((source) => scoreSource(source));
-
-  const claims: Claim[] = [];
-  for (const source of sources.filter((item) => item.decision === 'accepted')) {
-    for (const claim of source.claims ?? []) {
-      claims.push({
-        id: `C${String(claims.length + 1).padStart(3, '0')}`,
-        claim,
-        sourceIds: [source.id],
-        confidence: claimConfidence(source.scores),
-        freshness: claimFreshness(source.publishedAt),
+        workDir,
+        perTaskMaxResults,
       });
     }
+
+    job.status = 'running';
+    await adapter.saveJob(job);
+
+    let completedJob: DistributedJob;
+    if (workers === 0) {
+      console.log(JSON.stringify({ jobId: job.jobId }));
+      completedJob = await pollJobToCompletion(adapter, job.jobId);
+    } else {
+      const workerMetrics: UsageMetrics[] = [];
+      const workerPromises: Promise<void>[] = [];
+      for (let i = 0; i < workers; i += 1) {
+        const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
+        workerMetrics.push(metrics);
+        workerPromises.push(
+          workerLoop(
+            adapter,
+            job.jobId,
+            `worker-${i + 1}`,
+            profile,
+            effectiveProviderName,
+            searchDepth,
+            perTaskMaxResults,
+            useCache,
+            budget,
+            metrics,
+            workDir
+          )
+        );
+      }
+
+      await Promise.all(workerPromises);
+
+      const loaded = await adapter.getJob(job.jobId);
+      if (!loaded) {
+        throw new Error('Job disappeared during distributed run');
+      }
+      completedJob = loaded;
+    }
+
+    const aggregatedSources: Source[] = [];
+    for (const task of completedJob.tasks) {
+      if (task.status === 'completed' && task.result) {
+        aggregatedSources.push(...task.result.sources);
+      }
+    }
+
+    if (aggregatedSources.length === 0) {
+      throw new Error('Distributed run produced no accepted sources');
+    }
+
+    const sources: EnrichedSource[] = aggregatedSources.map((source) => scoreSource(source));
+    const claims = extractClaims(sources);
+
+    const totalMetrics: UsageMetrics = completedJob.tasks
+      .filter((t) => t.status === 'completed' && t.result)
+      .reduce(
+        (acc, t) => ({
+          providerCalls: acc.providerCalls + (t.result?.usageMetrics.providerCalls ?? 0),
+          apiCalls: acc.apiCalls + (t.result?.usageMetrics.apiCalls ?? 0),
+          estimatedCostUsd: acc.estimatedCostUsd,
+        }),
+        { providerCalls: 0, apiCalls: 0, estimatedCostUsd: estimate.estimatedCostUsd }
+      );
+
+    const run: Run = {
+      runId,
+      objective,
+      executionProfile: profile,
+      status: 'completed',
+      createdAt: new Date().toISOString(),
+      usageMetrics: totalMetrics,
+      replayedFrom,
+      cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
+      providerName: effectiveProviderName,
+    };
+
+    const researchPlan: ResearchPlan = {
+      objective,
+      searchDepth,
+      executionProfile: profile,
+      queryFamilies: completedJob.tasks.map((t) => t.queryFamily),
+      sourceTargets: ['official', 'community', 'secondary'],
+      stopConditions: ['all distributed tasks completed'],
+    };
+
+    await writeFile(
+      join(runDir, 'distributed-job.json'),
+      `${JSON.stringify(completedJob, null, 2)}\n`
+    );
+
+    const { verification } = await finalizeRun({
+      run,
+      objective,
+      profile,
+      sources,
+      claims,
+      plan: researchPlan,
+      usageMetrics: totalMetrics,
+      runDir,
+      budget,
+      distributed: true,
+      providerName: effectiveProviderName,
+    });
+
+    return {
+      runId,
+      runDir,
+      verification,
+    };
+  } catch (error) {
+    await rmdir(runDir).catch(() => {});
+    throw error;
+  } finally {
+    if (adapter.quit) {
+      await adapter.quit();
+    }
   }
-
-  const totalMetrics: UsageMetrics = workerMetrics.reduce(
-    (acc, m) => ({
-      providerCalls: acc.providerCalls + m.providerCalls,
-      apiCalls: acc.apiCalls + m.apiCalls,
-      estimatedCostUsd: acc.estimatedCostUsd,
-    }),
-    { providerCalls: 0, apiCalls: 0, estimatedCostUsd: estimate.estimatedCostUsd }
-  );
-
-  const run: Run = {
-    runId,
-    objective,
-    executionProfile: profile,
-    status: 'completed',
-    createdAt: new Date().toISOString(),
-    usageMetrics: totalMetrics,
-    replayedFrom,
-    cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
-  };
-
-  const researchPlan: ResearchPlan = {
-    objective,
-    searchDepth,
-    executionProfile: profile,
-    queryFamilies: completedJob.tasks.map((t) => t.queryFamily),
-    sourceTargets: ['official', 'community', 'secondary'],
-    stopConditions: ['all distributed tasks completed'],
-  };
-
-  await writeFile(
-    join(runDir, 'distributed-job.json'),
-    `${JSON.stringify(completedJob, null, 2)}\n`
-  );
-
-  const { verification } = await finalizeRun({
-    run,
-    objective,
-    profile,
-    sources,
-    claims,
-    plan: researchPlan,
-    usageMetrics: totalMetrics,
-    runDir,
-    budget,
-    distributed: true,
-    providerName: effectiveProviderName,
-  });
-
-  if (adapter.quit) {
-    await adapter.quit();
-  }
-
-  return {
-    runId,
-    runDir,
-    verification,
-  };
 }

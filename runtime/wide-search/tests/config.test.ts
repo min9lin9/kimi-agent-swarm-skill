@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { mkdtemp } from 'node:fs/promises';
+import { mkdtemp, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -73,5 +73,17 @@ describe('config', () => {
     expect(providers).toContain('brave');
 
     delete process.env.BRAVE_API_KEY;
+  });
+
+  test('writeConfig writes config files with restrictive permissions', async () => {
+    const workDir = await mkdtemp(join(tmpdir(), 'wide-search-config-perms-'));
+    const written: KaswConfig = {
+      providers: { tavily: { apiKey: 'secret-key' } },
+      defaults: {},
+    };
+
+    const localPath = await writeConfig(written, { global: false, workDir });
+    const localStat = await stat(localPath);
+    expect(localStat.mode & 0o777).toBe(0o600);
   });
 });

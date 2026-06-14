@@ -177,4 +177,59 @@ describe('CLI integration', () => {
     expect(html).toInclude('<html');
     expect(html).toInclude('KASW Benchmark Leaderboard');
   });
+
+  test('subcommand --help prints usage and exits with code 0', async () => {
+    const { exitCode, stderr } = await runCli(['worker', '--help']);
+    expect(exitCode).toBe(0);
+    expect(stderr).toInclude('Usage:');
+  });
+
+  test('--dry-run=false executes the run instead of dry-running', async () => {
+    const { exitCode, stdout } = await runCli([
+      'run',
+      'test objective',
+      '--profile',
+      'fixture',
+      '--dry-run=false',
+      '--work-dir',
+      workDir,
+    ]);
+
+    expect(exitCode).toBe(0);
+    const result = parseCliJson(stdout) as { runDir: string };
+    const runJson = await readFile(join(result.runDir, 'run.json'), 'utf8');
+    expect(runJson).toBeDefined();
+  });
+
+  test('negative --workers value returns a clear error', async () => {
+    const { exitCode, stderr } = await runCli([
+      'run',
+      'test objective',
+      '--profile',
+      'fixture',
+      '--distributed',
+      '--workers=-1',
+      '--work-dir',
+      workDir,
+    ]);
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toInclude('--workers');
+  });
+
+  test('leaderboard --clear requires --yes', async () => {
+    const { exitCode, stderr } = await runCli(['leaderboard', '--clear', '--work-dir', workDir]);
+
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toInclude('--yes');
+  });
+
+  test('leaderboard honors --work-dir for jsonl file', async () => {
+    await runCli(['leaderboard', '--clear', '--yes', '--work-dir', workDir]);
+    const { exitCode, stdout } = await runCli(['leaderboard', '--work-dir', workDir]);
+
+    expect(exitCode).toBe(0);
+    const parsed = JSON.parse(stdout);
+    expect(Array.isArray(parsed)).toBe(true);
+  });
 });

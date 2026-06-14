@@ -7,13 +7,14 @@ Evidence-backed wide-search CLI for the Kimi Agent Swarm. It turns a research ob
 Requires [Bun](https://bun.sh) 1.0 or later. The published package runs via Bun, so `npm install -g` only works when `bun` is on your `PATH`.
 
 ```bash
-# Registry install (recommended)
+# Registry install with Bun (recommended)
 bun install -g kimi-agent-swarm-cli
 
-# Local tarball install
-npm install -g kimi-agent-swarm-cli-*.tgz
-# or
+# Local tarball install with Bun
 bun add -g kimi-agent-swarm-cli-*.tgz
+
+# Local tarball install with npm (requires bun on PATH)
+npm install -g kimi-agent-swarm-cli-*.tgz
 ```
 
 For local development:
@@ -68,7 +69,7 @@ kasw research "<objective>" [options]
 | `--max-cost-usd <n>` | Abort if estimated/actual cost exceeds budget |
 | `--max-provider-calls <n>` | Abort if provider calls exceed budget |
 | `--max-api-calls <n>` | Abort if API calls exceed budget |
-| `--dry-run` | Print cost estimate and write run metadata without executing |
+| `--dry-run` | Print cost estimate without executing or writing run artifacts |
 | `--use-cache` | Reuse cached provider responses when available |
 | `--replay <run-id>` | Rerun a previous run with the same inputs |
 | `--distributed` | Execute using distributed worker tasks |
@@ -134,7 +135,10 @@ kasw leaderboard [options]
 | `--compare <id-1>,<id-2>,...` | Compare specific runs |
 | `--html` | Generate an HTML report |
 | `--out <path>` | Output path for the HTML report. Default: `leaderboard-report.html` |
-| `--clear` | Clear all leaderboard entries |
+| `--clear` | Clear all leaderboard entries (requires `--yes`) |
+| `--yes` | Confirm destructive operations |
+| `--work-dir <dir>` | Working directory for the leaderboard file. Default: current directory |
+| `--leaderboard-path <path>` | Custom leaderboard file path |
 
 ### `providers`
 
@@ -227,7 +231,14 @@ console.log(JSON.stringify({ type: 'complete' }));
 Run it with:
 
 ```bash
+# If the script is executable (chmod +x)
 kasw research "example objective" --profile local-command --provider-command ./my-provider.ts
+
+# Or run it through Bun
+kasw research "example objective" --profile local-command --provider-command "bun ./my-provider.ts"
+
+# Run the bundled fixture
+kasw research "example objective" --profile local-command --provider-command "bun ./fixtures/jsonl-provider.ts"
 ```
 
 See `fixtures/jsonl-provider.ts` for a runnable fixture.
@@ -307,7 +318,7 @@ Enable caching with `--use-cache`. For the `web-search` profile, this stores pro
 
 ### Dry-run
 
-`--dry-run` estimates cost and writes `run.json` and `research-plan.json` without calling any provider. Useful for budget checks and CI validation.
+`--dry-run` estimates cost and returns a run result without calling any provider. No run artifacts are written. Useful for budget checks and CI validation. Pass `--dry-run=false` to explicitly disable a dry-run configured elsewhere.
 
 ## Distributed execution
 
@@ -341,6 +352,7 @@ Set `REDIS_URL` and, if needed, `REDIS_PASSWORD` and `REDIS_USERNAME`:
 
 ```bash
 export REDIS_URL="redis://localhost:6379"
+export REDIS_USERNAME="..."
 export REDIS_PASSWORD="..."
 ```
 
@@ -358,7 +370,7 @@ Benchmarks compare a fixture run against golden answers and compute precision, r
 kasw benchmark --profile fixture-paul-graham-corpus
 ```
 
-Each benchmark result is appended to `~/.kasw/leaderboard.jsonl`. View them with:
+Each benchmark result is appended to `<work-dir>/.runs/leaderboard.jsonl` (default work-dir is the current directory). View them with:
 
 ```bash
 kasw leaderboard

@@ -96,7 +96,10 @@ function getFlag(parsed: ParsedArgs, name: string): string | undefined {
 }
 
 function getBooleanFlag(parsed: ParsedArgs, name: string): boolean {
-  return parsed.flags[name] !== undefined;
+  const value = parsed.flags[name];
+  if (value === undefined) return false;
+  if (value === 'false') return false;
+  return true;
 }
 
 function getNumberFlag(parsed: ParsedArgs, name: string): number | undefined {
@@ -105,6 +108,9 @@ function getNumberFlag(parsed: ParsedArgs, name: string): number | undefined {
   const value = Number(raw);
   if (Number.isNaN(value)) {
     throw new Error(`Flag --${name} requires a numeric value`);
+  }
+  if (value < 0) {
+    throw new Error(`Flag --${name} must be non-negative`);
   }
   return value;
 }
@@ -156,6 +162,10 @@ async function inspectRun(runDir: string): Promise<{
 
 async function handleRun(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
   const config = await loadConfig(workDir);
 
@@ -250,6 +260,10 @@ async function handleRun(args: string[]): Promise<void> {
 
 async function handleVerify(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const runDir = getFlag(parsed, 'run-dir');
   const result = await verifyRun({ runDir });
   console.log(JSON.stringify(result, null, 2));
@@ -257,6 +271,10 @@ async function handleVerify(args: string[]): Promise<void> {
 
 async function handleInspect(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const runDir = getFlag(parsed, 'run-dir');
   if (!runDir) {
     throw new Error('inspect command requires --run-dir');
@@ -267,6 +285,10 @@ async function handleInspect(args: string[]): Promise<void> {
 
 async function handleExport(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const runDir = getFlag(parsed, 'run-dir');
   const format = validateEnum('format', getFlag(parsed, 'format'), EXPORT_FORMATS);
   const outPath = getFlag(parsed, 'out');
@@ -284,6 +306,10 @@ async function handleExport(args: string[]): Promise<void> {
 
 async function handleBenchmark(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const profile = validateEnum('profile', getFlag(parsed, 'profile'), EXECUTION_PROFILES);
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
 
@@ -304,26 +330,35 @@ async function handleBenchmark(args: string[]): Promise<void> {
 
 async function handleLeaderboard(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const profile = validateEnum('profile', getFlag(parsed, 'profile'), EXECUTION_PROFILES);
   const compareRaw = getFlag(parsed, 'compare');
   const html = getBooleanFlag(parsed, 'html');
   const outPath = getFlag(parsed, 'out');
   const shouldClear = getBooleanFlag(parsed, 'clear');
+  const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
+  const leaderboardPath = getFlag(parsed, 'leaderboard-path');
 
   if (shouldClear) {
-    await clearLeaderboard();
+    if (!getBooleanFlag(parsed, 'yes')) {
+      throw new Error('--clear requires --yes');
+    }
+    await clearLeaderboard(workDir, leaderboardPath);
     console.log(JSON.stringify({ cleared: true }, null, 2));
     return;
   }
 
   if (compareRaw) {
     const runIds = compareRaw.split(',').map((id) => id.trim());
-    const comparison = await compareRuns(runIds);
+    const comparison = await compareRuns(runIds, workDir, leaderboardPath);
     console.log(JSON.stringify(comparison, null, 2));
     return;
   }
 
-  const entries = await getLeaderboard(profile);
+  const entries = await getLeaderboard(profile, workDir, leaderboardPath);
 
   if (html) {
     const destination = outPath ?? 'leaderboard-report.html';
@@ -337,6 +372,10 @@ async function handleLeaderboard(args: string[]): Promise<void> {
 
 async function handleInit(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const nonInteractive = getBooleanFlag(parsed, 'non-interactive');
   const local = getBooleanFlag(parsed, 'local');
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
@@ -348,17 +387,22 @@ async function handleInit(args: string[]): Promise<void> {
   });
 
   console.log(JSON.stringify({ configPath: result.configPath, configured: result.wrote }, null, 2));
-  defaultLogger.info(getInitInstructions());
+  defaultLogger.info(getInitInstructions(result.configPath));
 }
 
 async function handleWorker(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  if (getBooleanFlag(parsed, 'help')) {
+    printUsage(0);
+    return;
+  }
   const jobId = getFlag(parsed, 'job-id');
   const workerId = getFlag(parsed, 'worker-id') ?? 'cli-worker';
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
   const queueType = validateEnum('queue-type', getFlag(parsed, 'queue-type'), QUEUE_TYPES);
   const redisUrl = getFlag(parsed, 'redis-url') ?? process.env.REDIS_URL;
   const redisPassword = getFlag(parsed, 'redis-password') ?? process.env.REDIS_PASSWORD;
+  const redisUsername = getFlag(parsed, 'redis-username') ?? process.env.REDIS_USERNAME;
 
   if (!jobId) {
     throw new Error('worker command requires --job-id');
@@ -366,7 +410,7 @@ async function handleWorker(args: string[]): Promise<void> {
 
   const adapter: QueueAdapter =
     queueType === 'redis'
-      ? new RedisQueueAdapter({ redisUrl, password: redisPassword })
+      ? new RedisQueueAdapter({ redisUrl, username: redisUsername, password: redisPassword })
       : new MemoryQueueAdapter({ workDir });
 
   const job = await adapter.getJob(jobId);
@@ -381,21 +425,24 @@ async function handleWorker(args: string[]): Promise<void> {
 
   const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
 
-  await workerLoop(
-    adapter,
-    jobId,
-    workerId,
-    job.executionProfile,
-    job.providerName,
-    job.searchDepth,
-    perTaskMaxResults,
-    job.useCache ?? false,
-    job.budget ?? {},
-    metrics
-  );
-
-  if (adapter.quit) {
-    await adapter.quit();
+  try {
+    await workerLoop(
+      adapter,
+      jobId,
+      workerId,
+      job.executionProfile,
+      job.providerName,
+      job.searchDepth,
+      perTaskMaxResults,
+      job.useCache ?? false,
+      job.budget ?? {},
+      metrics,
+      workDir
+    );
+  } finally {
+    if (adapter.quit) {
+      await adapter.quit();
+    }
   }
 
   console.log(JSON.stringify({ workerId, done: true, metrics }, null, 2));
@@ -485,7 +532,12 @@ function printUsage(exitCode = 1): void {
   defaultLogger.error('    --profile <fixture>           filter by profile');
   defaultLogger.error('    --compare <run-id-1>,<run-id-2>  compare specific runs');
   defaultLogger.error('    --html [--out <path>]         generate HTML report');
-  defaultLogger.error('    --clear                       clear all leaderboard entries');
+  defaultLogger.error(
+    '    --clear                       clear all leaderboard entries (requires --yes)'
+  );
+  defaultLogger.error('    --yes                         confirm destructive operations');
+  defaultLogger.error('    --work-dir <dir>              working directory (default: cwd)');
+  defaultLogger.error('    --leaderboard-path <path>     custom leaderboard file path');
   defaultLogger.error(
     '  providers                      list available providers and required env vars'
   );

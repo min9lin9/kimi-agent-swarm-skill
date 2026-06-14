@@ -1,4 +1,4 @@
-import { getProviderDescriptor, listProviderNames } from './providers/registry';
+import { getProviderDescriptor } from './providers/registry';
 import type {
   BudgetOptions,
   CostEstimate,
@@ -6,13 +6,6 @@ import type {
   SearchDepth,
   UsageMetrics,
 } from './types';
-
-export const PROVIDER_PRICING: Record<string, ProviderPricing> = Object.fromEntries(
-  listProviderNames().map((name) => {
-    const descriptor = getProviderDescriptor(name);
-    return [name, descriptor?.pricing ?? { perCallUsd: 0 }];
-  })
-);
 
 export function maxResultsForDepth(depth: SearchDepth): number {
   switch (depth) {
@@ -30,7 +23,7 @@ export function maxResultsForDepth(depth: SearchDepth): number {
 }
 
 export function getProviderPricing(providerName: string): ProviderPricing {
-  return PROVIDER_PRICING[providerName] ?? { perCallUsd: 0 };
+  return getProviderDescriptor(providerName)?.pricing ?? { perCallUsd: 0 };
 }
 
 export function estimateRunCost(

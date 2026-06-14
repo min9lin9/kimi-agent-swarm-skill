@@ -97,7 +97,7 @@ export async function writeConfig(
   if (options.global) {
     await mkdir(getGlobalConfigDir(), { recursive: true });
   }
-  await writeFile(path, `${JSON.stringify(config, null, 2)}\n`);
+  await writeFile(path, `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
   return path;
 }
 

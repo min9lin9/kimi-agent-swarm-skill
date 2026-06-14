@@ -43,3 +43,22 @@ jobs:
         env:
           REDIS_URL: redis://localhost:6379
         run: bun test
+
+      - name: Pack and verify installed bin
+        run: |
+          bun run pack
+          tarball=$(ls kimi-agent-swarm-cli-*.tgz | head -n 1)
+          temp_dir=$(mktemp -d)
+          cd "$temp_dir"
+          npm install "$tarball"
+          ./node_modules/.bin/kasw --help
+          ./node_modules/.bin/kasw providers
+
+      - name: Pack and verify installed bin
+        run: |
+          npm pack
+          mkdir /tmp/kasw-pkg-test
+          cd /tmp/kasw-pkg-test
+          npm init -y
+          npm install "$(ls ${{ github.workspace }}/kimi-agent-swarm-cli-*.tgz)"
+          npx kasw --help

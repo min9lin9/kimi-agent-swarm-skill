@@ -47,14 +47,17 @@ export async function runBenchmark(
       urlCoverage: 0,
       passed: false,
     };
-    await recordEntry({
-      runId: failed.runId,
-      profile,
-      runDir: failed.runDir,
-      timestamp: new Date().toISOString(),
-      gitCommit: await getGitCommit(),
-      scores: failed,
-    });
+    await recordEntry(
+      {
+        runId: failed.runId,
+        profile,
+        runDir: failed.runDir,
+        timestamp: new Date().toISOString(),
+        gitCommit: await getGitCommit(),
+        scores: failed,
+      },
+      workDir
+    );
     return failed;
   }
 
@@ -77,7 +80,12 @@ export async function runBenchmark(
     .filter(Boolean)
     .map((line) => JSON.parse(line) as EnrichedSource);
 
-  const acceptedClaims = actualClaims;
+  const acceptedSourceIds = new Set(
+    sources.filter((s) => s.decision === 'accepted').map((s) => s.id)
+  );
+  const acceptedClaims = actualClaims.filter((claim) =>
+    claim.sourceIds.every((id) => acceptedSourceIds.has(id))
+  );
 
   let matchedGolden = 0;
   const matchedActualIds = new Set<string>();
@@ -133,14 +141,17 @@ export async function runBenchmark(
   };
 
   const gitCommit = await getGitCommit();
-  await recordEntry({
-    runId: benchmarkResult.runId,
-    profile,
-    runDir: benchmarkResult.runDir,
-    timestamp: new Date().toISOString(),
-    gitCommit,
-    scores: benchmarkResult,
-  });
+  await recordEntry(
+    {
+      runId: benchmarkResult.runId,
+      profile,
+      runDir: benchmarkResult.runDir,
+      timestamp: new Date().toISOString(),
+      gitCommit,
+      scores: benchmarkResult,
+    },
+    workDir
+  );
 
   return benchmarkResult;
 }

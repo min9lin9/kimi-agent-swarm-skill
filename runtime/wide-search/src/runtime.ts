@@ -1,4 +1,4 @@
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile, rmdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { checkEstimatedBudget, estimateRunCost } from './costs';
@@ -37,7 +37,8 @@ export async function runWideSearch({
     ) as ResearchPlan;
     objective = objective || previousRun.objective;
     profile = previousRun.executionProfile;
-    providerName = providerName ?? resolveProviderName(previousRun.executionProfile);
+    providerName =
+      providerName ?? previousRun.providerName ?? resolveProviderName(previousRun.executionProfile);
     searchDepth = previousPlan.searchDepth ?? searchDepth;
     replayedFrom = replayRunId;
   }
@@ -45,6 +46,12 @@ export async function runWideSearch({
   if (!objective) {
     throw new Error('runWideSearch requires objective');
   }
+
+  const effectiveProviderName = resolveProviderName(profile, providerName);
+  const estimate = estimateRunCost(effectiveProviderName, searchDepth);
+
+  const runId = makeRunId();
+  const runDir = join(workDir, '.runs', 'wide-search', runId);
 
   if (distributed?.enabled) {
     return runDistributedWideSearch({
@@ -61,12 +68,7 @@ export async function runWideSearch({
     });
   }
 
-  const runId = makeRunId();
-  const runDir = join(workDir, '.runs', 'wide-search', runId);
   await mkdir(runDir, { recursive: true });
-
-  const effectiveProviderName = resolveProviderName(profile, providerName);
-  const estimate = estimateRunCost(effectiveProviderName, searchDepth);
 
   const usageMetrics: UsageMetrics = {
     providerCalls: 0,
@@ -74,91 +76,101 @@ export async function runWideSearch({
     estimatedCostUsd: estimate.estimatedCostUsd,
   };
 
-  if (budget.dryRun) {
-    const dryRun: Run = {
+  try {
+    if (budget.dryRun) {
+      const dryRun: Run = {
+        runId,
+        objective,
+        executionProfile: profile,
+        status: 'completed',
+        createdAt: new Date().toISOString(),
+        usageMetrics,
+        providerName: effectiveProviderName,
+      };
+      const { verification } = await finalizeRun({
+        run: dryRun,
+        objective,
+        profile,
+        sources: [],
+        claims: [],
+        usageMetrics,
+        runDir,
+        budget,
+        isDryRun: true,
+        providerName: effectiveProviderName,
+        estimate,
+      });
+      await rmdir(runDir).catch(() => {});
+      return { runId, runDir, verification };
+    }
+
+    checkEstimatedBudget(estimate, budget);
+
+    const {
+      sources,
+      claims,
+      usageMetrics: taskMetrics,
+    } = await runWideSearchTask({
+      objective,
+      profile,
+      providerCommand,
+      providerArgs,
+      providerName,
+      searchDepth,
+      budget,
+      useCache,
+      workDir,
+      metrics: usageMetrics,
+      checkBudget: false,
+    });
+
+    const run: Run = {
       runId,
       objective,
       executionProfile: profile,
       status: 'completed',
       createdAt: new Date().toISOString(),
-      usageMetrics,
+      usageMetrics: taskMetrics,
+      replayedFrom,
+      cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
+      providerName: effectiveProviderName,
     };
+
+    const researchPlan: ResearchPlan = {
+      objective,
+      searchDepth,
+      executionProfile: profile,
+      queryFamilies: [
+        profile.startsWith('fixture') ? `fixture:${profile}` : 'local-command provider',
+      ],
+      sourceTargets: ['official', 'community', 'secondary'],
+      stopConditions: [
+        profile.startsWith('fixture')
+          ? 'fixture source set exhausted'
+          : 'provider output exhausted',
+      ],
+    };
+
     const { verification } = await finalizeRun({
-      run: dryRun,
+      run,
       objective,
       profile,
-      sources: [],
-      claims: [],
-      usageMetrics,
+      sources,
+      claims,
+      plan: researchPlan,
+      usageMetrics: taskMetrics,
       runDir,
       budget,
-      isDryRun: true,
       providerName: effectiveProviderName,
-      estimate,
     });
-    return { runId, runDir, verification };
+
+    return {
+      runId,
+      runDir,
+      verification,
+    };
+  } catch (error) {
+    await rmdir(runDir).catch(() => {});
+    throw error;
   }
-
-  checkEstimatedBudget(estimate, budget);
-
-  const {
-    sources,
-    claims,
-    usageMetrics: taskMetrics,
-  } = await runWideSearchTask({
-    objective,
-    profile,
-    providerCommand,
-    providerArgs,
-    providerName,
-    searchDepth,
-    budget,
-    useCache,
-    workDir,
-    metrics: usageMetrics,
-    checkBudget: false,
-  });
-
-  const run: Run = {
-    runId,
-    objective,
-    executionProfile: profile,
-    status: 'completed',
-    createdAt: new Date().toISOString(),
-    usageMetrics: taskMetrics,
-    replayedFrom,
-    cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
-  };
-
-  const researchPlan: ResearchPlan = {
-    objective,
-    searchDepth,
-    executionProfile: profile,
-    queryFamilies: [
-      profile.startsWith('fixture') ? `fixture:${profile}` : 'local-command provider',
-    ],
-    sourceTargets: ['official', 'community', 'secondary'],
-    stopConditions: [
-      profile.startsWith('fixture') ? 'fixture source set exhausted' : 'provider output exhausted',
-    ],
-  };
-
-  const { verification } = await finalizeRun({
-    run,
-    objective,
-    profile,
-    sources,
-    claims,
-    plan: researchPlan,
-    usageMetrics: taskMetrics,
-    runDir,
-    budget,
-    providerName: effectiveProviderName,
-  });
-
-  return {
-    runId,
-    runDir,
-    verification,
-  };
 }

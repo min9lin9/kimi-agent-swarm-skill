@@ -40,7 +40,7 @@ function makeLogger(level: LogLevel = 'info'): MutableLogger {
   }
 
   return {
-    debug: (message, ...args) => log('debug', 'log', message, args),
+    debug: (message, ...args) => log('debug', 'error', message, args),
     info: (message, ...args) => log('info', 'error', message, args),
     warn: (message, ...args) => log('warn', 'error', message, args),
     error: (message, ...args) => log('error', 'error', message, args),

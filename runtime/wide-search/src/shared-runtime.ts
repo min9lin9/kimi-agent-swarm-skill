@@ -15,7 +15,7 @@ import { defaultLogger } from './logger';
 import { renderMarkdownSynthesis } from './markdown';
 import { createSearchProvider, getProviderDescriptor } from './providers';
 import { scoreSource } from './scorer';
-import { claimConfidence, claimFreshness, loadFixtureSources } from './shared';
+import { extractClaims, loadFixtureSources } from './shared';
 import type {
   BudgetOptions,
   Claim,
@@ -73,6 +73,11 @@ export interface FinalizeRunOptions {
 export function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
   if (profile === 'web-search') {
     return providerName ?? 'mock';
+  }
+  if (providerName && providerName !== 'mock') {
+    defaultLogger.warn(
+      `--provider ${providerName} is ignored for profile ${profile}; using mock provider`
+    );
   }
   return 'mock';
 }
@@ -187,18 +192,7 @@ export async function runWideSearchTask({
     checkBudget(effectiveProviderName, usageMetrics, budget);
   }
 
-  const claims: Claim[] = [];
-  for (const source of sources.filter((item) => item.decision === 'accepted')) {
-    for (const claim of source.claims ?? []) {
-      claims.push({
-        id: `C${String(claims.length + 1).padStart(3, '0')}`,
-        claim,
-        sourceIds: [source.id],
-        confidence: claimConfidence(source.scores),
-        freshness: claimFreshness(source.publishedAt),
-      });
-    }
-  }
+  const claims = extractClaims(sources);
 
   return { sources, claims, usageMetrics };
 }
