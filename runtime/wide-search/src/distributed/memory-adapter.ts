@@ -1,15 +1,15 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-import type { QueueAdapter } from "./queue-adapter";
-import type { DistributedJob, DistributedTask, WorkerResult } from "../types";
+import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
+import type { QueueAdapter } from './queue-adapter';
 
 export interface MemoryAdapterOptions {
   workDir?: string;
 }
 
 export class MemoryQueueAdapter implements QueueAdapter {
-  readonly type = "memory";
+  readonly type = 'memory';
   private readonly jobs = new Map<string, DistributedJob>();
   private readonly workDir: string;
 
@@ -18,11 +18,11 @@ export class MemoryQueueAdapter implements QueueAdapter {
   }
 
   private jobFilePath(jobId: string): string {
-    return join(this.workDir, ".runs", "wide-search", "jobs", `${jobId}.json`);
+    return join(this.workDir, '.runs', 'wide-search', 'jobs', `${jobId}.json`);
   }
 
   async createJob(
-    job: Omit<DistributedJob, "jobId" | "createdAt" | "updatedAt">,
+    job: Omit<DistributedJob, 'jobId' | 'createdAt' | 'updatedAt'>
   ): Promise<DistributedJob> {
     const now = new Date().toISOString();
     const created: DistributedJob = {
@@ -43,12 +43,12 @@ export class MemoryQueueAdapter implements QueueAdapter {
     }
 
     try {
-      const text = await readFile(this.jobFilePath(jobId), "utf8");
+      const text = await readFile(this.jobFilePath(jobId), 'utf8');
       const loaded = JSON.parse(text) as DistributedJob;
       this.jobs.set(jobId, loaded);
       return loaded;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         return undefined;
       }
       throw error;
@@ -57,25 +57,20 @@ export class MemoryQueueAdapter implements QueueAdapter {
 
   async saveJob(job: DistributedJob): Promise<void> {
     const path = this.jobFilePath(job.jobId);
-    await mkdir(join(path, ".."), { recursive: true });
+    await mkdir(join(path, '..'), { recursive: true });
     const updated = { ...job, updatedAt: new Date().toISOString() };
     this.jobs.set(job.jobId, updated);
     await writeFile(path, `${JSON.stringify(updated, null, 2)}\n`);
   }
 
-  async claimNextTask(
-    jobId: string,
-    workerId: string,
-  ): Promise<DistributedTask | undefined> {
+  async claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined> {
     const job = await this.getJob(jobId);
     if (!job) return undefined;
 
-    const task = job.tasks.find(
-      (t) => t.status === "pending" && t.attempts < t.maxRetries,
-    );
+    const task = job.tasks.find((t) => t.status === 'pending' && t.attempts < t.maxRetries);
     if (!task) return undefined;
 
-    task.status = "running";
+    task.status = 'running';
     task.workerId = workerId;
     task.attempts += 1;
     task.startedAt = new Date().toISOString();
@@ -87,7 +82,7 @@ export class MemoryQueueAdapter implements QueueAdapter {
     const { job, task } = await this.findTask(taskId);
     if (!task || !job) return;
 
-    task.status = "completed";
+    task.status = 'completed';
     task.result = result;
     task.completedAt = new Date().toISOString();
     task.error = undefined;
@@ -102,10 +97,10 @@ export class MemoryQueueAdapter implements QueueAdapter {
 
     task.error = error;
     if (task.attempts >= task.maxRetries) {
-      task.status = "failed";
+      task.status = 'failed';
       task.completedAt = new Date().toISOString();
     } else {
-      task.status = "pending";
+      task.status = 'pending';
       task.workerId = undefined;
       task.startedAt = undefined;
     }
@@ -117,17 +112,17 @@ export class MemoryQueueAdapter implements QueueAdapter {
   async getPendingTaskCount(jobId: string): Promise<number> {
     const job = await this.getJob(jobId);
     if (!job) return 0;
-    return job.tasks.filter((t) => t.status === "pending").length;
+    return job.tasks.filter((t) => t.status === 'pending').length;
   }
 
   async getRunningTaskCount(jobId: string): Promise<number> {
     const job = await this.getJob(jobId);
     if (!job) return 0;
-    return job.tasks.filter((t) => t.status === "running").length;
+    return job.tasks.filter((t) => t.status === 'running').length;
   }
 
   private async findTask(
-    taskId: string,
+    taskId: string
   ): Promise<{ job?: DistributedJob; task?: DistributedTask }> {
     for (const job of this.jobs.values()) {
       const task = job.tasks.find((t) => t.taskId === taskId);
@@ -139,14 +134,14 @@ export class MemoryQueueAdapter implements QueueAdapter {
   }
 
   private updateJobStatus(job: DistributedJob): void {
-    if (job.tasks.every((t) => t.status === "completed")) {
-      job.status = "completed";
-    } else if (job.tasks.some((t) => t.status === "running")) {
-      job.status = "running";
-    } else if (job.tasks.every((t) => t.status === "failed")) {
-      job.status = "failed";
+    if (job.tasks.every((t) => t.status === 'completed')) {
+      job.status = 'completed';
+    } else if (job.tasks.some((t) => t.status === 'running')) {
+      job.status = 'running';
+    } else if (job.tasks.every((t) => t.status === 'failed')) {
+      job.status = 'failed';
     } else {
-      job.status = "running";
+      job.status = 'running';
     }
   }
 }

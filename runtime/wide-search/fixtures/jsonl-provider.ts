@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
-import type { Source } from "../src/types";
+import type { Source } from '../src/types';
 
 const sources: Source[] = [
   {
-    id: "L001",
-    url: "https://example.com/local-command-primary",
-    title: "Local Command Primary Source",
-    sourceClass: "primary-data",
-    publishedAt: "2026-05-22",
-    discoveredBy: "local-command fixture",
+    id: 'L001',
+    url: 'https://example.com/local-command-primary',
+    title: 'Local Command Primary Source',
+    sourceClass: 'primary',
+    publishedAt: '2026-05-22',
+    discoveredBy: 'local-command fixture',
     scores: {
       relevance: 4,
       authority: 4,
@@ -16,15 +16,15 @@ const sources: Source[] = [
       diversity: 3,
       extractionValue: 4,
     },
-    claims: ["Local command providers can feed replayable source candidates into the runtime."],
+    claims: ['Local command providers can feed replayable source candidates into the runtime.'],
   },
   {
-    id: "L002",
-    url: "https://example.com/local-command-low-quality",
-    title: "Local Command Low Quality Source",
-    sourceClass: "secondary",
-    publishedAt: "2024-01-01",
-    discoveredBy: "local-command fixture",
+    id: 'L002',
+    url: 'https://example.com/local-command-low-quality',
+    title: 'Local Command Low Quality Source',
+    sourceClass: 'secondary',
+    publishedAt: '2024-01-01',
+    discoveredBy: 'local-command fixture',
     scores: {
       relevance: 1,
       authority: 1,
@@ -32,10 +32,10 @@ const sources: Source[] = [
       diversity: 1,
       extractionValue: 1,
     },
-    claims: ["Low quality command output should be rejected."],
+    claims: ['Low quality command output should be rejected.'],
   },
 ];
 
 for (const source of sources) {
-  console.log(JSON.stringify({ type: "source_candidate", source }));
+  console.log(JSON.stringify({ type: 'source_candidate', source }));
 }

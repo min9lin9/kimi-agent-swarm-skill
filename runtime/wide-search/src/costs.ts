@@ -1,4 +1,4 @@
-import type { BudgetOptions, CostEstimate, SearchDepth, UsageMetrics } from "./types";
+import type { BudgetOptions, CostEstimate, SearchDepth, UsageMetrics } from './types';
 
 export interface ProviderPricing {
   perCallUsd: number;
@@ -15,13 +15,13 @@ export const PROVIDER_PRICING: Record<string, ProviderPricing> = {
 
 export function maxResultsForDepth(depth: SearchDepth): number {
   switch (depth) {
-    case "light":
+    case 'light':
       return 10;
-    case "standard":
+    case 'standard':
       return 25;
-    case "deep":
+    case 'deep':
       return 75;
-    case "maximum":
+    case 'maximum':
       return 100;
     default:
       return 25;
@@ -34,7 +34,7 @@ export function getProviderPricing(providerName: string): ProviderPricing {
 
 export function estimateRunCost(
   providerName: string,
-  depth: SearchDepth = "standard",
+  depth: SearchDepth = 'standard'
 ): CostEstimate {
   const pricing = getProviderPricing(providerName);
   const estimatedProviderCalls = 1;
@@ -62,43 +62,40 @@ export function calculateActualCost(providerName: string, metrics: UsageMetrics)
 export class BudgetExceededError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "BudgetExceededError";
+    this.name = 'BudgetExceededError';
   }
 }
 
 export function checkBudget(
   providerName: string,
   metrics: UsageMetrics,
-  budget: BudgetOptions = {},
+  budget: BudgetOptions = {}
 ): void {
   const actualCost = calculateActualCost(providerName, metrics);
 
   if (budget.maxCostUsd !== undefined && actualCost > budget.maxCostUsd) {
     throw new BudgetExceededError(
-      `Actual cost $${actualCost.toFixed(4)} exceeds budget $${budget.maxCostUsd.toFixed(4)}`,
+      `Actual cost $${actualCost.toFixed(4)} exceeds budget $${budget.maxCostUsd.toFixed(4)}`
     );
   }
 
   if (budget.maxProviderCalls !== undefined && metrics.providerCalls > budget.maxProviderCalls) {
     throw new BudgetExceededError(
-      `Provider calls ${metrics.providerCalls} exceed budget ${budget.maxProviderCalls}`,
+      `Provider calls ${metrics.providerCalls} exceed budget ${budget.maxProviderCalls}`
     );
   }
 
   if (budget.maxApiCalls !== undefined && metrics.apiCalls > budget.maxApiCalls) {
     throw new BudgetExceededError(
-      `API calls ${metrics.apiCalls} exceed budget ${budget.maxApiCalls}`,
+      `API calls ${metrics.apiCalls} exceed budget ${budget.maxApiCalls}`
     );
   }
 }
 
-export function checkEstimatedBudget(
-  estimate: CostEstimate,
-  budget: BudgetOptions = {},
-): void {
+export function checkEstimatedBudget(estimate: CostEstimate, budget: BudgetOptions = {}): void {
   if (budget.maxCostUsd !== undefined && estimate.estimatedCostUsd > budget.maxCostUsd) {
     throw new BudgetExceededError(
-      `Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds budget $${budget.maxCostUsd.toFixed(4)}. Use --dry-run to inspect or raise the budget.`,
+      `Estimated cost $${estimate.estimatedCostUsd.toFixed(4)} exceeds budget $${budget.maxCostUsd.toFixed(4)}. Use --dry-run to inspect or raise the budget.`
     );
   }
 
@@ -107,13 +104,13 @@ export function checkEstimatedBudget(
     estimate.estimatedProviderCalls > budget.maxProviderCalls
   ) {
     throw new BudgetExceededError(
-      `Estimated provider calls ${estimate.estimatedProviderCalls} exceed budget ${budget.maxProviderCalls}`,
+      `Estimated provider calls ${estimate.estimatedProviderCalls} exceed budget ${budget.maxProviderCalls}`
     );
   }
 
   if (budget.maxApiCalls !== undefined && estimate.estimatedApiCalls > budget.maxApiCalls) {
     throw new BudgetExceededError(
-      `Estimated API calls ${estimate.estimatedApiCalls} exceed budget ${budget.maxApiCalls}`,
+      `Estimated API calls ${estimate.estimatedApiCalls} exceed budget ${budget.maxApiCalls}`
     );
   }
 }
@@ -125,10 +122,10 @@ export function formatCostReport(providerName: string, metrics: UsageMetrics): s
     `Provider calls: ${metrics.providerCalls}`,
     `API calls: ${metrics.apiCalls}`,
     metrics.estimatedTokens !== undefined ? `Estimated tokens: ${metrics.estimatedTokens}` : null,
-    `Estimated cost: $${metrics.estimatedCostUsd?.toFixed(4) ?? "0.0000"}`,
+    `Estimated cost: $${metrics.estimatedCostUsd?.toFixed(4) ?? '0.0000'}`,
     `Actual cost: $${actualCost.toFixed(4)}`,
     metrics.notes ? `Notes: ${metrics.notes}` : null,
   ]
     .filter(Boolean)
-    .join("\n");
+    .join('\n');
 }

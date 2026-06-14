@@ -4,7 +4,7 @@
       "id": "S001",
       "url": "https://example.com/official-agent-report",
       "title": "Official Agent Research Report",
-      "sourceClass": "official",
+      "sourceClass": "primary",
       "publishedAt": "2026-05-20",
       "discoveredBy": "fixture:agent research",
       "scores": {
@@ -14,9 +14,7 @@
         "diversity": 3,
         "extractionValue": 4
       },
-      "claims": [
-        "Evidence-backed research workflows need source and claim traceability."
-      ]
+      "claims": ["Evidence-backed research workflows need source and claim traceability."]
     },
     {
       "id": "S002",
@@ -32,9 +30,7 @@
         "diversity": 4,
         "extractionValue": 3
       },
-      "claims": [
-        "Users prefer readable synthesis before audit files."
-      ]
+      "claims": ["Users prefer readable synthesis before audit files."]
     },
     {
       "id": "S003",
@@ -50,9 +46,7 @@
         "diversity": 0,
         "extractionValue": 1
       },
-      "claims": [
-        "Weak duplicate source should not be accepted."
-      ]
+      "claims": ["Weak duplicate source should not be accepted."]
     }
   ]
 }

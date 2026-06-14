@@ -1,4 +1,4 @@
-import type { SearchDepth, Source } from "../types";
+import type { SearchDepth, Source } from '../types';
 
 export interface SearchOptions {
   objective: string;

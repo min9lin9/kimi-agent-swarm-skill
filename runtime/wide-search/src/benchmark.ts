@@ -1,19 +1,19 @@
-import { join } from "node:path";
+import { join } from 'node:path';
 
-import { getGitCommit, recordEntry } from "./leaderboard";
-import { runWideSearch } from "./runtime";
-import type { BenchmarkResult, Claim, EnrichedSource, GoldenAnswer } from "./types";
+import { getGitCommit, recordEntry } from './leaderboard';
+import { runWideSearch } from './runtime';
+import type { BenchmarkResult, Claim, EnrichedSource, GoldenAnswer } from './types';
 
 function normalizeClaimText(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .replace(/\s+/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
 function tokenSet(text: string): Set<string> {
-  return new Set(normalizeClaimText(text).split(" ").filter(Boolean));
+  return new Set(normalizeClaimText(text).split(' ').filter(Boolean));
 }
 
 function jaccardSimilarity(a: string, b: string): number {
@@ -28,7 +28,7 @@ function jaccardSimilarity(a: string, b: string): number {
 function findBestMatch(
   expectedClaim: string,
   actualClaims: Claim[],
-  threshold = 0.6,
+  threshold = 0.6
 ): Claim | undefined {
   let best: Claim | undefined;
   let bestScore = 0;
@@ -45,12 +45,12 @@ function findBestMatch(
 export async function runBenchmark(
   profile: string,
   golden: GoldenAnswer,
-  workDir: string = process.cwd(),
+  workDir: string = process.cwd()
 ): Promise<BenchmarkResult> {
   const objective = `Benchmark: ${profile}`;
   const runResult = await runWideSearch({
     objective,
-    profile: profile as "fixture-paul-graham-corpus",
+    profile: profile as 'fixture-paul-graham-corpus',
     workDir,
   });
 
@@ -64,6 +64,7 @@ export async function runBenchmark(
       recall: 0,
       citationAccuracy: 0,
       f1: 0,
+      urlCoverage: 0,
       passed: false,
     };
     await recordEntry({
@@ -79,12 +80,12 @@ export async function runBenchmark(
 
   // We only have verification summary here, but the actual claims live in the ledger.
   // Re-read ledger files for scoring.
-  const ledgerPath = join(runResult.runDir, "claim-ledger.jsonl");
-  const sourceLedgerPath = join(runResult.runDir, "source-ledger.jsonl");
+  const ledgerPath = join(runResult.runDir, 'claim-ledger.jsonl');
+  const sourceLedgerPath = join(runResult.runDir, 'source-ledger.jsonl');
 
-  const claimModule = await import("node:fs/promises");
-  const claimText = await claimModule.readFile(ledgerPath, "utf8");
-  const sourceText = await claimModule.readFile(sourceLedgerPath, "utf8");
+  const claimModule = await import('node:fs/promises');
+  const claimText = await claimModule.readFile(ledgerPath, 'utf8');
+  const sourceText = await claimModule.readFile(sourceLedgerPath, 'utf8');
 
   const actualClaims: Claim[] = claimText
     .split(/\r?\n/)
@@ -109,20 +110,32 @@ export async function runBenchmark(
   }
 
   const precision = acceptedClaims.length > 0 ? matchedActualIds.size / acceptedClaims.length : 0;
-  const recall = golden.expectedClaims.length > 0 ? matchedGolden / golden.expectedClaims.length : 0;
+  const recall =
+    golden.expectedClaims.length > 0 ? matchedGolden / golden.expectedClaims.length : 0;
   const f1 = precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
 
   const citedClaims = acceptedClaims.filter(
-    (claim) => Array.isArray(claim.sourceIds) && claim.sourceIds.length > 0,
+    (claim) => Array.isArray(claim.sourceIds) && claim.sourceIds.length > 0
   );
-  const citationAccuracy = acceptedClaims.length > 0 ? citedClaims.length / acceptedClaims.length : 0;
+  const citationAccuracy =
+    acceptedClaims.length > 0 ? citedClaims.length / acceptedClaims.length : 0;
 
   // Optional URL coverage check
+  let urlCoverage = 0;
+  let passed = recall >= 0.5 && citationAccuracy >= 0.8;
+  const failures: string[] = [];
   if (golden.expectedSourceUrls && golden.expectedSourceUrls.length > 0) {
-    const acceptedUrls = new Set(sources.filter((s) => s.decision === "accepted").map((s) => s.url));
+    const acceptedUrls = new Set(
+      sources.filter((s) => s.decision === 'accepted').map((s) => s.url)
+    );
     const coveredUrls = golden.expectedSourceUrls.filter((url) => acceptedUrls.has(url));
-    if (coveredUrls.length / golden.expectedSourceUrls.length < 0.5) {
-      // URL coverage below 50% is a soft failure; does not override numeric scores.
+    urlCoverage = Number((coveredUrls.length / golden.expectedSourceUrls.length).toFixed(4));
+    if (urlCoverage < 0.5) {
+      passed = false;
+      failures.push(
+        `URL coverage ${(urlCoverage * 100).toFixed(1)}% below 50% threshold ` +
+          `(${coveredUrls.length}/${golden.expectedSourceUrls.length} expected sources)`
+      );
     }
   }
 
@@ -134,7 +147,9 @@ export async function runBenchmark(
     recall: Number(recall.toFixed(4)),
     citationAccuracy: Number(citationAccuracy.toFixed(4)),
     f1: Number(f1.toFixed(4)),
-    passed: recall >= 0.5 && citationAccuracy >= 0.8,
+    passed,
+    urlCoverage,
+    failures: failures.length > 0 ? failures : undefined,
   };
 
   const gitCommit = await getGitCommit();

@@ -1,6 +1,6 @@
-import { createInterface, type Interface } from "node:readline/promises";
+import { type Interface, createInterface } from 'node:readline/promises';
 
-import { getGlobalConfigPath, writeConfig, type KaswConfig, type ProviderConfig } from "./config";
+import { type KaswConfig, type ProviderConfig, getGlobalConfigPath, writeConfig } from './config';
 
 export interface InitOptions {
   nonInteractive?: boolean;
@@ -11,20 +11,25 @@ export interface InitOptions {
 interface ProviderPrompt {
   name: string;
   label: string;
-  credentialType: "apiKey" | "token";
+  credentialType: 'apiKey' | 'token';
   envVar: string;
 }
 
 const PROVIDERS: ProviderPrompt[] = [
-  { name: "serper", label: "Serper.dev (Google Search)", credentialType: "apiKey", envVar: "SERPER_API_KEY" },
-  { name: "tavily", label: "Tavily", credentialType: "apiKey", envVar: "TAVILY_API_KEY" },
-  { name: "brave", label: "Brave Search", credentialType: "apiKey", envVar: "BRAVE_API_KEY" },
-  { name: "github", label: "GitHub", credentialType: "token", envVar: "GITHUB_TOKEN" },
+  {
+    name: 'serper',
+    label: 'Serper.dev (Google Search)',
+    credentialType: 'apiKey',
+    envVar: 'SERPER_API_KEY',
+  },
+  { name: 'tavily', label: 'Tavily', credentialType: 'apiKey', envVar: 'TAVILY_API_KEY' },
+  { name: 'brave', label: 'Brave Search', credentialType: 'apiKey', envVar: 'BRAVE_API_KEY' },
+  { name: 'github', label: 'GitHub', credentialType: 'token', envVar: 'GITHUB_TOKEN' },
 ];
 
 async function prompt(question: string, reader?: Interface): Promise<string> {
   if (!reader) {
-    return "";
+    return '';
   }
   const answer = await reader.question(question);
   return answer.trim();
@@ -32,7 +37,7 @@ async function prompt(question: string, reader?: Interface): Promise<string> {
 
 async function promptSecret(question: string, reader?: Interface): Promise<string> {
   if (!reader) {
-    return "";
+    return '';
   }
   const stdin = process.stdin;
   const stdout = process.stdout;
@@ -44,35 +49,37 @@ async function promptSecret(question: string, reader?: Interface): Promise<strin
   for await (const chunk of stdin) {
     const text = chunk.toString();
     for (const char of text) {
-      if (char === "\n" || char === "\r" || char === "\u0004") {
+      if (char === '\n' || char === '\r' || char === '\u0004') {
         stdin.setRawMode?.(false);
-        stdout.write("\n");
-        return chunks.join("").trim();
+        stdout.write('\n');
+        return chunks.join('').trim();
       }
-      if (char === "\u0003") {
+      if (char === '\u0003') {
         stdin.setRawMode?.(false);
         process.exit(1);
       }
-      if (char === "\u007f") {
+      if (char === '\u007f') {
         chunks.pop();
-        stdout.write("\b \b");
+        stdout.write('\b \b');
       } else {
         chunks.push(char);
-        stdout.write("*");
+        stdout.write('*');
       }
     }
   }
-  return chunks.join("").trim();
+  return chunks.join('').trim();
 }
 
-export async function runInit(options: InitOptions = {}): Promise<{ configPath: string; wrote: string[] }> {
+export async function runInit(
+  options: InitOptions = {}
+): Promise<{ configPath: string; wrote: string[] }> {
   const wrote: string[] = [];
   const config: KaswConfig = {
     providers: {},
     defaults: {
-      provider: "mock",
-      depth: "standard",
-      profile: "fixture",
+      provider: 'mock',
+      depth: 'standard',
+      profile: 'fixture',
     },
   };
 
@@ -97,11 +104,14 @@ export async function runInit(options: InitOptions = {}): Promise<{ configPath: 
       }
 
       const enable = await prompt(`Enable ${provider.label}? (y/N) `, reader);
-      if (enable.toLowerCase() !== "y") {
+      if (enable.toLowerCase() !== 'y') {
         continue;
       }
 
-      const value = await promptSecret(`Enter ${provider.label} ${provider.credentialType === "apiKey" ? "API key" : "token"}: `, reader);
+      const value = await promptSecret(
+        `Enter ${provider.label} ${provider.credentialType === 'apiKey' ? 'API key' : 'token'}: `,
+        reader
+      );
       if (value) {
         const providerConfig: ProviderConfig = {
           [provider.credentialType]: value,
@@ -130,9 +140,14 @@ You can also set API keys via environment variables:
   SERPER_API_KEY, TAVILY_API_KEY, BRAVE_API_KEY, GITHUB_TOKEN
 
 Run a quick demo:
-  ./bin/kasw research "AI browser agent repos" --profile fixture
+  kasw research "AI browser agent repos" --profile fixture
 
-Or run a live search:
-  ./bin/kasw research "AI browser agent repos" --profile web-search --provider tavily
+Run a live search:
+  kasw research "AI browser agent repos" --profile web-search --provider tavily
+
+Other useful commands:
+  kasw benchmark --profile <fixture>
+  kasw leaderboard [--profile <fixture>] [--html]
+  kasw init --local            # write config to the current working directory
 `;
 }

@@ -204,9 +204,7 @@
         "diversity": 1,
         "extractionValue": 1
       },
-      "claims": [
-        "Generic job postings can list many titles but lack contextual role analysis."
-      ]
+      "claims": ["Generic job postings can list many titles but lack contextual role analysis."]
     },
     {
       "id": "quantitative-analyst",

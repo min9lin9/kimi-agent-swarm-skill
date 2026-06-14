@@ -1,8 +1,8 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
-import type { ExecutionProfile, SearchDepth } from "./types";
+import type { ExecutionProfile, SearchDepth } from './types';
 
 export interface ProviderConfig {
   apiKey?: string;
@@ -21,22 +21,22 @@ export interface KaswConfig {
 export const DEFAULT_CONFIG: KaswConfig = {
   providers: {},
   defaults: {
-    provider: "mock",
-    depth: "standard",
-    profile: "fixture",
+    provider: 'mock',
+    depth: 'standard',
+    profile: 'fixture',
   },
 };
 
 export function getGlobalConfigDir(): string {
-  return join(homedir(), ".kasw");
+  return join(homedir(), '.kasw');
 }
 
 export function getGlobalConfigPath(): string {
-  return join(getGlobalConfigDir(), "config.json");
+  return join(getGlobalConfigDir(), 'config.json');
 }
 
 export function getLocalConfigPath(workDir: string = process.cwd()): string {
-  return join(workDir, ".kasw.json");
+  return join(workDir, '.kasw.json');
 }
 
 export async function loadConfig(workDir: string = process.cwd()): Promise<KaswConfig> {
@@ -48,11 +48,11 @@ export async function loadConfig(workDir: string = process.cwd()): Promise<KaswC
 
 async function loadConfigFile(path: string): Promise<Partial<KaswConfig>> {
   try {
-    const text = await readFile(path, "utf8");
+    const text = await readFile(path, 'utf8');
     const parsed = JSON.parse(text) as Partial<KaswConfig>;
     return normalizeConfig(parsed);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return {};
     }
     throw error;
@@ -69,7 +69,7 @@ function normalizeConfig(config: Partial<KaswConfig>): Partial<KaswConfig> {
 function mergeConfigs(
   base: KaswConfig,
   global: Partial<KaswConfig>,
-  local: Partial<KaswConfig>,
+  local: Partial<KaswConfig>
 ): KaswConfig {
   return {
     providers: {
@@ -87,7 +87,7 @@ function mergeConfigs(
 
 export async function writeConfig(
   config: KaswConfig,
-  options: { global?: boolean; workDir?: string } = {},
+  options: { global?: boolean; workDir?: string } = {}
 ): Promise<string> {
   const path = options.global
     ? getGlobalConfigPath()
@@ -99,15 +99,15 @@ export async function writeConfig(
 }
 
 const PROVIDER_ENV_VARS: Record<string, string> = {
-  serper: "SERPER_API_KEY",
-  tavily: "TAVILY_API_KEY",
-  brave: "BRAVE_API_KEY",
-  github: "GITHUB_TOKEN",
+  serper: 'SERPER_API_KEY',
+  tavily: 'TAVILY_API_KEY',
+  brave: 'BRAVE_API_KEY',
+  github: 'GITHUB_TOKEN',
 };
 
 export function resolveProviderCredential(
   config: KaswConfig,
-  providerName: string,
+  providerName: string
 ): string | undefined {
   const envVar = PROVIDER_ENV_VARS[providerName];
   const envValue = envVar ? process.env[envVar] : undefined;
@@ -125,10 +125,10 @@ export function resolveProviderCredential(
 
 export function listConfiguredProviders(config: KaswConfig): string[] {
   const fromConfig = Object.keys(config.providers).filter(
-    (name) => config.providers[name]?.apiKey || config.providers[name]?.token,
+    (name) => config.providers[name]?.apiKey || config.providers[name]?.token
   );
   const fromEnv = Object.keys(PROVIDER_ENV_VARS).filter(
-    (name) => process.env[PROVIDER_ENV_VARS[name]],
+    (name) => process.env[PROVIDER_ENV_VARS[name]]
   );
   return [...new Set([...fromConfig, ...fromEnv])];
 }

@@ -1,9 +1,9 @@
-import { createHash } from "node:crypto";
-import { mkdir, readdir, readFile, unlink, writeFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
-import type { CacheKey, Source } from "./types";
+import type { CacheKey, Source } from './types';
 
 export interface CacheEntry {
   sources: Source[];
@@ -11,7 +11,7 @@ export interface CacheEntry {
 }
 
 export function getCacheDir(): string {
-  return join(homedir(), ".kasw", "cache");
+  return join(homedir(), '.kasw', 'cache');
 }
 
 export function cacheKeyHash(key: CacheKey): string {
@@ -21,7 +21,7 @@ export function cacheKeyHash(key: CacheKey): string {
     depth: key.depth,
     maxResults: key.maxResults,
   });
-  return createHash("sha256").update(normalized).digest("hex").slice(0, 32);
+  return createHash('sha256').update(normalized).digest('hex').slice(0, 32);
 }
 
 function cacheFilePath(key: CacheKey): string {
@@ -30,11 +30,11 @@ function cacheFilePath(key: CacheKey): string {
 
 export async function getCachedSources(
   key: CacheKey,
-  ttlHours = 168, // 7 days default
+  ttlHours = 168 // 7 days default
 ): Promise<Source[] | undefined> {
   const path = cacheFilePath(key);
   try {
-    const text = await readFile(path, "utf8");
+    const text = await readFile(path, 'utf8');
     const entry = JSON.parse(text) as CacheEntry;
 
     const cachedAt = new Date(entry.cachedAt).getTime();
@@ -46,7 +46,7 @@ export async function getCachedSources(
 
     return entry.sources;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return undefined;
     }
     throw error;
@@ -69,7 +69,7 @@ export async function clearCache(): Promise<number> {
   try {
     files = await readdir(dir);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return 0;
     }
     throw error;
@@ -77,7 +77,7 @@ export async function clearCache(): Promise<number> {
 
   let removed = 0;
   for (const file of files) {
-    if (file.endsWith(".json")) {
+    if (file.endsWith('.json')) {
       await unlink(join(dir, file));
       removed += 1;
     }

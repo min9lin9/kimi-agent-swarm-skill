@@ -1,10 +1,10 @@
-import type { DistributedJob, DistributedTask, WorkerResult } from "../types";
+import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
 
 export interface QueueAdapter {
   readonly type: string;
 
   createJob(
-    job: Omit<DistributedJob, "jobId" | "createdAt" | "updatedAt">,
+    job: Omit<DistributedJob, 'jobId' | 'createdAt' | 'updatedAt'>
   ): Promise<DistributedJob>;
 
   getJob(jobId: string): Promise<DistributedJob | undefined>;
@@ -16,6 +16,7 @@ export interface QueueAdapter {
 
   getPendingTaskCount(jobId: string): Promise<number>;
   getRunningTaskCount(jobId: string): Promise<number>;
+  quit?(): Promise<void>;
 }
 
 export function makeJobId(): string {
@@ -25,5 +26,5 @@ export function makeJobId(): string {
 }
 
 export function makeTaskId(jobId: string, index: number): string {
-  return `${jobId}-task-${String(index + 1).padStart(4, "0")}`;
+  return `${jobId}-task-${String(index + 1).padStart(4, '0')}`;
 }

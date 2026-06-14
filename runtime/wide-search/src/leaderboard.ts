@@ -1,8 +1,8 @@
-import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { appendFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
-import type { BenchmarkResult, LeaderboardEntry } from "./types";
+import type { BenchmarkResult, LeaderboardEntry } from './types';
 
 export interface ComparisonResult {
   runIds: string[];
@@ -10,11 +10,11 @@ export interface ComparisonResult {
 }
 
 export function getLeaderboardDir(): string {
-  return join(homedir(), ".kasw");
+  return join(homedir(), '.kasw');
 }
 
 export function getLeaderboardPath(): string {
-  return join(getLeaderboardDir(), "leaderboard.jsonl");
+  return join(getLeaderboardDir(), 'leaderboard.jsonl');
 }
 
 export async function recordEntry(entry: LeaderboardEntry): Promise<void> {
@@ -25,7 +25,7 @@ export async function recordEntry(entry: LeaderboardEntry): Promise<void> {
 
 export async function getLeaderboard(profile?: string): Promise<LeaderboardEntry[]> {
   try {
-    const text = await readFile(getLeaderboardPath(), "utf8");
+    const text = await readFile(getLeaderboardPath(), 'utf8');
     const entries = text
       .split(/\r?\n/)
       .filter(Boolean)
@@ -36,7 +36,7 @@ export async function getLeaderboard(profile?: string): Promise<LeaderboardEntry
     }
     return entries;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return [];
     }
     throw error;
@@ -50,16 +50,16 @@ export async function compareRuns(runIds: string[]): Promise<ComparisonResult> {
 }
 
 export async function clearLeaderboard(): Promise<void> {
-  await writeFile(getLeaderboardPath(), "");
+  await writeFile(getLeaderboardPath(), '');
 }
 
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function formatTimestamp(iso: string): string {
@@ -72,7 +72,7 @@ function shortenRunId(runId: string): string {
 }
 
 function trendLine(values: number[], width: number, height: number): string {
-  if (values.length < 2) return "";
+  if (values.length < 2) return '';
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
@@ -83,14 +83,14 @@ function trendLine(values: number[], width: number, height: number): string {
       const y = height - ((v - min) / range) * height;
       return `${x},${y}`;
     })
-    .join(" ");
+    .join(' ');
   return `<polyline points="${points}" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
 }
 
 function barChart(
   data: { label: string; value: number; color?: string }[],
   width: number,
-  height: number,
+  height: number
 ): string {
   const max = Math.max(1, ...data.map((d) => d.value));
   const barWidth = width / data.length - 16;
@@ -99,55 +99,62 @@ function barChart(
       const x = 8 + i * (barWidth + 16);
       const barHeight = (d.value / max) * (height - 40);
       const y = height - 36 - barHeight;
-      const color = d.color ?? "#2563eb";
+      const color = d.color ?? '#2563eb';
       return `
         <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" fill="${color}" rx="4" />
         <text x="${x + barWidth / 2}" y="${y - 8}" text-anchor="middle" font-size="12" font-weight="600" fill="#334155">${d.value.toFixed(4)}</text>
         <text x="${x + barWidth / 2}" y="${height - 14}" text-anchor="middle" font-size="11" fill="#64748b">${escapeHtml(d.label)}</text>
       `;
     })
-    .join("");
+    .join('');
   return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${bars}</svg>`;
 }
 
 function renderProfileSection(profile: string, entries: LeaderboardEntry[]): string {
   const sorted = [...entries].sort(
-    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 
   const bestByMetric = {
-    precision: sorted.reduce((best, e) => (e.scores.precision > best.scores.precision ? e : best), sorted[0]),
-    recall: sorted.reduce((best, e) => (e.scores.recall > best.scores.recall ? e : best), sorted[0]),
+    precision: sorted.reduce(
+      (best, e) => (e.scores.precision > best.scores.precision ? e : best),
+      sorted[0]
+    ),
+    recall: sorted.reduce(
+      (best, e) => (e.scores.recall > best.scores.recall ? e : best),
+      sorted[0]
+    ),
     f1: sorted.reduce((best, e) => (e.scores.f1 > best.scores.f1 ? e : best), sorted[0]),
   };
 
   const latest = sorted[sorted.length - 1];
-  const passRate = sorted.length > 0
-    ? Math.round((sorted.filter((e) => e.scores.passed).length / sorted.length) * 100)
-    : 0;
+  const passRate =
+    sorted.length > 0
+      ? Math.round((sorted.filter((e) => e.scores.passed).length / sorted.length) * 100)
+      : 0;
 
   const rows = sorted
     .map((e) => {
       const isBestF1 = e.runId === bestByMetric.f1.runId;
       return `
-        <tr class="${isBestF1 ? "best" : ""}">
+        <tr class="${isBestF1 ? 'best' : ''}">
           <td>${formatTimestamp(e.timestamp)}</td>
           <td><code>${escapeHtml(shortenRunId(e.runId))}</code></td>
           <td class="num">${e.scores.precision.toFixed(4)}</td>
           <td class="num">${e.scores.recall.toFixed(4)}</td>
           <td class="num">${e.scores.citationAccuracy.toFixed(4)}</td>
-          <td class="num">${e.scores.f1.toFixed(4)} ${isBestF1 ? "⭐" : ""}</td>
-          <td class="center">${e.scores.passed ? "✅" : "❌"}</td>
-          <td class="muted">${e.gitCommit ? escapeHtml(e.gitCommit.slice(0, 8)) : "—"}</td>
+          <td class="num">${e.scores.f1.toFixed(4)} ${isBestF1 ? '⭐' : ''}</td>
+          <td class="center">${e.scores.passed ? '✅' : '❌'}</td>
+          <td class="muted">${e.gitCommit ? escapeHtml(e.gitCommit.slice(0, 8)) : '—'}</td>
         </tr>
       `;
     })
-    .join("");
+    .join('');
 
   const barData = [
-    { label: "Latest", value: latest.scores.f1, color: "#2563eb" },
-    { label: "Best F1", value: bestByMetric.f1.scores.f1, color: "#22c55e" },
-    { label: "Best Recall", value: bestByMetric.recall.scores.recall, color: "#a855f7" },
+    { label: 'Latest', value: latest.scores.f1, color: '#2563eb' },
+    { label: 'Best F1', value: bestByMetric.f1.scores.f1, color: '#22c55e' },
+    { label: 'Best Recall', value: bestByMetric.recall.scores.recall, color: '#a855f7' },
   ];
 
   return `
@@ -156,7 +163,7 @@ function renderProfileSection(profile: string, entries: LeaderboardEntry[]): str
         <h2>${escapeHtml(profile)}</h2>
         <div class="badges">
           <span class="badge">${sorted.length} runs</span>
-          <span class="badge ${passRate >= 80 ? "good" : passRate >= 50 ? "warn" : "bad"}">${passRate}% passed</span>
+          <span class="badge ${passRate >= 80 ? 'good' : passRate >= 50 ? 'warn' : 'bad'}">${passRate}% passed</span>
         </div>
       </div>
 
@@ -186,7 +193,11 @@ function renderProfileSection(profile: string, entries: LeaderboardEntry[]): str
       <div class="charts">
         <div class="chart">
           <h3>F1 Trend</h3>
-          <svg viewBox="0 0 400 120" preserveAspectRatio="none">${trendLine(sorted.map((e) => e.scores.f1), 400, 120)}</svg>
+          <svg viewBox="0 0 400 120" preserveAspectRatio="none">${trendLine(
+            sorted.map((e) => e.scores.f1),
+            400,
+            120
+          )}</svg>
         </div>
         <div class="chart">
           <h3>Best Scores</h3>
@@ -218,7 +229,7 @@ function renderProfileSection(profile: string, entries: LeaderboardEntry[]): str
 
 export async function generateHtmlReport(
   entries: LeaderboardEntry[],
-  outPath: string,
+  outPath: string
 ): Promise<string> {
   const byProfile = entries.reduce<Record<string, LeaderboardEntry[]>>((acc, entry) => {
     acc[entry.profile] = acc[entry.profile] ?? [];
@@ -227,10 +238,10 @@ export async function generateHtmlReport(
   }, {});
 
   const summaryCards = [
-    { label: "Profiles", value: Object.keys(byProfile).length },
-    { label: "Total Runs", value: entries.length },
-    { label: "Passed", value: entries.filter((e) => e.scores.passed).length },
-    { label: "Failed", value: entries.filter((e) => !e.scores.passed).length },
+    { label: 'Profiles', value: Object.keys(byProfile).length },
+    { label: 'Total Runs', value: entries.length },
+    { label: 'Passed', value: entries.filter((e) => e.scores.passed).length },
+    { label: 'Failed', value: entries.filter((e) => !e.scores.passed).length },
   ];
 
   const summaryHtml = summaryCards
@@ -240,13 +251,13 @@ export async function generateHtmlReport(
           <div class="label">${escapeHtml(card.label)}</div>
           <div class="value">${card.value}</div>
         </div>
-      `,
+      `
     )
-    .join("");
+    .join('');
 
   const sections = Object.entries(byProfile)
     .map(([profile, profileEntries]) => renderProfileSection(profile, profileEntries))
-    .join("");
+    .join('');
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -309,8 +320,8 @@ export async function generateHtmlReport(
 export async function getGitCommit(): Promise<string | undefined> {
   try {
     const result = await new Promise<string>((resolve, reject) => {
-      import("node:child_process").then(({ exec }) => {
-        exec("git rev-parse HEAD", (error, stdout) => {
+      import('node:child_process').then(({ exec }) => {
+        exec('git rev-parse HEAD', (error, stdout) => {
           if (error) reject(error);
           else resolve(stdout.trim());
         });

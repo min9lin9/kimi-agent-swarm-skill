@@ -232,9 +232,7 @@
         "diversity": 1,
         "extractionValue": 1
       },
-      "claims": [
-        "Forum discussions may contain anecdotes but lack structured role analysis."
-      ]
+      "claims": ["Forum discussions may contain anecdotes but lack structured role analysis."]
     },
     {
       "id": "regional-head-of-research",

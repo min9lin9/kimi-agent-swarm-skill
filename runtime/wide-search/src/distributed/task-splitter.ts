@@ -1,30 +1,21 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-import type { DistributedTask, ExecutionProfile, Source } from "../types";
+import { FIXTURE_FILE_MAP } from '../shared';
+import type { DistributedTask, ExecutionProfile, Source } from '../types';
 
 export interface TaskPlan {
   queryFamily: string;
   query: string;
 }
 
-const FIXTURE_FILE_MAP: Record<string, string> = {
-  fixture: "basic-sources.json",
-  "fixture-asset-mgmt": "asset-mgmt-roles.json",
-  "fixture-sellside-research": "sellside-research-roles.json",
-  "fixture-youtube-niche": "youtube-niche.json",
-  "fixture-paul-graham-corpus": "paul-graham-corpus.json",
-  "fixture-github-repo-landscape": "github-repo-landscape.json",
-  "fixture-market-scan": "market-scan.json",
-};
-
 export function splitWebSearchTasks(objective: string): TaskPlan[] {
   const queries: TaskPlan[] = [
-    { queryFamily: "primary", query: objective },
-    { queryFamily: "best-of", query: `best ${objective}` },
-    { queryFamily: "comparison", query: `${objective} comparison` },
-    { queryFamily: "github", query: `${objective} github` },
-    { queryFamily: "latest", query: `${objective} 2026` },
+    { queryFamily: 'primary', query: objective },
+    { queryFamily: 'best-of', query: `best ${objective}` },
+    { queryFamily: 'comparison', query: `${objective} comparison` },
+    { queryFamily: 'github', query: `${objective} github` },
+    { queryFamily: 'latest', query: `${objective} 2026` },
   ];
 
   // Deduplicate while preserving order.
@@ -39,14 +30,14 @@ export function splitWebSearchTasks(objective: string): TaskPlan[] {
 export async function splitFixtureTasks(
   profile: ExecutionProfile,
   fixturesDir: string,
-  batchSize = 5,
+  batchSize = 5
 ): Promise<TaskPlan[]> {
   const fileName = FIXTURE_FILE_MAP[profile];
   if (!fileName) {
     throw new Error(`No fixture file mapping for profile: ${profile}`);
   }
 
-  const text = await readFile(join(fixturesDir, fileName), "utf8");
+  const text = await readFile(join(fixturesDir, fileName), 'utf8');
   const { sources } = JSON.parse(text) as { sources: Source[] };
 
   const tasks: TaskPlan[] = [];
@@ -54,7 +45,7 @@ export async function splitFixtureTasks(
     const batch = sources.slice(i, i + batchSize);
     tasks.push({
       queryFamily: `fixture-batch-${Math.floor(i / batchSize) + 1}`,
-      query: batch.map((s) => s.id).join(","),
+      query: batch.map((s) => s.id).join(','),
     });
   }
 
@@ -64,14 +55,14 @@ export async function splitFixtureTasks(
 export function buildTasksFromPlans(
   jobId: string,
   plans: TaskPlan[],
-  maxRetries: number,
+  maxRetries: number
 ): DistributedTask[] {
   return plans.map((plan, index) => ({
-    taskId: `${jobId}-task-${String(index + 1).padStart(4, "0")}`,
+    taskId: `${jobId}-task-${String(index + 1).padStart(4, '0')}`,
     jobId,
     queryFamily: plan.queryFamily,
     query: plan.query,
-    status: "pending",
+    status: 'pending',
     attempts: 0,
     maxRetries,
   }));

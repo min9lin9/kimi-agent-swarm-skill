@@ -1,150 +1,29 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-import { getCachedSources, setCachedSources } from "./cache";
-import { loadCommandSources } from "./command-provider";
-import { loadConfig, resolveProviderCredential } from "./config";
-import {
-  calculateActualCost,
-  checkBudget,
-  checkEstimatedBudget,
-  estimateRunCost,
-  formatCostReport,
-  maxResultsForDepth,
-} from "./costs";
-import { runDistributedWideSearch } from "./distributed/runner";
-import { renderMarkdownSynthesis } from "./markdown";
-import { createSearchProvider } from "./providers";
-import { scoreSource } from "./scorer";
-import { verifyRun } from "./verifier";
+import { checkEstimatedBudget, estimateRunCost, formatCostReport } from './costs';
+import { runDistributedWideSearch } from './distributed/runner';
+import { defaultLogger } from './logger';
+import { renderMarkdownSynthesis } from './markdown';
+import { makeRunId } from './shared';
+import { resolveProviderName, runWideSearchTask } from './shared-runtime';
 import type {
   BudgetOptions,
-  Claim,
-  ClaimConfidence,
-  ClaimFreshness,
-  EnrichedSource,
-  ExecutionProfile,
-  LoadSourcesOptions,
   ResearchPlan,
   Run,
   RunWideSearchOptions,
   RunWideSearchResult,
-  SearchDepth,
-  Source,
   UsageMetrics,
-} from "./types";
-
-function makeRunId(): string {
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-  const suffix = Math.random().toString(36).slice(2, 8);
-  return `${stamp}-${suffix}`;
-}
-
-function claimConfidence(source: Source): ClaimConfidence {
-  const authority = source.scores?.authority ?? 0;
-  if (authority >= 4) return "high";
-  if (authority >= 2) return "medium";
-  return "low";
-}
-
-function claimFreshness(source: Source): ClaimFreshness {
-  if (!source.publishedAt || source.publishedAt === "unknown") return "unknown";
-
-  const now = new Date();
-  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
-    .toISOString()
-    .split("T")[0];
-
-  return source.publishedAt >= oneYearAgo ? "current" : "stale";
-}
-
-const FIXTURE_FILE_MAP: Record<string, string> = {
-  fixture: "basic-sources.json",
-  "fixture-asset-mgmt": "asset-mgmt-roles.json",
-  "fixture-sellside-research": "sellside-research-roles.json",
-  "fixture-youtube-niche": "youtube-niche.json",
-  "fixture-paul-graham-corpus": "paul-graham-corpus.json",
-  "fixture-github-repo-landscape": "github-repo-landscape.json",
-  "fixture-market-scan": "market-scan.json",
-};
-
-async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {
-  const fileName = FIXTURE_FILE_MAP[profile];
-  if (fileName === undefined) {
-    throw new Error(`unknown fixture profile: ${profile}`);
-  }
-  const fixtureUrl = new URL(`../fixtures/${fileName}`, import.meta.url);
-  const fixture = JSON.parse(await readFile(fixtureUrl, "utf8")) as { sources: Source[] };
-  return fixture.sources;
-}
-
-async function loadSources({
-  profile,
-  objective,
-  providerCommand,
-  providerArgs,
-  providerName,
-  searchDepth,
-  metrics,
-  useCache,
-}: LoadSourcesOptions): Promise<Source[]> {
-  if (profile.startsWith("fixture")) {
-    return loadFixtureSources(profile);
-  }
-
-  if (profile === "local-command") {
-    return loadCommandSources({ providerCommand, providerArgs, objective });
-  }
-
-  if (profile === "web-search") {
-    const depth = searchDepth ?? "standard";
-    const maxResults = maxResultsForDepth(depth);
-    const cacheKey = { provider: providerName ?? "mock", objective, depth, maxResults };
-
-    if (useCache && providerName && providerName !== "mock") {
-      const cached = await getCachedSources(cacheKey);
-      if (cached) {
-        if (metrics) {
-          metrics.notes = metrics.notes ? `${metrics.notes}; cache hit` : "cache hit";
-        }
-        return cached;
-      }
-    }
-
-    const config = await loadConfig();
-    const credential = resolveProviderCredential(config, providerName ?? "mock");
-    const provider = createSearchProvider(providerName ?? "mock", { credential, metrics });
-    const sources = await provider.search({
-      objective,
-      depth,
-      maxResults,
-    });
-
-    if (useCache && providerName && providerName !== "mock") {
-      await setCachedSources(cacheKey, sources);
-    }
-
-    return sources;
-  }
-
-  throw new Error(`unsupported execution profile: ${profile}`);
-}
-
-
-function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
-  if (profile === "web-search") {
-    return providerName ?? "mock";
-  }
-  return "mock";
-}
+} from './types';
+import { verifyRun } from './verifier';
 
 export async function runWideSearch({
   objective,
-  profile = "fixture",
+  profile = 'fixture',
   providerCommand,
   providerArgs = [],
   providerName,
-  searchDepth = "standard",
+  searchDepth = 'standard',
   workDir = process.cwd(),
   budget = {},
   useCache = false,
@@ -154,10 +33,10 @@ export async function runWideSearch({
   let replayedFrom: string | undefined;
 
   if (replayRunId) {
-    const previousRunDir = join(workDir, ".runs", "wide-search", replayRunId);
-    const previousRun = JSON.parse(await readFile(join(previousRunDir, "run.json"), "utf8")) as Run;
+    const previousRunDir = join(workDir, '.runs', 'wide-search', replayRunId);
+    const previousRun = JSON.parse(await readFile(join(previousRunDir, 'run.json'), 'utf8')) as Run;
     const previousPlan = JSON.parse(
-      await readFile(join(previousRunDir, "research-plan.json"), "utf8"),
+      await readFile(join(previousRunDir, 'research-plan.json'), 'utf8')
     ) as ResearchPlan;
     objective = objective ?? previousRun.objective;
     profile = previousRun.executionProfile;
@@ -167,22 +46,26 @@ export async function runWideSearch({
   }
 
   if (!objective) {
-    throw new Error("runWideSearch requires objective");
+    throw new Error('runWideSearch requires objective');
   }
 
   if (distributed?.enabled) {
     return runDistributedWideSearch({
       objective,
       profile,
+      providerCommand,
+      providerArgs,
       providerName,
       searchDepth,
       workDir,
+      budget,
+      useCache,
       distributed,
     });
   }
 
   const runId = makeRunId();
-  const runDir = join(workDir, ".runs", "wide-search", runId);
+  const runDir = join(workDir, '.runs', 'wide-search', runId);
   await mkdir(runDir, { recursive: true });
 
   const effectiveProviderName = resolveProviderName(profile, providerName);
@@ -197,21 +80,21 @@ export async function runWideSearch({
   checkEstimatedBudget(estimate, budget);
 
   if (budget.dryRun) {
-    usageMetrics.notes = "Dry run: no provider executed.";
+    usageMetrics.notes = 'Dry run: no provider executed.';
     const dryRun: Run = {
       runId,
       objective,
       executionProfile: profile,
-      status: "completed",
+      status: 'completed',
       createdAt: new Date().toISOString(),
       usageMetrics,
     };
-    await writeFile(join(runDir, "run.json"), `${JSON.stringify(dryRun, null, 2)}\n`);
+    await writeFile(join(runDir, 'run.json'), `${JSON.stringify(dryRun, null, 2)}\n`);
     return {
       runId,
       runDir,
       verification: {
-        status: "passed",
+        status: 'passed',
         acceptedSources: 0,
         rejectedSources: 0,
         unsupportedClaims: 0,
@@ -222,75 +105,68 @@ export async function runWideSearch({
         conflictingClaimPairs: [],
         coverageGaps: [],
         failures: [],
-        warnings: ["dry-run: no sources or claims evaluated"],
+        warnings: ['dry-run: no sources or claims evaluated'],
       },
     };
   }
 
-  const rawSources = await loadSources({
-    profile,
+  const {
+    sources,
+    claims,
+    usageMetrics: taskMetrics,
+  } = await runWideSearchTask({
     objective,
+    profile,
     providerCommand,
     providerArgs,
     providerName,
     searchDepth,
-    metrics: usageMetrics,
+    budget,
     useCache,
+    workDir,
+    metrics: usageMetrics,
   });
-  const sources: EnrichedSource[] = rawSources.map((source) => scoreSource(source));
-
-  usageMetrics.actualCostUsd = calculateActualCost(effectiveProviderName, usageMetrics);
-  checkBudget(effectiveProviderName, usageMetrics, budget);
-
-  const claims: Claim[] = [];
-  for (const source of sources.filter((item) => item.decision === "accepted")) {
-    for (const claim of source.claims ?? []) {
-      claims.push({
-        id: `C${String(claims.length + 1).padStart(3, "0")}`,
-        claim,
-        sourceIds: [source.id],
-        confidence: claimConfidence(source),
-        freshness: claimFreshness(source),
-      });
-    }
-  }
 
   const run: Run = {
     runId,
     objective,
     executionProfile: profile,
-    status: "completed",
+    status: 'completed',
     createdAt: new Date().toISOString(),
-    usageMetrics,
+    usageMetrics: taskMetrics,
     replayedFrom,
-    cached: useCache && profile === "web-search" && effectiveProviderName !== "mock",
+    cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
   };
 
   const researchPlan: ResearchPlan = {
     objective,
     searchDepth,
     executionProfile: profile,
-    queryFamilies: [profile.startsWith("fixture") ? `fixture:${profile}` : "local-command provider"],
-    sourceTargets: ["official", "community", "secondary"],
-    stopConditions: [profile.startsWith("fixture") ? "fixture source set exhausted" : "provider output exhausted"],
+    queryFamilies: [
+      profile.startsWith('fixture') ? `fixture:${profile}` : 'local-command provider',
+    ],
+    sourceTargets: ['official', 'community', 'secondary'],
+    stopConditions: [
+      profile.startsWith('fixture') ? 'fixture source set exhausted' : 'provider output exhausted',
+    ],
   };
 
-  await writeFile(join(runDir, "run.json"), `${JSON.stringify(run, null, 2)}\n`);
-  await writeFile(join(runDir, "research-plan.json"), `${JSON.stringify(researchPlan, null, 2)}\n`);
+  await writeFile(join(runDir, 'run.json'), `${JSON.stringify(run, null, 2)}\n`);
+  await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(researchPlan, null, 2)}\n`);
   await writeFile(
-    join(runDir, "source-ledger.jsonl"),
-    `${sources.map((source) => JSON.stringify(source)).join("\n")}\n`,
+    join(runDir, 'source-ledger.jsonl'),
+    `${sources.map((source) => JSON.stringify(source)).join('\n')}\n`
   );
   await writeFile(
-    join(runDir, "claim-ledger.jsonl"),
-    `${claims.map((claim) => JSON.stringify(claim)).join("\n")}\n`,
+    join(runDir, 'claim-ledger.jsonl'),
+    `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
   );
 
   const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
   const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
-  await writeFile(join(runDir, "synthesis.md"), synthesis);
+  await writeFile(join(runDir, 'synthesis.md'), synthesis);
 
-  console.log(formatCostReport(effectiveProviderName, usageMetrics));
+  defaultLogger.info(formatCostReport(effectiveProviderName, taskMetrics));
 
   return {
     runId,

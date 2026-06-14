@@ -1,15 +1,15 @@
-export type SearchDepth = "light" | "standard" | "deep" | "maximum";
+export type SearchDepth = 'light' | 'standard' | 'deep' | 'maximum';
 
 export type ExecutionProfile =
-  | "fixture"
-  | "fixture-asset-mgmt"
-  | "fixture-sellside-research"
-  | "fixture-youtube-niche"
-  | "fixture-paul-graham-corpus"
-  | "fixture-github-repo-landscape"
-  | "fixture-market-scan"
-  | "local-command"
-  | "web-search";
+  | 'fixture'
+  | 'fixture-asset-mgmt'
+  | 'fixture-sellside-research'
+  | 'fixture-youtube-niche'
+  | 'fixture-paul-graham-corpus'
+  | 'fixture-github-repo-landscape'
+  | 'fixture-market-scan'
+  | 'local-command'
+  | 'web-search';
 
 export interface SourceScores {
   relevance: number;
@@ -19,11 +19,13 @@ export interface SourceScores {
   extractionValue?: number;
 }
 
+export type SourceClass = 'primary' | 'primary-analysis' | 'secondary' | 'community' | 'unknown';
+
 export interface Source {
   id: string;
   url: string;
   title: string;
-  sourceClass: string;
+  sourceClass: SourceClass;
   publishedAt?: string;
   discoveredBy: string;
   scores: SourceScores;
@@ -31,13 +33,13 @@ export interface Source {
 }
 
 export interface EnrichedSource extends Source {
-  decision: "accepted" | "rejected";
+  decision: 'accepted' | 'rejected';
   reason: string;
 }
 
-export type ClaimConfidence = "high" | "medium" | "low";
+export type ClaimConfidence = 'high' | 'medium' | 'low';
 
-export type ClaimFreshness = "current" | "stale" | "unknown";
+export type ClaimFreshness = 'current' | 'stale' | 'unknown';
 
 export interface Claim {
   id: string;
@@ -60,7 +62,7 @@ export interface Run {
   runId: string;
   objective: string;
   executionProfile: ExecutionProfile;
-  status: "completed" | "failed";
+  status: 'completed' | 'failed';
   createdAt: string;
   usageMetrics: UsageMetrics;
   replayedFrom?: string;
@@ -90,7 +92,7 @@ export interface ConflictingClaimPair {
 }
 
 export interface VerificationReport {
-  status: "passed" | "failed";
+  status: 'passed' | 'failed';
   acceptedSources: number;
   rejectedSources: number;
   unsupportedClaims: number;
@@ -123,7 +125,11 @@ export interface DistributedRunOptions {
   workers?: number;
   maxRetries?: number;
   resumeJobId?: string;
-  queueType?: "memory" | "redis";
+  queueType?: 'memory' | 'redis';
+  redisUrl?: string;
+  redisPassword?: string;
+  redisUsername?: string;
+  redisKeyPrefix?: string;
 }
 
 export interface DistributedJob {
@@ -132,14 +138,18 @@ export interface DistributedJob {
   executionProfile: ExecutionProfile;
   providerName: string;
   searchDepth: SearchDepth;
-  queueType: "memory" | "redis";
+  queueType: 'memory' | 'redis';
   status: DistributedJobStatus;
   tasks: DistributedTask[];
+  useCache?: boolean;
+  budget?: BudgetOptions;
+  workDir?: string;
+  perTaskMaxResults?: number;
   createdAt: string;
   updatedAt: string;
 }
 
-export type DistributedJobStatus = "pending" | "running" | "completed" | "failed";
+export type DistributedJobStatus = 'pending' | 'running' | 'completed' | 'failed';
 
 export interface DistributedTask {
   taskId: string;
@@ -156,11 +166,12 @@ export interface DistributedTask {
   completedAt?: string;
 }
 
-export type DistributedTaskStatus = "pending" | "running" | "completed" | "failed";
+export type DistributedTaskStatus = 'pending' | 'running' | 'completed' | 'failed';
 
 export interface WorkerResult {
   sources: Source[];
   usageMetrics: UsageMetrics;
+  claims?: Claim[];
 }
 
 export interface LoadSourcesOptions {
@@ -170,8 +181,11 @@ export interface LoadSourcesOptions {
   providerArgs?: string[];
   providerName?: string;
   searchDepth?: SearchDepth;
+  maxResults?: number;
   metrics?: UsageMetrics;
   useCache?: boolean;
+  sourceIds?: string[];
+  workDir?: string;
 }
 
 export interface VerifyRunOptions {
@@ -197,7 +211,7 @@ export interface BudgetOptions {
   dryRun?: boolean;
 }
 
-export type ExportFormat = "json" | "csv" | "html" | "svg";
+export type ExportFormat = 'json' | 'csv' | 'html' | 'svg';
 
 export interface ExportOptions {
   runDir: string;
@@ -219,6 +233,8 @@ export interface BenchmarkResult {
   citationAccuracy: number;
   f1: number;
   passed: boolean;
+  urlCoverage: number;
+  failures?: string[];
 }
 
 export interface LeaderboardEntry {

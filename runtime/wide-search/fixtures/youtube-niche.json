@@ -254,9 +254,7 @@
         "diversity": 1,
         "extractionValue": 1
       },
-      "claims": [
-        "Forum discussions may contain anecdotes but lack structured niche analysis."
-      ]
+      "claims": ["Forum discussions may contain anecdotes but lack structured niche analysis."]
     }
   ]
 }

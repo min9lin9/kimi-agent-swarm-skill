@@ -7,7 +7,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 5
+      },
       "claims": [
         "Browser-use connects AI agents directly to browser UI elements for task automation.",
         "It is one of the most starred AI browser agent repositories."
@@ -20,7 +26,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 5, "authority": 4, "freshness": 5, "diversity": 3, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 5
+      },
       "claims": [
         "Stagehand provides an AI-driven browser automation framework with act/extract/observe primitives.",
         "It is built on top of Playwright."
@@ -33,7 +45,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 5, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 5,
+        "authority": 3,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Shortest is a natural-language AI testing framework that converts prompts into browser tests."
       ]
@@ -45,7 +63,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 5, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 5,
+        "authority": 3,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Nanobrowser is an open-source AI web agent that runs directly in the browser as an extension."
       ]
@@ -57,7 +81,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "AutoGPT was one of the first open-source projects to popularize autonomous AI agents.",
         "It focuses on goal-oriented autonomous task execution."
@@ -70,7 +100,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "LangChain provides abstractions for chaining LLM calls, tools, and memory.",
         "It is widely used as a foundation for agent frameworks."
@@ -83,10 +119,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 4 },
-      "claims": [
-        "CrewAI structures agents into role-based crews that collaborate on tasks."
-      ]
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": ["CrewAI structures agents into role-based crews that collaborate on tasks."]
     },
     {
       "id": "GH-008",
@@ -95,10 +135,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
-      "claims": [
-        "AutoGen from Microsoft enables multi-agent conversations and tool use."
-      ]
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": ["AutoGen from Microsoft enables multi-agent conversations and tool use."]
     },
     {
       "id": "GH-009",
@@ -107,10 +151,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
-      "claims": [
-        "Pydantic AI is an agent framework built around type-safe structured outputs."
-      ]
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": ["Pydantic AI is an agent framework built around type-safe structured outputs."]
     },
     {
       "id": "GH-010",
@@ -119,10 +167,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
-      "claims": [
-        "Smolagents from Hugging Face emphasizes small, efficient agent code execution."
-      ]
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": ["Smolagents from Hugging Face emphasizes small, efficient agent code execution."]
     },
     {
       "id": "GH-011",
@@ -131,10 +183,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "LlamaIndex focuses on data ingestion and retrieval for LLM applications."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["LlamaIndex focuses on data ingestion and retrieval for LLM applications."]
     },
     {
       "id": "GH-012",
@@ -143,7 +199,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
       "claims": [
         "Haystack is an end-to-end NLP framework for building search and question-answering systems."
       ]
@@ -155,7 +217,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 3, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 3,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "ScrapeGraphAI uses LLMs to generate scraping pipelines from natural language prompts."
       ]
@@ -167,10 +235,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "Scrapy is a mature Python framework for large-scale web scraping."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["Scrapy is a mature Python framework for large-scale web scraping."]
     },
     {
       "id": "GH-015",
@@ -179,7 +251,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 3, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 4
+      },
       "claims": [
         "Playwright is a cross-browser automation library widely used by AI agent projects."
       ]
@@ -191,10 +269,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 3, "extractionValue": 3 },
-      "claims": [
-        "Selenium is the legacy standard for browser automation."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 3,
+        "extractionValue": 3
+      },
+      "claims": ["Selenium is the legacy standard for browser automation."]
     },
     {
       "id": "GH-017",
@@ -203,10 +285,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "Open Interpreter lets LLMs run code locally to accomplish tasks."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["Open Interpreter lets LLMs run code locally to accomplish tasks."]
     },
     {
       "id": "GH-018",
@@ -215,10 +301,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 3, "freshness": 4, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "OpenAI Swarm demonstrated lightweight multi-agent orchestration patterns."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 3,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["OpenAI Swarm demonstrated lightweight multi-agent orchestration patterns."]
     },
     {
       "id": "GH-019",
@@ -227,10 +317,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 3, "freshness": 3, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "AgentGPT provided a browser-based interface for running autonomous agents."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 3,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["AgentGPT provided a browser-based interface for running autonomous agents."]
     },
     {
       "id": "GH-020",
@@ -239,7 +333,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 3, "freshness": 3, "diversity": 4, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 3,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 3
+      },
       "claims": [
         "SuperAGI aimed to be a production-ready autonomous agent framework with tools and memory."
       ]
@@ -251,10 +351,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 4, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 4 },
-      "claims": [
-        "LangGraph enables building stateful, multi-actor agent workflows as graphs."
-      ]
+      "scores": {
+        "relevance": 4,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
+      "claims": ["LangGraph enables building stateful, multi-actor agent workflows as graphs."]
     },
     {
       "id": "GH-022",
@@ -263,10 +367,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 3, "authority": 4, "freshness": 5, "diversity": 4, "extractionValue": 3 },
-      "claims": [
-        "E2B provides sandboxed cloud environments for running AI-generated code."
-      ]
+      "scores": {
+        "relevance": 3,
+        "authority": 4,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 3
+      },
+      "claims": ["E2B provides sandboxed cloud environments for running AI-generated code."]
     },
     {
       "id": "GH-023",
@@ -275,10 +383,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 2, "authority": 3, "freshness": 4, "diversity": 4, "extractionValue": 2 },
-      "claims": [
-        "Vectara offers RAG-as-a-service with retrieval and summarization APIs."
-      ]
+      "scores": {
+        "relevance": 2,
+        "authority": 3,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 2
+      },
+      "claims": ["Vectara offers RAG-as-a-service with retrieval and summarization APIs."]
     },
     {
       "id": "GH-024",
@@ -287,10 +399,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 2, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 2 },
-      "claims": [
-        "Jina is a neural search framework for building multimodal AI applications."
-      ]
+      "scores": {
+        "relevance": 2,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 2
+      },
+      "claims": ["Jina is a neural search framework for building multimodal AI applications."]
     },
     {
       "id": "GH-025",
@@ -299,10 +415,14 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "github-repo-landscape",
-      "scores": { "relevance": 2, "authority": 4, "freshness": 4, "diversity": 4, "extractionValue": 2 },
-      "claims": [
-        "Weaviate is an open-source vector database for AI-native applications."
-      ]
+      "scores": {
+        "relevance": 2,
+        "authority": 4,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 2
+      },
+      "claims": ["Weaviate is an open-source vector database for AI-native applications."]
     }
   ]
 }

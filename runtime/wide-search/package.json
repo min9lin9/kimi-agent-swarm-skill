@@ -6,36 +6,28 @@
   "bin": {
     "kasw": "src/cli.ts"
   },
-  "files": [
-    "src",
-    "fixtures",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["src", "fixtures", "README.md", "LICENSE"],
   "engines": {
     "bun": ">=1.0.0"
   },
   "scripts": {
     "test": "bun test",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "bun run typecheck && bun test",
+    "lint": "biome lint .",
+    "format": "biome format . --write",
+    "check": "biome check .",
+    "prepublishOnly": "bun run typecheck && bun run check && bun test",
     "pack": "npm pack"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest",
     "typescript": "^5.8.0"
   },
   "optionalDependencies": {
-    "ioredis": "^5.4.0"
+    "ioredis": "^5.11.1"
   },
-  "keywords": [
-    "kimi",
-    "agent",
-    "swarm",
-    "wide-search",
-    "research",
-    "cli"
-  ],
+  "keywords": ["kimi", "agent", "swarm", "wide-search", "research", "cli"],
   "license": "MIT",
   "repository": {
     "type": "git",

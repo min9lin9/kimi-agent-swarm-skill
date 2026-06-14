@@ -1,23 +1,22 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
-import { loadConfig, resolveProviderCredential } from "../config";
-import { renderMarkdownSynthesis } from "../markdown";
-import { createSearchProvider } from "../providers";
-import { scoreSource } from "../scorer";
-import { verifyRun } from "../verifier";
-import type { QueueAdapter } from "./queue-adapter";
-import { MemoryQueueAdapter } from "./memory-adapter";
-import { RedisQueueAdapter } from "./redis-adapter";
 import {
-  buildTasksFromPlans,
-  splitFixtureTasks,
-  splitWebSearchTasks,
-} from "./task-splitter";
+  calculateActualCost,
+  checkBudget,
+  checkEstimatedBudget,
+  estimateRunCost,
+  formatCostReport,
+  getProviderPricing,
+  maxResultsForDepth,
+} from '../costs';
+import { defaultLogger } from '../logger';
+import { renderMarkdownSynthesis } from '../markdown';
+import { scoreSource } from '../scorer';
+import { claimConfidence, claimFreshness, makeRunId } from '../shared';
+import { resolveProviderName, runWideSearchTask } from '../shared-runtime';
 import type {
   Claim,
-  ClaimConfidence,
-  ClaimFreshness,
   DistributedJob,
   DistributedRunOptions,
   DistributedTask,
@@ -32,36 +31,22 @@ import type {
   UsageMetrics,
   VerificationReport,
   WorkerResult,
-} from "../types";
+} from '../types';
+import { verifyRun } from '../verifier';
+import { MemoryQueueAdapter } from './memory-adapter';
+import type { QueueAdapter } from './queue-adapter';
+import { type RedisAdapterOptions, RedisQueueAdapter } from './redis-adapter';
+import { buildTasksFromPlans, splitFixtureTasks, splitWebSearchTasks } from './task-splitter';
 
-function makeRunId(): string {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-  const random = Math.random().toString(36).slice(2, 8);
-  return `${timestamp}-${random}`;
-}
-
-function claimConfidence(source: EnrichedSource): ClaimConfidence {
-  const score = source.scores?.authority ?? 0;
-  if (score >= 4.5) return "high";
-  if (score >= 3) return "medium";
-  return "low";
-}
-
-function claimFreshness(source: EnrichedSource): ClaimFreshness {
-  if (!source.publishedAt || source.publishedAt === "unknown") return "unknown";
-  const now = new Date();
-  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
-    .toISOString()
-    .split("T")[0];
-  return source.publishedAt >= oneYearAgo ? "current" : "stale";
-}
-
-function createQueueAdapter(
-  options: DistributedRunOptions,
-  workDir: string,
-): QueueAdapter {
-  if (options.queueType === "redis") {
-    return new RedisQueueAdapter();
+function createQueueAdapter(options: DistributedRunOptions, workDir: string): QueueAdapter {
+  if (options.queueType === 'redis') {
+    const redisOptions: RedisAdapterOptions = {
+      redisUrl: options.redisUrl ?? process.env.REDIS_URL,
+      password: options.redisPassword ?? process.env.REDIS_PASSWORD,
+      username: options.redisUsername ?? process.env.REDIS_USERNAME,
+      keyPrefix: options.redisKeyPrefix,
+    };
+    return new RedisQueueAdapter(redisOptions);
   }
   return new MemoryQueueAdapter({ workDir });
 }
@@ -71,46 +56,45 @@ async function executeTask(
   profile: ExecutionProfile,
   providerName: string,
   searchDepth: SearchDepth,
-  metrics: UsageMetrics,
+  maxResults: number | undefined,
+  useCache: boolean,
+  budget: import('../types').BudgetOptions,
+  metrics: UsageMetrics
 ): Promise<WorkerResult> {
-  if (profile.startsWith("fixture")) {
-    const sourceIds = task.query.split(",").map((id) => id.trim());
-    const allSources = await loadFixtureSources(profile);
-    const selected = allSources.filter((s) => sourceIds.includes(s.id));
-    return { sources: selected, usageMetrics: { ...metrics } };
+  if (profile.startsWith('fixture')) {
+    const sourceIds = task.query.split(',').map((id) => id.trim());
+    const result = await runWideSearchTask({
+      objective: task.query,
+      profile,
+      providerName,
+      searchDepth,
+      useCache,
+      metrics,
+      sourceIds,
+      checkBudget: false,
+    });
+    return {
+      sources: result.sources,
+      usageMetrics: result.usageMetrics,
+      claims: result.claims,
+    };
   }
 
-  const config = await loadConfig();
-  const credential = resolveProviderCredential(config, providerName);
-  const provider = createSearchProvider(providerName, { credential, metrics });
-  const maxResults = Math.ceil(25 / 5); // split results across families
-  const sources = await provider.search({
+  const result = await runWideSearchTask({
     objective: task.query,
-    depth: searchDepth,
+    profile,
+    providerName,
+    searchDepth,
+    useCache,
+    metrics,
     maxResults,
+    checkBudget: false,
   });
-  return { sources, usageMetrics: { ...metrics } };
-}
-
-async function loadFixtureSources(profile: ExecutionProfile): Promise<Source[]> {
-  const FIXTURE_FILE_MAP: Record<string, string> = {
-    fixture: "basic-sources.json",
-    "fixture-asset-mgmt": "asset-mgmt-roles.json",
-    "fixture-sellside-research": "sellside-research-roles.json",
-    "fixture-youtube-niche": "youtube-niche.json",
-    "fixture-paul-graham-corpus": "paul-graham-corpus.json",
-    "fixture-github-repo-landscape": "github-repo-landscape.json",
-    "fixture-market-scan": "market-scan.json",
+  return {
+    sources: result.sources,
+    usageMetrics: result.usageMetrics,
+    claims: result.claims,
   };
-
-  const fileName = FIXTURE_FILE_MAP[profile];
-  if (!fileName) {
-    throw new Error(`No fixture file mapping for profile: ${profile}`);
-  }
-
-  const text = await readFile(join(import.meta.dir, "../../fixtures", fileName), "utf8");
-  const data = JSON.parse(text) as { sources: Source[] };
-  return data.sources;
 }
 
 export async function workerLoop(
@@ -120,7 +104,10 @@ export async function workerLoop(
   profile: ExecutionProfile,
   providerName: string,
   searchDepth: SearchDepth,
-  metrics: UsageMetrics,
+  perTaskMaxResults: number | undefined,
+  useCache: boolean,
+  budget: import('../types').BudgetOptions,
+  metrics: UsageMetrics
 ): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -138,7 +125,16 @@ export async function workerLoop(
     }
 
     try {
-      const result = await executeTask(task, profile, providerName, searchDepth, metrics);
+      const result = await executeTask(
+        task,
+        profile,
+        providerName,
+        searchDepth,
+        perTaskMaxResults,
+        useCache,
+        budget,
+        metrics
+      );
       await adapter.completeTask(task.taskId, result);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -149,19 +145,107 @@ export async function workerLoop(
 
 export async function runDistributedWideSearch({
   objective,
-  profile = "fixture",
+  profile = 'fixture',
+  providerCommand,
+  providerArgs,
   providerName,
-  searchDepth = "standard",
+  searchDepth = 'standard',
   workDir = process.cwd(),
+  budget = {},
+  useCache = false,
+  replayRunId,
   distributed = { enabled: true },
-}: RunWideSearchOptions): Promise<RunWideSearchResult> {
+}: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
+  let replayedFrom: string | undefined;
+
+  if (replayRunId) {
+    const previousRunDir = join(workDir, '.runs', 'wide-search', replayRunId);
+    const previousRun = JSON.parse(await readFile(join(previousRunDir, 'run.json'), 'utf8')) as Run;
+    const previousPlan = JSON.parse(
+      await readFile(join(previousRunDir, 'research-plan.json'), 'utf8')
+    ) as ResearchPlan;
+    objective = objective ?? previousRun.objective;
+    profile = previousRun.executionProfile;
+    providerName = providerName ?? resolveProviderName(previousRun.executionProfile);
+    searchDepth = previousPlan.searchDepth ?? searchDepth;
+    replayedFrom = replayRunId;
+  }
+
+  if (!objective) {
+    throw new Error('runDistributedWideSearch requires objective');
+  }
+
   const runId = makeRunId();
-  const runDir = join(workDir, ".runs", "wide-search", runId);
+  const runDir = join(workDir, '.runs', 'wide-search', runId);
   await mkdir(runDir, { recursive: true });
 
-  const effectiveProviderName = profile === "web-search" ? (providerName ?? "mock") : "mock";
+  const effectiveProviderName = resolveProviderName(profile, providerName);
   const maxRetries = distributed.maxRetries ?? 3;
   const workers = distributed.workers ?? 4;
+
+  const plans = profile.startsWith('fixture')
+    ? await splitFixtureTasks(profile, join(import.meta.dir, '../../fixtures'))
+    : splitWebSearchTasks(objective);
+
+  const perTaskMaxResults = profile.startsWith('fixture')
+    ? undefined
+    : Math.ceil(maxResultsForDepth(searchDepth) / Math.max(1, plans.length));
+
+  const estimatedProviderCalls = profile.startsWith('fixture') ? 0 : plans.length;
+  const estimate = {
+    ...estimateRunCost(effectiveProviderName, searchDepth),
+    estimatedProviderCalls,
+    estimatedApiCalls: estimatedProviderCalls,
+    estimatedCostUsd: getProviderPricing(effectiveProviderName).perCallUsd * estimatedProviderCalls,
+  };
+
+  const usageMetrics: UsageMetrics = {
+    providerCalls: 0,
+    apiCalls: 0,
+    estimatedCostUsd: estimate.estimatedCostUsd,
+  };
+
+  checkEstimatedBudget(estimate, budget);
+
+  if (budget.dryRun) {
+    usageMetrics.notes = 'Dry run: no distributed tasks executed.';
+    const dryRun: Run = {
+      runId,
+      objective,
+      executionProfile: profile,
+      status: 'completed',
+      createdAt: new Date().toISOString(),
+      usageMetrics,
+    };
+    const dryPlan: ResearchPlan = {
+      objective,
+      searchDepth,
+      executionProfile: profile,
+      queryFamilies: plans.map((p) => p.queryFamily),
+      sourceTargets: ['official', 'community', 'secondary'],
+      stopConditions: ['dry-run: all distributed tasks planned but not executed'],
+    };
+    await writeFile(join(runDir, 'run.json'), `${JSON.stringify(dryRun, null, 2)}\n`);
+    await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(dryPlan, null, 2)}\n`);
+    return {
+      runId,
+      runDir,
+      verification: {
+        status: 'passed',
+        acceptedSources: 0,
+        rejectedSources: 0,
+        unsupportedClaims: 0,
+        staleClaims: 0,
+        unknownFreshnessClaims: 0,
+        lowConfidenceClaims: 0,
+        duplicateClaimGroups: [],
+        conflictingClaimPairs: [],
+        coverageGaps: [],
+        failures: [],
+        warnings: ['dry-run: no sources or claims evaluated'],
+      },
+    };
+  }
 
   const adapter = createQueueAdapter(distributed, workDir);
 
@@ -173,22 +257,23 @@ export async function runDistributedWideSearch({
     }
     job = loaded;
   } else {
-    const plans = profile.startsWith("fixture")
-      ? await splitFixtureTasks(profile, join(import.meta.dir, "../../fixtures"))
-      : splitWebSearchTasks(objective ?? "");
-    const tasks = buildTasksFromPlans("placeholder", plans, maxRetries);
+    const tasks = buildTasksFromPlans('placeholder', plans, maxRetries);
     job = await adapter.createJob({
-      objective: objective ?? "",
+      objective,
       executionProfile: profile,
       providerName: effectiveProviderName,
       searchDepth,
-      queueType: distributed.queueType ?? "memory",
-      status: "pending",
+      queueType: distributed.queueType ?? 'memory',
+      status: 'pending',
       tasks: tasks.map((t) => ({ ...t, taskId: `${runId}-${t.taskId}` })),
+      useCache,
+      budget,
+      workDir,
+      perTaskMaxResults,
     });
   }
 
-  job.status = "running";
+  job.status = 'running';
   await adapter.saveJob(job);
 
   const workerMetrics: UsageMetrics[] = [];
@@ -204,8 +289,11 @@ export async function runDistributedWideSearch({
         profile,
         effectiveProviderName,
         searchDepth,
-        metrics,
-      ),
+        perTaskMaxResults,
+        useCache,
+        budget,
+        metrics
+      )
     );
   }
 
@@ -213,31 +301,31 @@ export async function runDistributedWideSearch({
 
   const completedJob = await adapter.getJob(job.jobId);
   if (!completedJob) {
-    throw new Error("Job disappeared during distributed run");
+    throw new Error('Job disappeared during distributed run');
   }
 
   const aggregatedSources: Source[] = [];
   for (const task of completedJob.tasks) {
-    if (task.status === "completed" && task.result) {
+    if (task.status === 'completed' && task.result) {
       aggregatedSources.push(...task.result.sources);
     }
   }
 
   if (aggregatedSources.length === 0) {
-    throw new Error("Distributed run produced no accepted sources");
+    throw new Error('Distributed run produced no accepted sources');
   }
 
   const sources: EnrichedSource[] = aggregatedSources.map((source) => scoreSource(source));
 
   const claims: Claim[] = [];
-  for (const source of sources.filter((item) => item.decision === "accepted")) {
+  for (const source of sources.filter((item) => item.decision === 'accepted')) {
     for (const claim of source.claims ?? []) {
       claims.push({
-        id: `C${String(claims.length + 1).padStart(3, "0")}`,
+        id: `C${String(claims.length + 1).padStart(3, '0')}`,
         claim,
         sourceIds: [source.id],
-        confidence: claimConfidence(source),
-        freshness: claimFreshness(source),
+        confidence: claimConfidence(source.scores),
+        freshness: claimFreshness(source.publishedAt),
       });
     }
   }
@@ -246,43 +334,60 @@ export async function runDistributedWideSearch({
     (acc, m) => ({
       providerCalls: acc.providerCalls + m.providerCalls,
       apiCalls: acc.apiCalls + m.apiCalls,
+      estimatedCostUsd: acc.estimatedCostUsd,
     }),
-    { providerCalls: 0, apiCalls: 0 },
+    { providerCalls: 0, apiCalls: 0, estimatedCostUsd: estimate.estimatedCostUsd }
   );
+  totalMetrics.actualCostUsd = calculateActualCost(effectiveProviderName, totalMetrics);
+  checkBudget(effectiveProviderName, totalMetrics, budget);
 
   const run: Run = {
     runId,
-    objective: objective ?? "",
+    objective,
     executionProfile: profile,
-    status: "completed",
+    status: 'completed',
     createdAt: new Date().toISOString(),
     usageMetrics: totalMetrics,
+    replayedFrom,
+    cached: useCache && profile === 'web-search' && effectiveProviderName !== 'mock',
   };
 
   const researchPlan: ResearchPlan = {
-    objective: objective ?? "",
+    objective,
     searchDepth,
     executionProfile: profile,
     queryFamilies: completedJob.tasks.map((t) => t.queryFamily),
-    sourceTargets: ["official", "community", "secondary"],
-    stopConditions: ["all distributed tasks completed"],
+    sourceTargets: ['official', 'community', 'secondary'],
+    stopConditions: ['all distributed tasks completed'],
   };
 
-  await writeFile(join(runDir, "run.json"), `${JSON.stringify(run, null, 2)}\n`);
-  await writeFile(join(runDir, "research-plan.json"), `${JSON.stringify(researchPlan, null, 2)}\n`);
+  await writeFile(join(runDir, 'run.json'), `${JSON.stringify(run, null, 2)}\n`);
+  await writeFile(join(runDir, 'research-plan.json'), `${JSON.stringify(researchPlan, null, 2)}\n`);
   await writeFile(
-    join(runDir, "source-ledger.jsonl"),
-    `${sources.map((source) => JSON.stringify(source)).join("\n")}\n`,
+    join(runDir, 'source-ledger.jsonl'),
+    `${sources.map((source) => JSON.stringify(source)).join('\n')}\n`
   );
   await writeFile(
-    join(runDir, "claim-ledger.jsonl"),
-    `${claims.map((claim) => JSON.stringify(claim)).join("\n")}\n`,
+    join(runDir, 'claim-ledger.jsonl'),
+    `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
   );
-  await writeFile(join(runDir, "distributed-job.json"), `${JSON.stringify(completedJob, null, 2)}\n`);
+  await writeFile(
+    join(runDir, 'distributed-job.json'),
+    `${JSON.stringify(completedJob, null, 2)}\n`
+  );
 
-  const verification: VerificationReport = await verifyRun({ runDir, minAcceptedSources: 1 });
+  const verification: VerificationReport = await verifyRun({
+    runDir,
+    minAcceptedSources: 1,
+  });
   const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
-  await writeFile(join(runDir, "synthesis.md"), synthesis);
+  await writeFile(join(runDir, 'synthesis.md'), synthesis);
+
+  defaultLogger.info(formatCostReport(effectiveProviderName, totalMetrics));
+
+  if (adapter.quit) {
+    await adapter.quit();
+  }
 
   return {
     runId,

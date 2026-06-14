@@ -1,5 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { readFile, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import type {
   Claim,
@@ -9,10 +9,10 @@ import type {
   ResearchPlan,
   Run,
   VerificationReport,
-} from "./types";
+} from './types';
 
 async function readJsonl<T>(path: string): Promise<T[]> {
-  const text = await readFile(path, "utf8");
+  const text = await readFile(path, 'utf8');
   return text
     .split(/\r?\n/)
     .filter(Boolean)
@@ -21,7 +21,7 @@ async function readJsonl<T>(path: string): Promise<T[]> {
 
 async function readJsonFile<T>(path: string): Promise<T | undefined> {
   try {
-    const text = await readFile(path, "utf8");
+    const text = await readFile(path, 'utf8');
     return JSON.parse(text) as T;
   } catch {
     return undefined;
@@ -29,7 +29,7 @@ async function readJsonFile<T>(path: string): Promise<T | undefined> {
 }
 
 function escapeCsvField(field: string): string {
-  if (field.includes(",") || field.includes('"') || field.includes("\n") || field.includes("\r")) {
+  if (field.includes(',') || field.includes('"') || field.includes('\n') || field.includes('\r')) {
     return `"${field.replace(/"/g, '""')}"`;
   }
   return field;
@@ -37,25 +37,25 @@ function escapeCsvField(field: string): string {
 
 function escapeHtml(text: string): string {
   return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function sourceUrlForClaim(claim: Claim, sources: EnrichedSource[]): string {
   const source = sources.find((s) => claim.sourceIds.includes(s.id));
-  return source?.url ?? "";
+  return source?.url ?? '';
 }
 
 function sourceTitleForClaim(claim: Claim, sources: EnrichedSource[]): string {
   const source = sources.find((s) => claim.sourceIds.includes(s.id));
-  return source?.title ?? "";
+  return source?.title ?? '';
 }
 
 function scoreDistribution(sources: EnrichedSource[]): Record<string, number> {
-  const dist: Record<string, number> = { "1-2": 0, "3": 0, "4-5": 0 };
+  const dist: Record<string, number> = { '1-2': 0, '3': 0, '4-5': 0 };
   for (const source of sources) {
     const weighted =
       (source.scores.relevance ?? 0) * 0.35 +
@@ -63,16 +63,16 @@ function scoreDistribution(sources: EnrichedSource[]): Record<string, number> {
       (source.scores.freshness ?? 0) * 0.2 +
       (source.scores.diversity ?? 0) * 0.1 +
       (source.scores.extractionValue ?? 0) * 0.1;
-    if (weighted < 2.5) dist["1-2"] += 1;
-    else if (weighted < 3.5) dist["3"] += 1;
-    else dist["4-5"] += 1;
+    if (weighted < 2.5) dist['1-2'] += 1;
+    else if (weighted < 3.5) dist['3'] += 1;
+    else dist['4-5'] += 1;
   }
   return dist;
 }
 
 function sourceClassDistribution(sources: EnrichedSource[]): Record<string, number> {
   return sources.reduce<Record<string, number>>((acc, source) => {
-    const key = source.sourceClass ?? "unknown";
+    const key = source.sourceClass ?? 'unknown';
     acc[key] = (acc[key] ?? 0) + 1;
     return acc;
   }, {});
@@ -96,7 +96,10 @@ function renderSvgGraph({
   const rowHeight = 70;
   const topMargin = 90;
   const bottomMargin = 60;
-  const height = Math.max(420, topMargin + Math.max(sources.length, claims.length) * rowHeight + bottomMargin);
+  const height = Math.max(
+    420,
+    topMargin + Math.max(sources.length, claims.length) * rowHeight + bottomMargin
+  );
 
   const sourceX = 140;
   const claimX = width - 140;
@@ -118,28 +121,31 @@ function renderSvgGraph({
   const edges = claims.flatMap((claim) =>
     claim.sourceIds
       .map((sid) => sourceById.get(sid))
-      .filter((s): s is typeof sourceNodes[number] => s !== undefined)
+      .filter((s): s is (typeof sourceNodes)[number] => s !== undefined)
       .map((source) => {
         const c = claimById.get(claim.id);
         if (!c) return null;
         return { source, claim: c };
       })
-      .filter((e): e is { source: typeof sourceNodes[number]; claim: typeof claimNodes[number] } => e !== null),
+      .filter(
+        (e): e is { source: (typeof sourceNodes)[number]; claim: (typeof claimNodes)[number] } =>
+          e !== null
+      )
   );
 
-  const sourceColor = (s: EnrichedSource) => (s.decision === "accepted" ? "#22c55e" : "#ef4444");
+  const sourceColor = (s: EnrichedSource) => (s.decision === 'accepted' ? '#22c55e' : '#ef4444');
   const claimColor = (c: Claim) => {
-    if (c.confidence === "high") return "#22c55e";
-    if (c.confidence === "medium") return "#f59e0b";
-    return "#ef4444";
+    if (c.confidence === 'high') return '#22c55e';
+    if (c.confidence === 'medium') return '#f59e0b';
+    return '#ef4444';
   };
 
   const edgeLines = edges
     .map(
       (e) =>
-        `<line x1="${e.source.x + 70}" y1="${e.source.y}" x2="${e.claim.x - 70}" y2="${e.claim.y}" stroke="#94a3b8" stroke-width="1.5" opacity="0.45" />`,
+        `<line x1="${e.source.x + 70}" y1="${e.source.y}" x2="${e.claim.x - 70}" y2="${e.claim.y}" stroke="#94a3b8" stroke-width="1.5" opacity="0.45" />`
     )
-    .join("");
+    .join('');
 
   const sourceRects = sourceNodes
     .map(
@@ -149,9 +155,9 @@ function renderSvgGraph({
           <text x="80" y="18" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">${escapeHtml(truncate(s.title, 24))}</text>
           <text x="80" y="34" text-anchor="middle" font-size="10" fill="#64748b">${escapeHtml(s.sourceClass)} · ${escapeHtml(s.id.slice(0, 8))}</text>
         </g>
-      `,
+      `
     )
-    .join("");
+    .join('');
 
   const claimRects = claimNodes
     .map(
@@ -161,12 +167,12 @@ function renderSvgGraph({
           <text x="80" y="18" text-anchor="middle" font-size="11" font-weight="600" fill="#0f172a">${escapeHtml(truncate(c.claim, 26))}</text>
           <text x="80" y="34" text-anchor="middle" font-size="10" fill="#64748b">${c.confidence} · ${escapeHtml(c.id.slice(0, 8))}</text>
         </g>
-      `,
+      `
     )
-    .join("");
+    .join('');
 
-  const accepted = sources.filter((s) => s.decision === "accepted").length;
-  const rejected = sources.filter((s) => s.decision === "rejected").length;
+  const accepted = sources.filter((s) => s.decision === 'accepted').length;
+  const rejected = sources.filter((s) => s.decision === 'rejected').length;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" font-family="system-ui, -apple-system, sans-serif">
@@ -197,9 +203,9 @@ function renderSvgGraph({
 
 function svgBarChart(
   data: Record<string, number>,
-  options: { width?: number; height?: number; color?: string } = {},
+  options: { width?: number; height?: number; color?: string } = {}
 ): string {
-  const { width = 300, height = 120, color = "#2563eb" } = options;
+  const { width = 300, height = 120, color = '#2563eb' } = options;
   const entries = Object.entries(data);
   const max = Math.max(1, ...entries.map(([, v]) => v));
   const barWidth = width / entries.length - 10;
@@ -214,7 +220,7 @@ function svgBarChart(
         <text x="${x + barWidth / 2}" y="${height - 12}" text-anchor="middle" font-size="10" fill="#64748b">${escapeHtml(label)}</text>
       `;
     })
-    .join("");
+    .join('');
   return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">${bars}</svg>`;
 }
 
@@ -231,8 +237,8 @@ function renderHtmlSynthesis({
   claims: Claim[];
   verification?: VerificationReport;
 }): string {
-  const acceptedSources = sources.filter((s) => s.decision === "accepted");
-  const rejectedSources = sources.filter((s) => s.decision === "rejected");
+  const acceptedSources = sources.filter((s) => s.decision === 'accepted');
+  const rejectedSources = sources.filter((s) => s.decision === 'rejected');
   const scoreDist = scoreDistribution(sources);
   const classDist = sourceClassDistribution(sources);
 
@@ -249,9 +255,9 @@ function renderHtmlSynthesis({
       <td>${source.scores.authority ?? 0}</td>
       <td>${source.scores.freshness ?? 0}</td>
     </tr>
-  `,
+  `
     )
-    .join("");
+    .join('');
 
   const claimRows = claims
     .map(
@@ -261,12 +267,12 @@ function renderHtmlSynthesis({
       <td>${escapeHtml(claim.claim)}</td>
       <td><span class="badge confidence-${claim.confidence}">${claim.confidence}</span></td>
       <td><span class="badge freshness-${claim.freshness}">${claim.freshness}</span></td>
-      <td>${claim.sourceIds.join(", ")}</td>
+      <td>${claim.sourceIds.join(', ')}</td>
       <td><a href="${escapeHtml(sourceUrlForClaim(claim, sources))}" target="_blank">${escapeHtml(sourceTitleForClaim(claim, sources))}</a></td>
     </tr>
-  `,
+  `
     )
-    .join("");
+    .join('');
 
   const verificationCards = verification
     ? `
@@ -277,11 +283,11 @@ function renderHtmlSynthesis({
         <div class="card"><h3>Claims</h3><p class="big">${claims.length}</p></div>
       </div>
     `
-    : "";
+    : '';
 
   const cost = run.usageMetrics
-    ? `<p><strong>Estimated cost:</strong> $${run.usageMetrics.estimatedCostUsd?.toFixed(4) ?? "0.0000"} | <strong>Actual cost:</strong> $${run.usageMetrics.actualCostUsd?.toFixed(4) ?? "0.0000"}</p>`
-    : "";
+    ? `<p><strong>Estimated cost:</strong> $${run.usageMetrics.estimatedCostUsd?.toFixed(4) ?? '0.0000'} | <strong>Actual cost:</strong> $${run.usageMetrics.actualCostUsd?.toFixed(4) ?? '0.0000'}</p>`
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -326,14 +332,14 @@ function renderHtmlSynthesis({
 <body>
   <h1>${escapeHtml(run.objective)}</h1>
   <p class="meta">Run ID: <code>${escapeHtml(run.runId)}</code> · Profile: <strong>${run.executionProfile}</strong> · Status: <strong>${run.status}</strong> · ${escapeHtml(run.createdAt)}</p>
-  ${plan ? `<p class="meta">Search depth: ${plan.searchDepth} · Query families: ${plan.queryFamilies.map(escapeHtml).join(", ")}</p>` : ""}
+  ${plan ? `<p class="meta">Search depth: ${plan.searchDepth} · Query families: ${plan.queryFamilies.map(escapeHtml).join(', ')}</p>` : ''}
   ${cost}
   ${verificationCards}
 
   <h2>Source Quality</h2>
   <div class="charts">
     <div class="chart"><h3>Weighted Score Distribution</h3>${svgBarChart(scoreDist)}</div>
-    <div class="chart"><h3>Source Class Distribution</h3>${svgBarChart(classDist, { color: "#7c3aed" })}</div>
+    <div class="chart"><h3>Source Class Distribution</h3>${svgBarChart(classDist, { color: '#7c3aed' })}</div>
   </div>
 
   <h2>Sources (${acceptedSources.length} accepted, ${rejectedSources.length} rejected)</h2>
@@ -372,13 +378,13 @@ function renderHtmlSynthesis({
 }
 
 export async function exportRun({ runDir, format, outPath }: ExportOptions): Promise<string> {
-  const run = JSON.parse(await readFile(join(runDir, "run.json"), "utf8")) as Run;
-  const sources = await readJsonl<EnrichedSource>(join(runDir, "source-ledger.jsonl"));
-  const claims = await readJsonl<Claim>(join(runDir, "claim-ledger.jsonl"));
+  const run = JSON.parse(await readFile(join(runDir, 'run.json'), 'utf8')) as Run;
+  const sources = await readJsonl<EnrichedSource>(join(runDir, 'source-ledger.jsonl'));
+  const claims = await readJsonl<Claim>(join(runDir, 'claim-ledger.jsonl'));
 
   const destination = outPath ?? join(runDir, `export.${format}`);
 
-  if (format === "json") {
+  if (format === 'json') {
     const payload = {
       runId: run.runId,
       objective: run.objective,
@@ -393,32 +399,32 @@ export async function exportRun({ runDir, format, outPath }: ExportOptions): Pro
     return destination;
   }
 
-  if (format === "csv") {
-    const header = ["claim_id", "claim", "source_ids", "confidence", "freshness", "url"];
+  if (format === 'csv') {
+    const header = ['claim_id', 'claim', 'source_ids', 'confidence', 'freshness', 'url'];
     const rows = claims.map((claim) => [
       claim.id,
       claim.claim,
-      claim.sourceIds.join(";"),
+      claim.sourceIds.join(';'),
       claim.confidence,
       claim.freshness,
       sourceUrlForClaim(claim, sources),
     ]);
-    const csv = [header, ...rows]
-      .map((row) => row.map(escapeCsvField).join(","))
-      .join("\n");
+    const csv = [header, ...rows].map((row) => row.map(escapeCsvField).join(',')).join('\n');
     await writeFile(destination, `${csv}\n`);
     return destination;
   }
 
-  if (format === "html") {
-    const plan = await readJsonFile<ResearchPlan>(join(runDir, "research-plan.json"));
-    const verification = await readJsonFile<VerificationReport>(join(runDir, "verification-report.json"));
+  if (format === 'html') {
+    const plan = await readJsonFile<ResearchPlan>(join(runDir, 'research-plan.json'));
+    const verification = await readJsonFile<VerificationReport>(
+      join(runDir, 'verification-report.json')
+    );
     const html = renderHtmlSynthesis({ run, plan, sources, claims, verification });
     await writeFile(destination, html);
     return destination;
   }
 
-  if (format === "svg") {
+  if (format === 'svg') {
     const svg = renderSvgGraph({ run, sources, claims });
     await writeFile(destination, svg);
     return destination;
@@ -428,5 +434,5 @@ export async function exportRun({ runDir, format, outPath }: ExportOptions): Pro
 }
 
 export function supportedExportFormats(): ExportFormat[] {
-  return ["json", "csv", "html", "svg"];
+  return ['json', 'csv', 'html', 'svg'];
 }

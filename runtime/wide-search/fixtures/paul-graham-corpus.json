@@ -7,7 +7,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 3, "diversity": 4, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 5
+      },
       "claims": [
         "A startup is a company designed to grow fast.",
         "Startups need to build something users actually want.",
@@ -21,7 +27,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 5
+      },
       "claims": [
         "Startups should initially do things that don't scale.",
         "Recruiting users manually is an acceptable early-stage tactic.",
@@ -35,7 +47,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 3, "diversity": 4, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 5
+      },
       "claims": [
         "The maker's schedule requires long uninterrupted blocks of time.",
         "Meetings are disruptive to makers because they break up the day.",
@@ -49,7 +67,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 5
+      },
       "claims": [
         "The best startup ideas often come from the founders' own problems.",
         "Live in the future and notice what is missing.",
@@ -63,7 +87,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 3, "diversity": 3, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 3,
+        "extractionValue": 4
+      },
       "claims": [
         "Relentless resourcefulness is the defining trait of successful founders.",
         "Startups face problems that seem impossible until they are solved."
@@ -76,7 +106,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 2, "diversity": 5, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 2,
+        "diversity": 5,
+        "extractionValue": 3
+      },
       "claims": [
         "Societies have moral fashions just like clothing fashions.",
         "Ideas that are taboo in one era may become accepted in another."
@@ -89,7 +125,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 2, "diversity": 4, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 2,
+        "diversity": 4,
+        "extractionValue": 3
+      },
       "claims": [
         "The essay is a flexible form that lets the writer explore an idea.",
         "Essays can be about any subject, not just literature."
@@ -102,7 +144,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 3, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Smart people sometimes choose ideas that are impressive but not valuable.",
         "The best problems are ones you personally experience."
@@ -115,7 +163,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 5, "authority": 5, "freshness": 2, "diversity": 4, "extractionValue": 5 },
+      "scores": {
+        "relevance": 5,
+        "authority": 5,
+        "freshness": 2,
+        "diversity": 4,
+        "extractionValue": 5
+      },
       "claims": [
         "Wealth is created by doing what people want, not by moving it around.",
         "A startup compresses a lifetime's worth of work into a few years.",
@@ -129,7 +183,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 2, "diversity": 5, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 2,
+        "diversity": 5,
+        "extractionValue": 3
+      },
       "claims": [
         "Good design is simple.",
         "Good design is often slightly funny.",
@@ -143,7 +203,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 3, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Startups are emotionally intense and unpredictable.",
         "Startups die more often from denial than from competition.",
@@ -157,7 +223,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 3, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 3,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Startups should release early and iterate.",
         "Startups should not let competitors dictate their strategy.",
@@ -171,7 +243,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 5, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 5,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Independent thinking requires both originality and domain expertise.",
         "Most people do not think independently because it is socially costly."
@@ -184,7 +262,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 3
+      },
       "claims": [
         "Simple writing is more powerful than complex writing.",
         "Jargon and abstraction often hide weak thinking."
@@ -197,7 +281,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 5, "diversity": 3, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 5,
+        "diversity": 3,
+        "extractionValue": 4
+      },
       "claims": [
         "Working hard requires both intensity and consistency over years.",
         "It is easier to work hard on something you find genuinely interesting."
@@ -210,7 +300,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "School trains students to optimize for test scores rather than real understanding.",
         "The real world rewards solving important problems, not passing exams."
@@ -223,7 +319,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 3, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 3 },
+      "scores": {
+        "relevance": 3,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 3
+      },
       "claims": [
         "Life is short, and many daily activities consume more time than they appear to.",
         "Eliminating bullshit from your life creates more time for what matters."
@@ -236,7 +338,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "Mean people rarely win in the long run.",
         "Kindness is a competitive advantage in business and life."
@@ -249,7 +357,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "You do not need to start a startup to be successful.",
         "Founders should understand the risks before committing to a startup."
@@ -262,7 +376,13 @@
       "sourceClass": "primary",
       "publishedAt": "2026-01-01",
       "discoveredBy": "paul-graham-corpus",
-      "scores": { "relevance": 4, "authority": 5, "freshness": 4, "diversity": 4, "extractionValue": 4 },
+      "scores": {
+        "relevance": 4,
+        "authority": 5,
+        "freshness": 4,
+        "diversity": 4,
+        "extractionValue": 4
+      },
       "claims": [
         "People are blind to tedious problems that could be valuable startup ideas.",
         "The best opportunities often involve work that others avoid."

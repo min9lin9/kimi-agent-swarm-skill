@@ -1,48 +1,341 @@
 # kimi-agent-swarm-cli
 
-Evidence-backed wide-search CLI for Kimi Agent Swarm.
+Evidence-backed wide-search CLI for the Kimi Agent Swarm. It turns a research objective into a structured evidence package: scored sources, extracted claims, verification reports, and exportable synthesis documents.
 
 ## Install
 
 Requires [Bun](https://bun.sh) 1.0 or later.
 
 ```bash
+# Global install
 npm install -g kimi-agent-swarm-cli
 # or
 bun install -g kimi-agent-swarm-cli
+
+# Local clone
+git clone https://github.com/min9lin9/kimi-agent-swarm-skill.git
+cd runtime/wide-search
+bun install
 ```
 
-## Quick Start
+When running from a local clone, use `bun src/cli.ts` in place of `kasw`.
+
+## Quick start
 
 ```bash
-# First-run setup
+# First-run setup (interactive)
 kasw init
 
 # Run a fixture benchmark
 kasw benchmark --profile fixture-paul-graham-corpus
 
-# Live search with Tavily (requires TAVILY_API_KEY)
+# Live web search with Tavily (requires TAVILY_API_KEY)
 kasw research "AI browser agent repos" --profile web-search --provider tavily
 
 # Distributed execution
 kasw research "AI browser agent landscape" --profile web-search --provider tavily --distributed --workers 4
 
-# Leaderboard
+# View the leaderboard
 kasw leaderboard --profile fixture-paul-graham-corpus
 kasw leaderboard --html --out leaderboard.html
 ```
 
-## Providers
+## CLI commands and flags
 
-- `mock` — deterministic demo/CI provider
-- `serper` — Serper.dev Google Search (requires `SERPER_API_KEY`)
-- `tavily` — Tavily AI search (requires `TAVILY_API_KEY`)
-- `brave` — Brave Search API (requires `BRAVE_API_KEY`)
-- `github` — GitHub repository search (requires `GITHUB_TOKEN`)
+### `research` / `run`
 
-## Documentation
+Run a wide search. The two names are aliases.
 
-See the [main repository README](https://github.com/min9lin9/kimi-agent-swarm-skill/blob/main/README.md) for full documentation.
+```bash
+kasw research "<objective>" [options]
+```
+
+| Flag | Description |
+| --- | --- |
+| `--profile <profile>` | Execution profile (see below). Default: `fixture` |
+| `--provider <name>` | Search provider: `mock`, `serper`, `tavily`, `brave`, `github`. Default: `mock` |
+| `--provider-name <name>` | Alias for `--provider` |
+| `--provider-command <cmd>` | External command for `local-command` profile |
+| `--provider-args <args>` | Space-separated arguments passed to `--provider-command` |
+| `--depth <depth>` | `light` \| `standard` (default) \| `deep` \| `maximum` |
+| `--work-dir <dir>` | Working directory for runs and local config. Default: current directory |
+| `--max-cost-usd <n>` | Abort if estimated/actual cost exceeds budget |
+| `--max-provider-calls <n>` | Abort if provider calls exceed budget |
+| `--max-api-calls <n>` | Abort if API calls exceed budget |
+| `--dry-run` | Print cost estimate and write run metadata without executing |
+| `--use-cache` | Reuse cached provider responses when available |
+| `--replay <run-id>` | Rerun a previous run with the same inputs |
+| `--distributed` | Execute using distributed worker tasks |
+| `--workers <n>` | Number of in-process workers for distributed runs. Default: `4` |
+| `--max-retries <n>` | Max retries per distributed task. Default: `3` |
+| `--queue-type <memory\|redis>` | Distributed queue backend. Default: `memory` |
+| `--resume-job-id <id>` | Resume a previous distributed job |
+| `--redis-url <url>` | Redis URL (defaults to `REDIS_URL` env) |
+| `--redis-password <password>` | Redis password (defaults to `REDIS_PASSWORD` env) |
+| `--redis-username <username>` | Redis username (defaults to `REDIS_USERNAME` env) |
+
+Pass `--` to stop flag parsing and treat everything after it as the objective:
+
+```bash
+kasw research -- "AI -- the future"
+```
+
+### `verify`
+
+Verify a previously created run.
+
+```bash
+kasw verify --run-dir <run-dir>
+```
+
+### `inspect`
+
+Print a concise summary of a run.
+
+```bash
+kasw inspect --run-dir <run-dir>
+```
+
+### `export`
+
+Export a run to `json`, `csv`, `html`, or `svg`.
+
+```bash
+kasw export --run-dir <run-dir> --format <json|csv|html|svg> [--out <path>]
+```
+
+If `--out` is omitted, the file is written inside the run directory as `export.<format>`.
+
+### `benchmark`
+
+Run a fixture profile against its bundled golden answers and record the scores.
+
+```bash
+kasw benchmark --profile <fixture-profile> [--work-dir <dir>]
+```
+
+### `leaderboard`
+
+View benchmark history.
+
+```bash
+kasw leaderboard [options]
+```
+
+| Flag | Description |
+| --- | --- |
+| `--profile <profile>` | Filter entries by profile |
+| `--compare <id-1>,<id-2>,...` | Compare specific runs |
+| `--html` | Generate an HTML report |
+| `--out <path>` | Output path for the HTML report. Default: `leaderboard-report.html` |
+| `--clear` | Clear all leaderboard entries |
+
+### `providers`
+
+List available providers and their required environment variables.
+
+```bash
+kasw providers
+```
+
+### `init`
+
+Create an initial configuration file.
+
+```bash
+kasw init [options]
+```
+
+| Flag | Description |
+| --- | --- |
+| `--non-interactive` | Skip prompts and use only existing env vars |
+| `--local` | Write `.kasw.json` in the current directory instead of `~/.kasw/config.json` |
+| `--work-dir <dir>` | Target directory for local config |
+
+### `worker`
+
+Run an external distributed worker process. Usually invoked automatically by `--distributed`, but can be started manually for multi-machine setups.
+
+```bash
+kasw worker --job-id <id> [options]
+```
+
+| Flag | Description |
+| --- | --- |
+| `--job-id <id>` | Required. Job to process |
+| `--worker-id <id>` | Worker identifier. Default: `cli-worker` |
+| `--work-dir <dir>` | Working directory for memory queue state |
+| `--queue-type <memory\|redis>` | Queue backend |
+| `--redis-url <url>` | Redis URL (defaults to `REDIS_URL` env) |
+| `--redis-password <password>` | Redis password (defaults to `REDIS_PASSWORD` env) |
+| `--redis-username <username>` | Redis username (defaults to `REDIS_USERNAME` env) |
+
+## Execution profiles
+
+| Profile | Description |
+| --- | --- |
+| `fixture` | Deterministic bundled fixture for demos and CI |
+| `fixture-asset-mgmt` | Asset management role fixture |
+| `fixture-sellside-research` | Sell-side research role fixture |
+| `fixture-youtube-niche` | YouTube niche fixture |
+| `fixture-paul-graham-corpus` | Paul Graham essays fixture |
+| `fixture-github-repo-landscape` | GitHub repository landscape fixture |
+| `fixture-market-scan` | Market scan fixture |
+| `local-command` | Run an external JSONL provider command |
+| `web-search` | Live search using a configured provider |
+
+## Provider setup
+
+Credentials are resolved in this order: environment variable → config file → provider constructor. At minimum, each live provider needs its API key set.
+
+| Provider | Required env var | Notes |
+| --- | --- | --- |
+| `mock` | none | Deterministic demo/CI provider |
+| `serper` | `SERPER_API_KEY` | Google Search via Serper.dev |
+| `tavily` | `TAVILY_API_KEY` | AI-native search |
+| `brave` | `BRAVE_API_KEY` | Brave Search API |
+| `github` | `GITHUB_TOKEN` | GitHub repository search (token raises rate limits) |
+
+Set keys in your shell:
+
+```bash
+export SERPER_API_KEY="..."
+export TAVILY_API_KEY="..."
+export BRAVE_API_KEY="..."
+export GITHUB_TOKEN="..."
+```
+
+Or run `kasw init` to write them to `~/.kasw/config.json`.
+
+## Configuration file
+
+Config files are JSON. Two locations are supported:
+
+- Global: `~/.kasw/config.json`
+- Local: `<work-dir>/.kasw.json`
+
+### Precedence
+
+1. Local `.kasw.json`
+2. Global `~/.kasw/config.json`
+3. Built-in defaults
+
+### Format
+
+```json
+{
+  "providers": {
+    "tavily": { "apiKey": "tvly-..." },
+    "github": { "token": "ghp_..." }
+  },
+  "defaults": {
+    "provider": "tavily",
+    "depth": "standard",
+    "profile": "web-search"
+  }
+}
+```
+
+Provider entries accept either `apiKey` or `token`; both are treated as the credential when resolving provider authentication.
+
+## Cache, replay, and dry-run
+
+### Cache
+
+Enable caching with `--use-cache`. For the `web-search` profile, this stores provider responses in `~/.kasw/cache/<sha256>.json` for 7 days and reuses them for matching `(provider, objective, depth, maxResults)` queries. The mock provider is never cached.
+
+### Replay
+
+`--replay <run-id>` reruns a previous run using the objective, profile, provider, and depth from that run. A new run directory is created and `replayedFrom` is set to the original run ID.
+
+### Dry-run
+
+`--dry-run` estimates cost and writes `run.json` and `research-plan.json` without calling any provider. Useful for budget checks and CI validation.
+
+## Distributed execution
+
+Distributed mode splits a research job into tasks and processes them in parallel.
+
+### In-process workers (memory queue)
+
+The default memory queue runs workers inside the same CLI process. No extra infrastructure is required.
+
+```bash
+kasw research "..." --profile web-search --provider tavily --distributed --workers 4
+```
+
+### External workers
+
+Start the CLI with `--distributed` to enqueue a job, then run one or more `worker` processes:
+
+```bash
+# Controller
+kasw research "..." --profile web-search --provider tavily --distributed --queue-type redis --workers 0
+
+# Workers (can be on other machines)
+kasw worker --job-id <job-id> --queue-type redis --redis-url redis://localhost:6379
+```
+
+If `--workers 0` is not supported directly, omit `--distributed` from the controller and use the internal flow; external workers are typically used with Redis.
+
+### Redis setup
+
+Set `REDIS_URL` and, if needed, `REDIS_PASSWORD` and `REDIS_USERNAME`:
+
+```bash
+export REDIS_URL="redis://localhost:6379"
+export REDIS_PASSWORD="..."
+```
+
+Redis is only required when `--queue-type redis` is used. It is an optional runtime dependency (`ioredis`).
+
+### Resuming a job
+
+Use `--resume-job-id <job-id>` with `--distributed` to load an existing job state instead of creating a new one. This is useful for retrying failed tasks or reconnecting workers.
+
+## Benchmarking and leaderboard
+
+Benchmarks compare a fixture run against golden answers and compute precision, recall, F1, citation accuracy, and URL coverage.
+
+```bash
+kasw benchmark --profile fixture-paul-graham-corpus
+```
+
+Each benchmark result is appended to `~/.kasw/leaderboard.jsonl`. View them with:
+
+```bash
+kasw leaderboard
+kasw leaderboard --profile fixture-paul-graham-corpus
+kasw leaderboard --compare run-id-1,run-id-2
+kasw leaderboard --html --out leaderboard.html
+```
+
+A benchmark passes when recall ≥ 0.5 and citation accuracy ≥ 0.8. URL coverage ≥ 0.5 is also checked when golden source URLs are defined.
+
+## Exit codes and error handling
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | Success |
+| `1` | Invalid usage, unknown command, validation error, or runtime failure |
+
+Errors print a concise message to `stderr`. Common error cases:
+
+- Missing required flag (e.g., `--run-dir` for `inspect`/`export`)
+- Invalid enum value (profile, provider, depth, format)
+- Missing provider credential
+- Provider command exits non-zero (`local-command` profile)
+- Budget exceeded (`BudgetExceededError`)
+- Distributed job not found for resume
+
+## Adding a new provider
+
+1. Implement `SearchProvider` in `src/providers/<name>-provider.ts`.
+2. Export it from `src/providers/index.ts` and add it to `createSearchProvider()`.
+3. Add pricing to `src/costs.ts` `PROVIDER_PRICING`.
+4. Add the required env var mapping in `src/config.ts` `PROVIDER_ENV_VARS`.
+5. Register the provider name in `src/cli.ts` `PROVIDER_NAMES` and in the `providers` command table.
+6. Add tests in `tests/<name>-provider.test.ts`.
 
 ## License
 
