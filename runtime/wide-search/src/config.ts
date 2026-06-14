@@ -94,7 +94,9 @@ export async function writeConfig(
     ? getGlobalConfigPath()
     : getLocalConfigPath(options.workDir ?? process.cwd());
 
-  await mkdir(getGlobalConfigDir(), { recursive: true });
+  if (options.global) {
+    await mkdir(getGlobalConfigDir(), { recursive: true });
+  }
   await writeFile(path, `${JSON.stringify(config, null, 2)}\n`);
   return path;
 }

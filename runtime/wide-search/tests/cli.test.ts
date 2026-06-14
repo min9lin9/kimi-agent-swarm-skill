@@ -65,9 +65,9 @@ describe('CLI integration', () => {
     expect(stderr).toInclude('Usage:');
   });
 
-  test('--help prints usage and exits with code 1', async () => {
+  test('--help prints usage and exits with code 0', async () => {
     const { exitCode, stderr } = await runCli(['--help']);
-    expect(exitCode).toBe(1);
+    expect(exitCode).toBe(0);
     expect(stderr).toInclude('Usage:');
   });
 

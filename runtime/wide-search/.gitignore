@@ -23,3 +23,7 @@ Thumbs.db
 # Environment files
 .env
 .env.local
+
+# Local config
+.kasw.json
+*.tgz

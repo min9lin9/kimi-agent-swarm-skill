@@ -159,7 +159,11 @@ async function handleRun(args: string[]): Promise<void> {
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
   const config = await loadConfig(workDir);
 
-  const objective = getFlag(parsed, 'objective') ?? parsed.positional.join(' ');
+  const replayRunId = getFlag(parsed, 'replay');
+  let objective: string | undefined = getFlag(parsed, 'objective') ?? parsed.positional.join(' ');
+  if (replayRunId && objective === '') {
+    objective = undefined;
+  }
   const profile =
     validateEnum(
       'profile',
@@ -192,7 +196,6 @@ async function handleRun(args: string[]): Promise<void> {
     validateEnum('depth', getFlag(parsed, 'depth') ?? config.defaults.depth, SEARCH_DEPTHS) ??
     'standard';
 
-  const replayRunId = getFlag(parsed, 'replay');
   const useCache = getBooleanFlag(parsed, 'use-cache');
   const distributedEnabled = getBooleanFlag(parsed, 'distributed');
   const workers = getNumberFlag(parsed, 'workers');
@@ -408,7 +411,7 @@ function handleProviders(): void {
   console.log(JSON.stringify(providers, null, 2));
 }
 
-function printUsage(): void {
+function printUsage(exitCode = 1): void {
   defaultLogger.error(
     'Usage: kasw [options] <research|run|verify|inspect|export|benchmark|leaderboard|providers|init|worker>'
   );
@@ -486,7 +489,7 @@ function printUsage(): void {
   defaultLogger.error(
     '  providers                      list available providers and required env vars'
   );
-  process.exitCode = 1;
+  process.exitCode = exitCode;
 }
 
 async function main(): Promise<void> {
@@ -542,7 +545,12 @@ async function main(): Promise<void> {
     return;
   }
 
-  if (command === '--help' || command === '-h' || command === undefined) {
+  if (command === '--help' || command === '-h') {
+    printUsage(0);
+    return;
+  }
+
+  if (command === undefined) {
     printUsage();
     return;
   }

@@ -1,6 +1,42 @@
 import type { GoldenAnswer } from '../src/types';
 
 export const goldenAnswers: Record<string, GoldenAnswer> = {
+  fixture: {
+    expectedClaims: ['Evidence-backed research workflows need source and claim traceability.'],
+    expectedSourceUrls: ['https://example.com/official-agent-report'],
+  },
+  'fixture-asset-mgmt': {
+    expectedClaims: [
+      'The portfolio manager makes final investment decisions and bears P&L responsibility for the fund.',
+      'Analysts produce investment ideas and research reports but do not make final investment decisions.',
+      'Risk managers quantify potential losses using VaR and stress tests.',
+      "Fund accounting calculates the fund's net asset value (NAV).",
+      'The product manager designs and manages the product portfolio, identifies market opportunities, and develops new funds.',
+    ],
+    expectedSourceUrls: [
+      'https://example.com/asset-mgmt/portfolio-manager',
+      'https://example.com/asset-mgmt/research-analyst',
+      'https://example.com/asset-mgmt/risk-manager',
+      'https://example.com/asset-mgmt/fund-accounting',
+      'https://example.com/asset-mgmt/product-manager',
+    ],
+  },
+  'fixture-sellside-research': {
+    expectedClaims: [
+      'The Global Head of Research sets the overall strategy, quality standards, and business model for the research organization.',
+      'Makes final investment recommendations and target prices for 10-20 companies in a sector.',
+      'Research Associates support senior analysts through financial model updates, data collection and verification, draft report writing, and conference call notes.',
+      'Sets the direction for global equity markets, index targets, and sector allocation.',
+      'The Chief Economist focuses on macroeconomic forecasting, policy analysis, and asset allocation strategy.',
+    ],
+    expectedSourceUrls: [
+      'https://example.com/sellside-research/leadership',
+      'https://example.com/sellside-research/coverage-analyst',
+      'https://example.com/sellside-research/research-associate',
+      'https://example.com/sellside-research/equity-strategist',
+      'https://example.com/sellside-research/macro-economist',
+    ],
+  },
   'fixture-paul-graham-corpus': {
     expectedClaims: [
       "Startups should initially do things that don't scale.",

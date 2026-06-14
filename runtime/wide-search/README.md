@@ -4,15 +4,21 @@ Evidence-backed wide-search CLI for the Kimi Agent Swarm. It turns a research ob
 
 ## Install
 
-Requires [Bun](https://bun.sh) 1.0 or later.
+Requires [Bun](https://bun.sh) 1.0 or later. The published package runs via Bun, so `npm install -g` only works when `bun` is on your `PATH`.
 
 ```bash
-# Global install
-npm install -g kimi-agent-swarm-cli
-# or
+# Registry install (recommended)
 bun install -g kimi-agent-swarm-cli
 
-# Local clone
+# Local tarball install
+npm install -g kimi-agent-swarm-cli-*.tgz
+# or
+bun add -g kimi-agent-swarm-cli-*.tgz
+```
+
+For local development:
+
+```bash
 git clone https://github.com/min9lin9/kimi-agent-swarm-skill.git
 cd runtime/wide-search
 bun install
@@ -184,6 +190,48 @@ kasw worker --job-id <id> [options]
 | `local-command` | Run an external JSONL provider command |
 | `web-search` | Live search using a configured provider |
 
+### `local-command` profile
+
+The `local-command` profile runs an external JSONL provider command instead of the built-in provider registry. The command receives the research objective in the `WIDE_SEARCH_OBJECTIVE` environment variable and should emit one JSON event per line on stdout.
+
+Recognized event types:
+
+- `source_candidate` — contains a single `source` object.
+- `complete` — contains a `sources` array (or can be emitted alone to end the stream).
+- `error` — contains a `message` string and aborts the run.
+
+Minimal provider example:
+
+```bash
+#!/usr/bin/env bun
+# my-provider.ts
+const sources = [
+  {
+    id: 'L001',
+    url: 'https://example.com/local-command-primary',
+    title: 'Local Command Primary Source',
+    sourceClass: 'primary',
+    publishedAt: '2026-05-22',
+    discoveredBy: 'local-command',
+    scores: { relevance: 4, authority: 4, freshness: 4, diversity: 3, extractionValue: 4 },
+    claims: ['Local command providers feed replayable source candidates into the runtime.'],
+  },
+];
+
+for (const source of sources) {
+  console.log(JSON.stringify({ type: 'source_candidate', source }));
+}
+console.log(JSON.stringify({ type: 'complete' }));
+```
+
+Run it with:
+
+```bash
+kasw research "example objective" --profile local-command --provider-command ./my-provider.ts
+```
+
+See `fixtures/jsonl-provider.ts` for a runnable fixture.
+
 ## Provider setup
 
 Credentials are resolved in this order: environment variable → config file → provider constructor. At minimum, each live provider needs its API key set.
@@ -206,6 +254,15 @@ export GITHUB_TOKEN="..."
 ```
 
 Or run `kasw init` to write them to `~/.kasw/config.json`.
+
+For CI or development, each live provider can run in deterministic mock mode without an API key by setting the matching environment variable to `1`:
+
+- `TAVILY_MOCK=1`
+- `SERPER_MOCK=1`
+- `BRAVE_MOCK=1`
+- `GITHUB_MOCK=1`
+
+Mock mode returns bundled fixture results and does not call the external API.
 
 ## Configuration file
 
@@ -246,7 +303,7 @@ Enable caching with `--use-cache`. For the `web-search` profile, this stores pro
 
 ### Replay
 
-`--replay <run-id>` reruns a previous run using the objective, profile, provider, and depth from that run. A new run directory is created and `replayedFrom` is set to the original run ID.
+`--replay <run-id>` reruns a previous run using the objective, profile, provider, and depth from that run. A new run directory is created and `replayedFrom` is set to the original run ID. If you omit the objective, the previous run's objective is reused automatically.
 
 ### Dry-run
 
@@ -327,6 +384,13 @@ Errors print a concise message to `stderr`. Common error cases:
 - Provider command exits non-zero (`local-command` profile)
 - Budget exceeded (`BudgetExceededError`)
 - Distributed job not found for resume
+
+## Adding a new fixture profile
+
+1. Add the fixture data file to `fixtures/<name>.json` containing a top-level `sources` array.
+2. Map the profile name to the fixture file in `FIXTURE_FILE_MAP` in `src/shared.ts`.
+3. Add the profile name to `EXECUTION_PROFILES` in `src/cli.ts`.
+4. Add golden answers to `fixtures/golden-answers.ts` if you want `kasw benchmark --profile <new-profile>` to score it.
 
 ## Adding a new provider
 

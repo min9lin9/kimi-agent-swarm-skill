@@ -35,7 +35,7 @@ export async function runWideSearch({
     const previousPlan = JSON.parse(
       await readFile(join(previousRunDir, 'research-plan.json'), 'utf8')
     ) as ResearchPlan;
-    objective = objective ?? previousRun.objective;
+    objective = objective || previousRun.objective;
     profile = previousRun.executionProfile;
     providerName = providerName ?? resolveProviderName(previousRun.executionProfile);
     searchDepth = previousPlan.searchDepth ?? searchDepth;
