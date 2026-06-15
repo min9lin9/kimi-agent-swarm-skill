@@ -69,35 +69,46 @@ export class RedisQueueAdapter implements QueueAdapter {
       }
 
       const connectTimeout = 10000;
-      this.client = new Redis(url.toString(), {
+      const client = new Redis(url.toString(), {
         lazyConnect: true,
         connectTimeout,
         maxRetriesPerRequest: 1,
         enableOfflineQueue: false,
+        retryStrategy: (times: number) => Math.min(times * 500, 3000),
       });
-      this.client.on('error', (err: Error) => {
+      client.on('error', (err: Error) => {
         defaultLogger.error(`Redis adapter connection error: ${err.message}`);
       });
-      this.client.on('reconnecting', () => {
+      client.on('reconnecting', () => {
         defaultLogger.error('Redis adapter reconnecting...');
       });
 
-      await Promise.race([
-        this.client.connect(),
-        new Promise<void>((_, reject) => {
-          setTimeout(
-            () => reject(new Error(`Redis connection timed out after ${connectTimeout}ms`)),
-            connectTimeout
-          );
-        }),
-      ]);
+      try {
+        await Promise.race([
+          client.connect(),
+          new Promise<void>((_, reject) => {
+            setTimeout(
+              () => reject(new Error(`Redis connection timed out after ${connectTimeout}ms`)),
+              connectTimeout
+            );
+          }),
+        ]);
+        this.client = client;
+      } catch (error) {
+        this.client = undefined;
+        throw error;
+      }
     }
     return this.client;
   }
 
   async quit(): Promise<void> {
     if (this.client) {
-      await this.client.quit();
+      try {
+        await this.client.quit();
+      } catch {
+        // Connection may already be closed; ignore.
+      }
       this.client = undefined;
     }
   }

@@ -74,10 +74,11 @@ export class BraveSearchProvider implements SearchProvider {
       this.metrics.apiCalls += 1;
     }
 
+    if (process.env.BRAVE_MOCK === '1') {
+      return mockResults(objective).slice(0, maxResults);
+    }
+
     if (!this.apiKey) {
-      if (process.env.BRAVE_MOCK === '1') {
-        return mockResults(objective).slice(0, maxResults);
-      }
       throw new Error(
         'BRAVE_API_KEY environment variable is required for the brave provider (or set BRAVE_MOCK=1 for CI)'
       );

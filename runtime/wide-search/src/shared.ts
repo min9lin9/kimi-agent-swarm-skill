@@ -71,3 +71,10 @@ export function extractClaims(sources: EnrichedSource[]): Claim[] {
   }
   return claims;
 }
+
+export function renumberSources(sources: Source[]): Source[] {
+  return sources.map((source, index) => ({
+    ...source,
+    id: `SRC-${String(index + 1).padStart(4, '0')}`,
+  }));
+}

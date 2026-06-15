@@ -231,14 +231,16 @@ console.log(JSON.stringify({ type: 'complete' }));
 Run it with:
 
 ```bash
-# If the script is executable (chmod +x)
-kasw research "example objective" --profile local-command --provider-command ./my-provider.ts
+# Run a script through Bun (recommended)
+kasw research "example objective" --profile local-command --provider-command bun --provider-args "./my-provider.ts"
 
-# Or run it through Bun
-kasw research "example objective" --profile local-command --provider-command "bun ./my-provider.ts"
+# Or run the bundled fixture from a project clone
+kasw research "example objective" --profile local-command --provider-command bun --provider-args "./fixtures/jsonl-provider.ts"
 
-# Run the bundled fixture
-kasw research "example objective" --profile local-command --provider-command "bun ./fixtures/jsonl-provider.ts"
+# From an npm-installed package, reference the fixture through node_modules
+kasw research "example objective" --profile local-command \
+  --provider-command bun \
+  --provider-args "./node_modules/kimi-agent-swarm-cli/fixtures/jsonl-provider.ts"
 ```
 
 See `fixtures/jsonl-provider.ts` for a runnable fixture.
@@ -266,14 +268,14 @@ export GITHUB_TOKEN="..."
 
 Or run `kasw init` to write them to `~/.kasw/config.json`.
 
-For CI or development, each live provider can run in deterministic mock mode without an API key by setting the matching environment variable to `1`:
+For CI or development, each live provider can run in deterministic mock mode by setting the matching environment variable to `1`:
 
 - `TAVILY_MOCK=1`
 - `SERPER_MOCK=1`
 - `BRAVE_MOCK=1`
 - `GITHUB_MOCK=1`
 
-Mock mode returns bundled fixture results and does not call the external API.
+When a `*_MOCK=1` variable is set, the provider always returns bundled fixture results and does not call the external API, even if a credential is configured. This is useful for reproducible tests without removing saved API keys.
 
 ## Configuration file
 

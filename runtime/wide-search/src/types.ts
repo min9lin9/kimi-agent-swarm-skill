@@ -131,6 +131,7 @@ export interface DistributedRunOptions {
   redisPassword?: string;
   redisUsername?: string;
   redisKeyPrefix?: string;
+  taskTimeoutMs?: number;
 }
 
 export interface DistributedJob {

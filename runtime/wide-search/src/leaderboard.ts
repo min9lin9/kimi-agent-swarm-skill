@@ -8,6 +8,7 @@ import type { BenchmarkResult, LeaderboardEntry } from './types';
 export interface ComparisonResult {
   runIds: string[];
   entries: LeaderboardEntry[];
+  missing: string[];
 }
 
 export function getLeaderboardDir(
@@ -25,7 +26,7 @@ export function getLeaderboardPath(
   leaderboardPath?: string
 ): string {
   if (leaderboardPath) {
-    return leaderboardPath;
+    return join(workDir, leaderboardPath);
   }
   return join(getLeaderboardDir(workDir), 'leaderboard.jsonl');
 }
@@ -70,15 +71,25 @@ export async function compareRuns(
   leaderboardPath?: string
 ): Promise<ComparisonResult> {
   const all = await getLeaderboard(undefined, workDir, leaderboardPath);
-  const entries = all.filter((e) => runIds.includes(e.runId));
-  return { runIds, entries };
+  const found = new Set<string>();
+  const entries = all.filter((e) => {
+    if (runIds.includes(e.runId)) {
+      found.add(e.runId);
+      return true;
+    }
+    return false;
+  });
+  const missing = runIds.filter((id) => !found.has(id));
+  return { runIds, entries, missing };
 }
 
 export async function clearLeaderboard(
   workDir: string = process.cwd(),
   leaderboardPath?: string
 ): Promise<void> {
-  await writeFile(getLeaderboardPath(workDir, leaderboardPath), '');
+  const path = getLeaderboardPath(workDir, leaderboardPath);
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, '');
 }
 
 function formatTimestamp(iso: string): string {

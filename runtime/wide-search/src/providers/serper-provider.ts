@@ -72,10 +72,11 @@ export class SerperSearchProvider implements SearchProvider {
       this.metrics.apiCalls += 1;
     }
 
+    if (process.env.SERPER_MOCK === '1') {
+      return mockResults(objective).slice(0, maxResults);
+    }
+
     if (!this.apiKey) {
-      if (process.env.SERPER_MOCK === '1') {
-        return mockResults(objective).slice(0, maxResults);
-      }
       throw new Error(
         'SERPER_API_KEY environment variable is required for the serper provider (or set SERPER_MOCK=1 for CI)'
       );

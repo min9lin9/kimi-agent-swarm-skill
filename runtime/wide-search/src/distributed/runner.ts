@@ -10,7 +10,7 @@ import {
   maxResultsForDepth,
 } from '../costs';
 import { scoreSource } from '../scorer';
-import { extractClaims, makeRunId } from '../shared';
+import { extractClaims, makeRunId, renumberSources } from '../shared';
 import { finalizeRun, resolveProviderName, runWideSearchTask } from '../shared-runtime';
 import type {
   DistributedJob,
@@ -45,6 +45,13 @@ function createQueueAdapter(options: DistributedRunOptions, workDir: string): Qu
   return new MemoryQueueAdapter({ workDir });
 }
 
+function accumulateMetrics(into: UsageMetrics, from: UsageMetrics): void {
+  into.providerCalls += from.providerCalls;
+  into.apiCalls += from.apiCalls;
+  into.estimatedTokens = (into.estimatedTokens ?? 0) + (from.estimatedTokens ?? 0);
+  into.actualCostUsd = (into.actualCostUsd ?? 0) + (from.actualCostUsd ?? 0);
+}
+
 async function executeTask(
   task: DistributedTask,
   profile: ExecutionProfile,
@@ -56,42 +63,27 @@ async function executeTask(
   metrics: UsageMetrics,
   workDir: string
 ): Promise<WorkerResult> {
-  if (profile.startsWith('fixture')) {
-    const sourceIds = task.query.split(',').map((id) => id.trim());
-    const result = await runWideSearchTask({
-      objective: task.query,
-      profile,
-      providerName,
-      searchDepth,
-      useCache,
-      metrics,
-      sourceIds,
-      workDir,
-      checkBudget: false,
-    });
-    return {
-      sources: result.sources,
-      usageMetrics: result.usageMetrics,
-      claims: result.claims,
-    };
-  }
-
-  const result = await runWideSearchTask({
+  const taskMetrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
+  const baseOptions = {
     objective: task.query,
     profile,
     providerName,
     searchDepth,
     useCache,
-    metrics,
-    maxResults,
+    metrics: taskMetrics,
     workDir,
     checkBudget: false,
-  });
-  return {
-    sources: result.sources,
-    usageMetrics: result.usageMetrics,
-    claims: result.claims,
   };
+
+  const result = profile.startsWith('fixture')
+    ? await runWideSearchTask({
+        ...baseOptions,
+        sourceIds: task.query.split(',').map((id) => id.trim()),
+      })
+    : await runWideSearchTask({ ...baseOptions, maxResults });
+
+  accumulateMetrics(metrics, result.usageMetrics);
+  return result;
 }
 
 export async function workerLoop(
@@ -150,7 +142,8 @@ async function pollJobToCompletion(
   adapter: QueueAdapter,
   jobId: string,
   timeoutMs = 30 * 60 * 1000,
-  pollIntervalMs = 1000
+  pollIntervalMs = 1000,
+  taskTimeoutMs = 5 * 60 * 1000
 ): Promise<DistributedJob> {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
@@ -158,6 +151,20 @@ async function pollJobToCompletion(
     if (!current) {
       throw new Error('Job disappeared during distributed run');
     }
+
+    const now = Date.now();
+    for (const task of current.tasks) {
+      if (task.status === 'running' && task.startedAt) {
+        const elapsed = now - new Date(task.startedAt).getTime();
+        if (elapsed > taskTimeoutMs) {
+          await adapter.failTask(
+            task.taskId,
+            `stale task timeout after ${taskTimeoutMs}ms (worker may have died)`
+          );
+        }
+      }
+    }
+
     if (current.status === 'completed' || current.status === 'failed') {
       return current;
     }
@@ -306,7 +313,13 @@ export async function runDistributedWideSearch({
     let completedJob: DistributedJob;
     if (workers === 0) {
       console.log(JSON.stringify({ jobId: job.jobId }));
-      completedJob = await pollJobToCompletion(adapter, job.jobId);
+      completedJob = await pollJobToCompletion(
+        adapter,
+        job.jobId,
+        undefined,
+        undefined,
+        distributed.taskTimeoutMs
+      );
     } else {
       const workerMetrics: UsageMetrics[] = [];
       const workerPromises: Promise<void>[] = [];
@@ -347,10 +360,15 @@ export async function runDistributedWideSearch({
     }
 
     if (aggregatedSources.length === 0) {
-      throw new Error('Distributed run produced no accepted sources');
+      const failures = completedJob.tasks
+        .filter((t) => t.status === 'failed' && t.error)
+        .map((t) => `[${t.queryFamily}] ${t.error}`);
+      const suffix = failures.length > 0 ? `; task failures: ${failures.join('; ')}` : '';
+      throw new Error(`Distributed run produced no accepted sources${suffix}`);
     }
 
-    const sources: EnrichedSource[] = aggregatedSources.map((source) => scoreSource(source));
+    const renumberedSources = renumberSources(aggregatedSources);
+    const sources: EnrichedSource[] = renumberedSources.map((source) => scoreSource(source));
     const claims = extractClaims(sources);
 
     const totalMetrics: UsageMetrics = completedJob.tasks

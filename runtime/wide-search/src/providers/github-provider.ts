@@ -87,10 +87,11 @@ export class GitHubSearchProvider implements SearchProvider {
       this.metrics.apiCalls += 1;
     }
 
+    if (process.env.GITHUB_MOCK === '1') {
+      return mockResults(objective).slice(0, maxResults);
+    }
+
     if (!this.token) {
-      if (process.env.GITHUB_MOCK === '1') {
-        return mockResults(objective).slice(0, maxResults);
-      }
       throw new Error(
         'GITHUB_TOKEN environment variable is required for the github provider (or set GITHUB_MOCK=1 for CI)'
       );

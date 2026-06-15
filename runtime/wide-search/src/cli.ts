@@ -215,6 +215,7 @@ async function handleRun(args: string[]): Promise<void> {
   const redisUrl = getFlag(parsed, 'redis-url') ?? process.env.REDIS_URL;
   const redisPassword = getFlag(parsed, 'redis-password') ?? process.env.REDIS_PASSWORD;
   const redisUsername = getFlag(parsed, 'redis-username') ?? process.env.REDIS_USERNAME;
+  const taskTimeoutMs = getNumberFlag(parsed, 'task-timeout-ms');
 
   if (!objective && !replayRunId && !resumeJobId) {
     throw new Error(
@@ -239,6 +240,7 @@ async function handleRun(args: string[]): Promise<void> {
         redisUrl,
         redisPassword,
         redisUsername,
+        taskTimeoutMs,
       }
     : undefined;
 
@@ -354,6 +356,9 @@ async function handleLeaderboard(args: string[]): Promise<void> {
   if (compareRaw) {
     const runIds = compareRaw.split(',').map((id) => id.trim());
     const comparison = await compareRuns(runIds, workDir, leaderboardPath);
+    if (comparison.missing.length > 0) {
+      defaultLogger.warn(`Run IDs not found in leaderboard: ${comparison.missing.join(', ')}`);
+    }
     console.log(JSON.stringify(comparison, null, 2));
     return;
   }
@@ -511,6 +516,9 @@ function printUsage(exitCode = 1): void {
   );
   defaultLogger.error(
     '    --redis-username <username>   Redis username (defaults to REDIS_USERNAME env)'
+  );
+  defaultLogger.error(
+    '    --task-timeout-ms <n>         max time a distributed task may stay running (default: 300000)'
   );
   defaultLogger.error('');
   defaultLogger.error(

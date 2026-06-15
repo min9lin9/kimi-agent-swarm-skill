@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { chmod, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -98,6 +98,7 @@ export async function writeConfig(
     await mkdir(getGlobalConfigDir(), { recursive: true });
   }
   await writeFile(path, `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
+  await chmod(path, 0o600).catch(() => {});
   return path;
 }
 
