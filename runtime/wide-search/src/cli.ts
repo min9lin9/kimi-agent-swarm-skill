@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { runBenchmark } from './benchmark';
 import { loadConfig } from './config';
-import { maxResultsForDepth } from './costs';
+import { computePerTaskMaxResults } from './distributed/job-sizing';
 import { MemoryQueueAdapter } from './distributed/memory-adapter';
 import type { QueueAdapter } from './distributed/queue-adapter';
 import { RedisQueueAdapter } from './distributed/redis-adapter';
@@ -423,10 +423,7 @@ async function handleWorker(args: string[]): Promise<void> {
     throw new Error(`Job not found: ${jobId}`);
   }
 
-  const perTaskMaxResults =
-    job.executionProfile === 'web-search' && job.tasks.length > 0
-      ? Math.ceil(maxResultsForDepth(job.searchDepth) / job.tasks.length)
-      : undefined;
+  const perTaskMaxResults = computePerTaskMaxResults(job.executionProfile, job.searchDepth, job.tasks.length);
 
   const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
 

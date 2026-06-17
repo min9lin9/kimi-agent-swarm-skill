@@ -7,8 +7,8 @@ import {
   checkEstimatedBudget,
   estimateRunCost,
   getProviderPricing,
-  maxResultsForDepth,
 } from '../costs';
+import { computePerTaskMaxResults } from './job-sizing';
 import { scoreSource } from '../scorer';
 import { extractClaims, makeRunId, renumberSources } from '../shared';
 import { finalizeRun, resolveProviderName, runWideSearchTask } from '../shared-runtime';
@@ -59,6 +59,7 @@ async function executeTask(
   searchDepth: SearchDepth,
   maxResults: number | undefined,
   useCache: boolean,
+  budget: import('../types').BudgetOptions,
   metrics: UsageMetrics,
   workDir: string
 ): Promise<WorkerResult> {
@@ -121,6 +122,7 @@ export async function workerLoop(
         searchDepth,
         perTaskMaxResults,
         useCache,
+        budget,
         metrics,
         workDir
       );
@@ -174,6 +176,8 @@ async function pollJobToCompletion(
 export async function runDistributedWideSearch({
   objective,
   profile = 'fixture',
+  providerCommand,
+  providerArgs,
   providerName,
   searchDepth = 'standard',
   workDir = process.cwd(),
@@ -217,9 +221,7 @@ export async function runDistributedWideSearch({
     ? await splitFixtureTasks(profile, join(import.meta.dir, '../../fixtures'))
     : splitWebSearchTasks(objective);
 
-  const perTaskMaxResults = profile.startsWith('fixture')
-    ? undefined
-    : Math.ceil(maxResultsForDepth(searchDepth) / Math.max(1, plans.length));
+  const perTaskMaxResults = computePerTaskMaxResults(profile, searchDepth, plans.length);
 
   const estimatedProviderCalls = profile.startsWith('fixture') ? 0 : plans.length;
   const estimate = {
@@ -349,15 +351,6 @@ export async function runDistributedWideSearch({
     }
 
     const aggregatedSources: Source[] = [];
-    if (completedJob.status === 'failed') {
-      const failures = completedJob.tasks
-        .filter((t) => t.status === 'failed' && t.error)
-        .map((t) => `[${t.queryFamily}] ${t.error}`);
-      throw new Error(
-        `Distributed job failed: ${failures.join('; ') || 'one or more tasks failed'}`
-      );
-    }
-
     for (const task of completedJob.tasks) {
       if (task.status === 'completed' && task.result) {
         aggregatedSources.push(...task.result.sources);
