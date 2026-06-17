@@ -1,12 +1,21 @@
 import type { JobStore } from './job-store';
 import type { RedisClient } from './redis-client';
 
+export interface LeaseRecord {
+	taskId: string;
+	workerId: string;
+	issuedAt: number;
+	ttlMs: number;
+}
+
 export interface LeaseStore {
 	readonly type: string;
 
 	claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined>;
+	renewLease(token: string, ttlMs: number): Promise<boolean>;
 	releaseLease(token: string): Promise<void>;
 	getRunningCount(jobId: string): Promise<number>;
+	revokeStaleLeases(ttlMs: number): Promise<string[]>;
 }
 
 export interface MemoryLeaseStoreOptions {
@@ -16,26 +25,50 @@ export interface MemoryLeaseStoreOptions {
 export class MemoryLeaseStore implements LeaseStore {
 	readonly type = 'memory';
 	private readonly jobStore: JobStore;
-	private readonly running = new Map<string, { taskId: string; workerId: string }>();
+	private readonly leases = new Map<string, LeaseRecord>();
 
 	constructor(options: MemoryLeaseStoreOptions) {
 		this.jobStore = options.jobStore;
 	}
 
-	async claimLease(taskId: string, workerId: string, _ttlMs: number): Promise<string | undefined> {
-		const token = `${taskId}:${Date.now()}`;
-		this.running.set(token, { taskId, workerId });
+	async claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
+		const token = `${taskId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+		this.leases.set(token, { taskId, workerId, issuedAt: Date.now(), ttlMs });
 		return token;
 	}
 
+	async renewLease(token: string, ttlMs: number): Promise<boolean> {
+		const lease = this.leases.get(token);
+		if (!lease) return false;
+		if (Date.now() > lease.issuedAt + lease.ttlMs) {
+			this.leases.delete(token);
+			return false;
+		}
+		lease.issuedAt = Date.now();
+		lease.ttlMs = ttlMs;
+		return true;
+	}
+
 	async releaseLease(token: string): Promise<void> {
-		this.running.delete(token);
+		this.leases.delete(token);
 	}
 
 	async getRunningCount(jobId: string): Promise<number> {
 		const job = await this.jobStore.getJob(jobId);
 		if (!job) return 0;
 		return job.tasks.filter((t) => t.status === 'running').length;
+	}
+
+	async revokeStaleLeases(_ttlMs: number): Promise<string[]> {
+		const now = Date.now();
+		const revoked: string[] = [];
+		for (const [token, lease] of this.leases.entries()) {
+			if (now > lease.issuedAt + lease.ttlMs) {
+				this.leases.delete(token);
+				revoked.push(lease.taskId);
+			}
+		}
+		return revoked;
 	}
 }
 
@@ -58,21 +91,56 @@ export class RedisLeaseStore implements LeaseStore {
 		return `${this.keyPrefix}:running:${jobId}`;
 	}
 
-	async claimLease(taskId: string, _workerId: string, _ttlMs: number): Promise<string | undefined> {
+	private leaseKey(token: string): string {
+		return `${this.keyPrefix}:lease:${token}`;
+	}
+
+	async claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
 		const client = await this.getClient();
-		const token = `${taskId}:${Date.now()}`;
-		// In Phase 2 we rely on the task already being marked running by TaskQueue.
-		// Phase 3 will add explicit token validation and stale-lease revocation.
+		const token = `${taskId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+		const jobId = taskId.split('-task-')[0];
+		await client.sadd(this.runningKey(jobId), taskId);
+		await client.set(
+			this.leaseKey(token),
+			JSON.stringify({ taskId, workerId, issuedAt: Date.now(), ttlMs })
+		);
 		return token;
 	}
 
-	async releaseLease(_token: string): Promise<void> {
-		// Phase 2: no-op at token level. TaskQueue updates task status.
-		// Phase 3 will track token -> task mapping and clean the running set.
+	async renewLease(token: string, ttlMs: number): Promise<boolean> {
+		const client = await this.getClient();
+		const text = await client.get(this.leaseKey(token));
+		if (!text) return false;
+		const lease = JSON.parse(text) as LeaseRecord;
+		if (Date.now() > lease.issuedAt + lease.ttlMs) {
+			await client.del(this.leaseKey(token));
+			return false;
+		}
+		await client.set(
+			this.leaseKey(token),
+			JSON.stringify({ ...lease, issuedAt: Date.now(), ttlMs })
+		);
+		return true;
+	}
+
+	async releaseLease(token: string): Promise<void> {
+		const client = await this.getClient();
+		const text = await client.get(this.leaseKey(token));
+		await client.del(this.leaseKey(token));
+		if (!text) return;
+		const lease = JSON.parse(text) as LeaseRecord;
+		const jobId = lease.taskId.split('-task-')[0];
+		await client.srem(this.runningKey(jobId), lease.taskId);
 	}
 
 	async getRunningCount(jobId: string): Promise<number> {
 		const client = await this.getClient();
 		return client.scard(this.runningKey(jobId));
+	}
+
+	async revokeStaleLeases(_ttlMs: number): Promise<string[]> {
+		// Phase 3 stub: Redis lease revocation requires scanning lease keys,
+		// which is left for a follow-up once the token contract is validated.
+		return [];
 	}
 }

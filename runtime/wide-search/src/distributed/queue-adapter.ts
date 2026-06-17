@@ -1,3 +1,4 @@
+import { defaultLogger } from '../logger';
 import { deriveJobStatus } from './job-status';
 import type { JobStore } from './job-store';
 import type { LeaseStore } from './lease-store';
@@ -15,12 +16,13 @@ export interface QueueAdapter {
   saveJob(job: DistributedJob): Promise<void>;
 
   claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined>;
-  completeTask(taskId: string, result: WorkerResult): Promise<void>;
-  failTask(taskId: string, error: string): Promise<void>;
+  completeTask(taskId: string, result: WorkerResult, leaseToken?: string): Promise<void>;
+  failTask(taskId: string, error: string, leaseToken?: string): Promise<void>;
 
   getPendingTaskCount(jobId: string): Promise<number>;
   getRunningTaskCount(jobId: string): Promise<number>;
   quit?(): Promise<void>;
+  revokeStaleLeases?(ttlMs?: number): Promise<string[]>;
 }
 
 export function makeJobId(): string {
@@ -43,12 +45,16 @@ export interface QueueAdapterFacadeOptions {
 /**
  * Compatibility facade that exposes the legacy `QueueAdapter` interface while
  * delegating persistence, queueing, and lease tracking to focused internal stores.
+ *
+ * Lease token validation is in compatibility mode during Phase 3: a missing token
+ * is accepted but logged as a deprecation warning. Phase 4 will make tokens required.
  */
 export class QueueAdapterFacade implements QueueAdapter {
   readonly type: string;
   private readonly jobStore: JobStore;
   private readonly taskQueue: TaskQueue;
   private readonly leaseStore: LeaseStore;
+  private readonly leaseTtlMs = 30_000;
 
   constructor(options: QueueAdapterFacadeOptions) {
     this.type = options.type;
@@ -80,16 +86,31 @@ export class QueueAdapterFacade implements QueueAdapter {
   async claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined> {
     const task = await this.taskQueue.claimNextTask(jobId, workerId);
     if (task) {
-      await this.leaseStore.claimLease(task.taskId, workerId, 30_000);
+      const token = await this.leaseStore.claimLease(task.taskId, workerId, this.leaseTtlMs);
+      task.leaseToken = token;
     }
     return task;
   }
 
-  async completeTask(taskId: string, result: WorkerResult): Promise<void> {
+  async completeTask(taskId: string, result: WorkerResult, leaseToken?: string): Promise<void> {
     const found = await this.jobStore.findTask(taskId);
     if (!found) return;
 
     const { job, task } = found;
+
+    if (leaseToken !== undefined) {
+      const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
+      if (!renewed) {
+        defaultLogger.warn(`completeTask rejected for ${taskId}: invalid or expired lease token`);
+        return;
+      }
+      await this.leaseStore.releaseLease(leaseToken);
+    } else {
+      defaultLogger.warn(
+        `completeTask called without lease token for ${taskId}; accepting in compatibility mode`
+      );
+    }
+
     task.status = 'completed';
     task.result = result;
     task.completedAt = new Date().toISOString();
@@ -99,11 +120,25 @@ export class QueueAdapterFacade implements QueueAdapter {
     await this.jobStore.saveJob(job);
   }
 
-  async failTask(taskId: string, error: string): Promise<void> {
+  async failTask(taskId: string, error: string, leaseToken?: string): Promise<void> {
     const found = await this.jobStore.findTask(taskId);
     if (!found) return;
 
     const { job, task } = found;
+
+    if (leaseToken !== undefined) {
+      const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
+      if (!renewed) {
+        defaultLogger.warn(`failTask rejected for ${taskId}: invalid or expired lease token`);
+        return;
+      }
+      await this.leaseStore.releaseLease(leaseToken);
+    } else {
+      defaultLogger.warn(
+        `failTask called without lease token for ${taskId}; accepting in compatibility mode`
+      );
+    }
+
     task.error = error;
     if (task.attempts >= task.maxRetries) {
       task.status = 'failed';
@@ -124,4 +159,7 @@ export class QueueAdapterFacade implements QueueAdapter {
     return this.leaseStore.getRunningCount(jobId);
   }
 
+  async revokeStaleLeases(ttlMs = this.leaseTtlMs): Promise<string[]> {
+    return this.leaseStore.revokeStaleLeases(ttlMs);
+  }
 }

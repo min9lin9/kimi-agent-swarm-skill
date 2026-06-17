@@ -166,6 +166,7 @@ export interface DistributedTask {
   error?: string;
   startedAt?: string;
   completedAt?: string;
+  leaseToken?: string;
 }
 
 export type DistributedTaskStatus = 'pending' | 'running' | 'completed' | 'failed';

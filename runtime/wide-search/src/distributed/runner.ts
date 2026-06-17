@@ -127,13 +127,14 @@ export async function workerLoop(
         workDir
       );
       checkBudget(providerName, metrics, budget);
-      await adapter.completeTask(task.taskId, result);
+      checkBudget(providerName, metrics, budget);
+      await adapter.completeTask(task.taskId, result, task.leaseToken);
     } catch (error) {
       if (error instanceof BudgetExceededError) {
         throw error;
       }
       const message = error instanceof Error ? error.message : String(error);
-      await adapter.failTask(task.taskId, message);
+      await adapter.failTask(task.taskId, message, task.leaseToken);
     }
   }
 }
@@ -150,6 +151,10 @@ async function pollJobToCompletion(
     const current = await adapter.getJob(jobId);
     if (!current) {
       throw new Error('Job disappeared during distributed run');
+    }
+
+    if (adapter.revokeStaleLeases) {
+      await adapter.revokeStaleLeases(taskTimeoutMs);
     }
 
     const now = Date.now();
