@@ -6,9 +6,9 @@ import { runBenchmark } from './benchmark';
 import { loadConfig } from './config';
 import { computePerTaskMaxResults } from './distributed/job-sizing';
 import { MemoryQueueAdapter } from './distributed/memory-adapter';
+import { ExternalWorkerPool } from './distributed/worker-pool';
 import type { QueueAdapter } from './distributed/queue-adapter';
 import { RedisQueueAdapter } from './distributed/redis-adapter';
-import { workerLoop } from './distributed/runner';
 import { exportRun, supportedExportFormats } from './export';
 import { getInitInstructions, runInit } from './init';
 import { clearLeaderboard, compareRuns, generateHtmlReport, getLeaderboard } from './leaderboard';
@@ -423,31 +423,24 @@ async function handleWorker(args: string[]): Promise<void> {
     throw new Error(`Job not found: ${jobId}`);
   }
 
-  const perTaskMaxResults = computePerTaskMaxResults(job.executionProfile, job.searchDepth, job.tasks.length);
-
-  const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
-
   try {
-    await workerLoop(
+    await new ExternalWorkerPool({
       adapter,
-      jobId,
-      workerId,
-      job.executionProfile,
-      job.providerName,
-      job.searchDepth,
-      perTaskMaxResults,
-      job.useCache ?? false,
-      job.budget ?? {},
-      metrics,
-      workDir
-    );
+      profile: job.executionProfile,
+      providerName: job.providerName,
+      searchDepth: job.searchDepth,
+      perTaskMaxResults: computePerTaskMaxResults(job.executionProfile, job.searchDepth, job.tasks.length),
+      useCache: job.useCache ?? false,
+      budget: job.budget ?? {},
+      workDir,
+    }).runOnce(jobId, workerId);
   } finally {
     if (adapter.quit) {
       await adapter.quit();
     }
   }
 
-  console.log(JSON.stringify({ workerId, done: true, metrics }, null, 2));
+  console.log(JSON.stringify({ workerId, done: true, metrics: { providerCalls: 0, apiCalls: 0 } }, null, 2));
 }
 
 function handleProviders(): void {
