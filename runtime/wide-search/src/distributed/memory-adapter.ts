@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
+import { deriveJobStatus } from './job-status';
 import type { QueueAdapter } from './queue-adapter';
 
 export interface MemoryAdapterOptions {
@@ -39,12 +40,14 @@ export class MemoryQueueAdapter implements QueueAdapter {
   async getJob(jobId: string): Promise<DistributedJob | undefined> {
     const cached = this.jobs.get(jobId);
     if (cached) {
+      cached.status = deriveJobStatus(cached.tasks);
       return cached;
     }
 
     try {
       const text = await readFile(this.jobFilePath(jobId), 'utf8');
       const loaded = JSON.parse(text) as DistributedJob;
+      loaded.status = deriveJobStatus(loaded.tasks);
       this.jobs.set(jobId, loaded);
       return loaded;
     } catch (error) {
@@ -74,6 +77,7 @@ export class MemoryQueueAdapter implements QueueAdapter {
     task.workerId = workerId;
     task.attempts += 1;
     task.startedAt = new Date().toISOString();
+    job.status = deriveJobStatus(job.tasks);
     await this.saveJob(job);
     return task;
   }
@@ -87,7 +91,7 @@ export class MemoryQueueAdapter implements QueueAdapter {
     task.completedAt = new Date().toISOString();
     task.error = undefined;
 
-    this.updateJobStatus(job);
+    job.status = deriveJobStatus(job.tasks);
     await this.saveJob(job);
   }
 
@@ -105,7 +109,7 @@ export class MemoryQueueAdapter implements QueueAdapter {
       task.startedAt = undefined;
     }
 
-    this.updateJobStatus(job);
+    job.status = deriveJobStatus(job.tasks);
     await this.saveJob(job);
   }
 
@@ -131,17 +135,5 @@ export class MemoryQueueAdapter implements QueueAdapter {
       }
     }
     return {};
-  }
-
-  private updateJobStatus(job: DistributedJob): void {
-    if (job.tasks.every((t) => t.status === 'completed')) {
-      job.status = 'completed';
-    } else if (job.tasks.some((t) => t.status === 'running')) {
-      job.status = 'running';
-    } else if (job.tasks.every((t) => t.status === 'failed')) {
-      job.status = 'failed';
-    } else {
-      job.status = 'running';
-    }
   }
 }
