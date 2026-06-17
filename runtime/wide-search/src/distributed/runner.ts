@@ -59,7 +59,6 @@ async function executeTask(
   searchDepth: SearchDepth,
   maxResults: number | undefined,
   useCache: boolean,
-  budget: import('../types').BudgetOptions,
   metrics: UsageMetrics,
   workDir: string
 ): Promise<WorkerResult> {
@@ -122,7 +121,6 @@ export async function workerLoop(
         searchDepth,
         perTaskMaxResults,
         useCache,
-        budget,
         metrics,
         workDir
       );
@@ -176,8 +174,6 @@ async function pollJobToCompletion(
 export async function runDistributedWideSearch({
   objective,
   profile = 'fixture',
-  providerCommand,
-  providerArgs,
   providerName,
   searchDepth = 'standard',
   workDir = process.cwd(),
@@ -353,6 +349,15 @@ export async function runDistributedWideSearch({
     }
 
     const aggregatedSources: Source[] = [];
+    if (completedJob.status === 'failed') {
+      const failures = completedJob.tasks
+        .filter((t) => t.status === 'failed' && t.error)
+        .map((t) => `[${t.queryFamily}] ${t.error}`);
+      throw new Error(
+        `Distributed job failed: ${failures.join('; ') || 'one or more tasks failed'}`
+      );
+    }
+
     for (const task of completedJob.tasks) {
       if (task.status === 'completed' && task.result) {
         aggregatedSources.push(...task.result.sources);

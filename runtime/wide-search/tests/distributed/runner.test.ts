@@ -75,4 +75,58 @@ describe('runDistributedWideSearch', () => {
       })
     ).rejects.toBeInstanceOf(BudgetExceededError);
   });
+
+  test('resume rejects mixed completed and failed terminal tasks', async () => {
+    const workDir = await mkdtemp(join(tmpdir(), 'wide-search-dist-mixed-terminal-'));
+    const adapter = new MemoryQueueAdapter({ workDir });
+    const tasks = buildTasksFromPlans(
+      'mixed-job',
+      [
+        { queryFamily: 'accepted', query: 'paul-graham-essay-1' },
+        { queryFamily: 'failed', query: 'missing-source' },
+      ],
+      1
+    );
+    const job = await adapter.createJob({
+      objective: 'Summarize mixed terminal job',
+      executionProfile: 'fixture-paul-graham-corpus',
+      providerName: 'mock',
+      searchDepth: 'standard',
+      queueType: 'memory',
+      status: 'pending',
+      tasks,
+    });
+
+    const accepted = await adapter.claimNextTask(job.jobId, 'worker-1');
+    expect(accepted).toBeDefined();
+    if (!accepted) throw new Error('expected first task to be claimable');
+    await adapter.completeTask(accepted.taskId, {
+      sources: [
+        {
+          id: 'S001',
+          title: 'Accepted source',
+          url: 'https://example.test/source',
+          sourceClass: 'primary',
+          discoveredBy: 'test',
+          scores: { relevance: 5, authority: 5 },
+          claims: ['A useful source survived before another task failed.'],
+        },
+      ],
+      usageMetrics: { providerCalls: 1, apiCalls: 1 },
+    });
+
+    const failed = await adapter.claimNextTask(job.jobId, 'worker-2');
+    expect(failed).toBeDefined();
+    if (!failed) throw new Error('expected second task to be claimable');
+    await adapter.failTask(failed.taskId, 'fixture task failed');
+
+    await expect(
+      runDistributedWideSearch({
+        objective: 'Summarize mixed terminal job',
+        profile: 'fixture-paul-graham-corpus',
+        workDir,
+        distributed: { enabled: true, workers: 1, resumeJobId: job.jobId, queueType: 'memory' },
+      })
+    ).rejects.toThrow('Distributed job failed');
+  });
 });

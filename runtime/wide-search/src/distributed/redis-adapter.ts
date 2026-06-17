@@ -1,5 +1,6 @@
 import { defaultLogger } from '../logger';
 import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
+import { deriveJobStatus } from './job-status';
 import type { QueueAdapter } from './queue-adapter';
 
 export interface RedisAdapterOptions {
@@ -179,7 +180,7 @@ export class RedisQueueAdapter implements QueueAdapter {
       refreshed.push(taskText ? (JSON.parse(taskText) as DistributedTask) : t);
     }
     job.tasks = refreshed;
-    this.updateJobStatus(job);
+    job.status = deriveJobStatus(job.tasks);
     return job;
   }
 
@@ -252,17 +253,5 @@ export class RedisQueueAdapter implements QueueAdapter {
   async getRunningTaskCount(jobId: string): Promise<number> {
     const client = await this.getClient();
     return client.scard(this.runningKey(jobId));
-  }
-
-  private updateJobStatus(job: DistributedJob): void {
-    if (job.tasks.every((t) => t.status === 'completed')) {
-      job.status = 'completed';
-    } else if (job.tasks.some((t) => t.status === 'running')) {
-      job.status = 'running';
-    } else if (job.tasks.every((t) => t.status === 'failed')) {
-      job.status = 'failed';
-    } else {
-      job.status = 'running';
-    }
   }
 }

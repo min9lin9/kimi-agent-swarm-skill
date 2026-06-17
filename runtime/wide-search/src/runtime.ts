@@ -6,7 +6,6 @@ import { runDistributedWideSearch } from './distributed/runner';
 import { makeRunId } from './shared';
 import { finalizeRun, resolveProviderName, runWideSearchTask } from './shared-runtime';
 import type {
-  BudgetOptions,
   ResearchPlan,
   Run,
   RunWideSearchOptions,
@@ -54,6 +53,9 @@ export async function runWideSearch({
   const runDir = join(workDir, '.runs', 'wide-search', runId);
 
   if (distributed?.enabled) {
+    if (profile === 'local-command') {
+      throw new Error('local-command profile does not support distributed execution');
+    }
     return runDistributedWideSearch({
       objective,
       profile,

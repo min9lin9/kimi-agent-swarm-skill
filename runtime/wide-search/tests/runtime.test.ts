@@ -127,6 +127,21 @@ describe('runWideSearch', () => {
     expect(sourceLedger).toInclude('"decision":"rejected"');
   });
 
+  test('local-command run rejects distributed execution', async () => {
+    const workDir = await mkdtemp(join(tmpdir(), 'wide-search-local-command-distributed-'));
+
+    await expect(
+      runWideSearch({
+        objective: 'Reject unsupported distributed command provider',
+        profile: 'local-command',
+        providerCommand: process.execPath,
+        providerArgs: [join(testDir, '../fixtures/jsonl-provider.ts')],
+        workDir,
+        distributed: { enabled: true, workers: 1 },
+      })
+    ).rejects.toThrow('local-command profile does not support distributed execution');
+  });
+
   test('fixture-paul-graham-corpus run processes Paul Graham essays', async () => {
     const workDir = await mkdtemp(join(tmpdir(), 'wide-search-paul-graham-'));
 
