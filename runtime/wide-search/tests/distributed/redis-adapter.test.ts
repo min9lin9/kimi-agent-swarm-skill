@@ -51,12 +51,11 @@ describeOrSkip('RedisQueueAdapter', () => {
     expect(task).toBeDefined();
     expect(task?.status).toBe('running');
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(1);
-    if (!task) throw new Error('expected task to be claimable');
 
-    await adapter.completeTask(task.taskId, {
+    await adapter.completeTask(task!.taskId, {
       sources: [],
       usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    });
+    }, task!.leaseToken!);
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(0);
 
     const loaded = await adapter.getJob(job.jobId);
@@ -78,55 +77,43 @@ describeOrSkip('RedisQueueAdapter', () => {
     expect(task).toBeDefined();
     expect(task?.attempts).toBe(1);
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(1);
-    if (!task) throw new Error('expected task to be claimable');
 
-    await adapter.failTask(task.taskId, 'boom');
+    await adapter.failTask(task!.taskId, 'boom', task!.leaseToken!);
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(0);
 
     const retried = await adapter.claimNextTask(job.jobId, 'worker-2');
     expect(retried).toBeDefined();
     expect(retried?.attempts).toBe(2);
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(1);
-    if (!retried) throw new Error('expected retry task to be claimable');
 
-    await adapter.failTask(retried.taskId, 'boom again');
+    await adapter.failTask(retried!.taskId, 'boom again', retried!.leaseToken!);
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(0);
 
     const failedJob = await adapter.getJob(job.jobId);
     expect(failedJob?.tasks[0].status).toBe('failed');
   });
 
-  test('marks mixed completed and failed terminal tasks as failed', async () => {
+
+  test('revokes stale leases and clears running count', async () => {
     const job = await adapter.createJob({
-      objective: 'mixed terminal test',
+      objective: 'stale lease test',
       executionProfile: 'fixture',
       providerName: 'mock',
       searchDepth: 'standard',
       queueType: 'redis',
       status: 'pending',
-      tasks: buildTasksFromPlans(
-        'job-4',
-        [
-          { queryFamily: 'a', query: 'q1' },
-          { queryFamily: 'b', query: 'q2' },
-        ],
-        1
-      ),
+      tasks: buildTasksFromPlans('job-stale', [{ queryFamily: 'a', query: 'q1' }], 1),
     });
 
-    const completed = await adapter.claimNextTask(job.jobId, 'worker-1');
-    if (!completed) throw new Error('expected first task to be claimable');
-    await adapter.completeTask(completed.taskId, {
-      sources: [],
-      usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    });
+    const task = await adapter.claimNextTask(job.jobId, 'worker-1');
+    expect(task).toBeDefined();
+    expect(await adapter.getRunningTaskCount(job.jobId)).toBe(1);
 
-    const failed = await adapter.claimNextTask(job.jobId, 'worker-2');
-    if (!failed) throw new Error('expected second task to be claimable');
-    await adapter.failTask(failed.taskId, 'boom');
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    const revoked = await adapter.revokeStaleLeases!(10);
 
-    const failedJob = await adapter.getJob(job.jobId);
-    expect(failedJob?.status).toBe('failed');
+    expect(revoked).toContain(task!.taskId);
+    expect(await adapter.getRunningTaskCount(job.jobId)).toBe(0);
   });
 
   test('quit is idempotent', async () => {

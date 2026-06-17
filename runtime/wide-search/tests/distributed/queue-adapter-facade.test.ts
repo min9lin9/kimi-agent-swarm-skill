@@ -30,7 +30,7 @@ describe('QueueAdapterFacade token validation', () => {
     await adapter.completeTask(
       task!.taskId,
       { sources: [], usageMetrics: { providerCalls: 1, apiCalls: 1 } },
-      task!.leaseToken
+      task!.leaseToken!
     );
 
     const loaded = await adapter.getJob(job.jobId);
@@ -61,7 +61,7 @@ describe('QueueAdapterFacade token validation', () => {
     expect(loaded?.status).not.toBe('completed');
   });
 
-  test('accepts missing lease token in compatibility mode', async () => {
+  test('rejects missing lease token on completeTask', async () => {
     const adapter = await createAdapter();
     const job = await adapter.createJob({
       objective: 'test',
@@ -70,16 +70,18 @@ describe('QueueAdapterFacade token validation', () => {
       searchDepth: 'standard',
       queueType: 'memory',
       status: 'pending',
-      tasks: buildTasksFromPlans('job-compat', [{ queryFamily: 'a', query: 'q1' }], 1),
+      tasks: buildTasksFromPlans('job-missing-token', [{ queryFamily: 'a', query: 'q1' }], 1),
     });
 
     const task = await adapter.claimNextTask(job.jobId, 'worker-1');
-    await adapter.completeTask(task!.taskId, {
-      sources: [],
-      usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    });
+    // Pass an empty string as the missing token; the facade should reject it.
+    await adapter.completeTask(
+      task!.taskId,
+      { sources: [], usageMetrics: { providerCalls: 1, apiCalls: 1 } },
+      ''
+    );
 
     const loaded = await adapter.getJob(job.jobId);
-    expect(loaded?.status).toBe('completed');
+    expect(loaded?.status).not.toBe('completed');
   });
 });

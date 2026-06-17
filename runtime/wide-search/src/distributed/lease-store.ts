@@ -138,9 +138,26 @@ export class RedisLeaseStore implements LeaseStore {
 		return client.scard(this.runningKey(jobId));
 	}
 
-	async revokeStaleLeases(_ttlMs: number): Promise<string[]> {
-		// Phase 3 stub: Redis lease revocation requires scanning lease keys,
-		// which is left for a follow-up once the token contract is validated.
-		return [];
+	async revokeStaleLeases(ttlMs: number): Promise<string[]> {
+		const client = await this.getClient();
+		const now = Date.now();
+		const leasePattern = `${this.keyPrefix}:lease:*`;
+		const keys = await client.keys(leasePattern);
+		const revoked: string[] = [];
+
+		for (const key of keys) {
+			const text = await client.get(key);
+			if (!text) continue;
+
+			const lease = JSON.parse(text) as LeaseRecord;
+			if (now > lease.issuedAt + lease.ttlMs) {
+				const jobId = lease.taskId.split('-task-')[0];
+				await client.srem(this.runningKey(jobId), lease.taskId);
+				await client.del(key);
+				revoked.push(lease.taskId);
+			}
+		}
+
+		return revoked;
 	}
 }

@@ -18,6 +18,7 @@ import type {
 } from '../types';
 import { defaultLogger } from '../logger';
 import type { QueueAdapter } from './queue-adapter';
+import { Coordinator } from './coordinator';
 
 function accumulateMetrics(into: UsageMetrics, from: UsageMetrics): void {
 	into.providerCalls += from.providerCalls;
@@ -101,13 +102,13 @@ export async function workerLoop(
 				workDir
 			);
 			checkBudget(providerName, metrics, budget);
-			await adapter.completeTask(task.taskId, result, task.leaseToken);
+			await adapter.completeTask(task.taskId, result, task.leaseToken!);
 		} catch (error) {
 			if (error instanceof BudgetExceededError) {
 				throw error;
 			}
 			const message = error instanceof Error ? error.message : String(error);
-			await adapter.failTask(task.taskId, message, task.leaseToken);
+			await adapter.failTask(task.taskId, message, task.leaseToken!);
 		}
 	}
 }
@@ -119,36 +120,12 @@ export async function pollJobToCompletion(
 	pollIntervalMs = 1000,
 	taskTimeoutMs = 5 * 60 * 1000
 ): Promise<DistributedJob> {
-	const start = Date.now();
-	while (Date.now() - start < timeoutMs) {
-		const current = await adapter.getJob(jobId);
-		if (!current) {
-			throw new Error('Job disappeared during distributed run');
-		}
-
-		if (adapter.revokeStaleLeases) {
-			await adapter.revokeStaleLeases(taskTimeoutMs);
-		}
-
-		const now = Date.now();
-		for (const task of current.tasks) {
-			if (task.status === 'running' && task.startedAt) {
-				const elapsed = now - new Date(task.startedAt).getTime();
-				if (elapsed > taskTimeoutMs) {
-					await adapter.failTask(
-						task.taskId,
-						`stale task timeout after ${taskTimeoutMs}ms (worker may have died)`
-					);
-				}
-			}
-		}
-
-		if (current.status === 'completed' || current.status === 'failed') {
-			return current;
-		}
-		await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-	}
-	throw new Error('Timed out waiting for external workers to complete the job');
+	const coordinator = new Coordinator(adapter, {
+		taskTimeoutMs,
+		pollIntervalMs,
+		totalTimeoutMs: timeoutMs,
+	});
+	return coordinator.runToCompletion(jobId);
 }
 
 export async function finalizeDistributedRun(

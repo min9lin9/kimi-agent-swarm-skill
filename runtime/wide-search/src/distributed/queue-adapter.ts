@@ -16,8 +16,9 @@ export interface QueueAdapter {
   saveJob(job: DistributedJob): Promise<void>;
 
   claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined>;
-  completeTask(taskId: string, result: WorkerResult, leaseToken?: string): Promise<void>;
-  failTask(taskId: string, error: string, leaseToken?: string): Promise<void>;
+  completeTask(taskId: string, result: WorkerResult, leaseToken: string): Promise<void>;
+  failTask(taskId: string, error: string, leaseToken: string): Promise<void>;
+  failStaleTask(taskId: string, error: string): Promise<void>;
 
   getPendingTaskCount(jobId: string): Promise<number>;
   getRunningTaskCount(jobId: string): Promise<number>;
@@ -92,24 +93,18 @@ export class QueueAdapterFacade implements QueueAdapter {
     return task;
   }
 
-  async completeTask(taskId: string, result: WorkerResult, leaseToken?: string): Promise<void> {
+  async completeTask(taskId: string, result: WorkerResult, leaseToken: string): Promise<void> {
     const found = await this.jobStore.findTask(taskId);
     if (!found) return;
 
     const { job, task } = found;
 
-    if (leaseToken !== undefined) {
-      const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
-      if (!renewed) {
-        defaultLogger.warn(`completeTask rejected for ${taskId}: invalid or expired lease token`);
-        return;
-      }
-      await this.leaseStore.releaseLease(leaseToken);
-    } else {
-      defaultLogger.warn(
-        `completeTask called without lease token for ${taskId}; accepting in compatibility mode`
-      );
+    const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
+    if (!renewed) {
+      defaultLogger.warn(`completeTask rejected for ${taskId}: invalid or expired lease token`);
+      return;
     }
+    await this.leaseStore.releaseLease(leaseToken);
 
     task.status = 'completed';
     task.result = result;
@@ -120,25 +115,39 @@ export class QueueAdapterFacade implements QueueAdapter {
     await this.jobStore.saveJob(job);
   }
 
-  async failTask(taskId: string, error: string, leaseToken?: string): Promise<void> {
+  async failTask(taskId: string, error: string, leaseToken: string): Promise<void> {
     const found = await this.jobStore.findTask(taskId);
     if (!found) return;
 
     const { job, task } = found;
 
-    if (leaseToken !== undefined) {
-      const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
-      if (!renewed) {
-        defaultLogger.warn(`failTask rejected for ${taskId}: invalid or expired lease token`);
-        return;
-      }
-      await this.leaseStore.releaseLease(leaseToken);
+    const renewed = await this.leaseStore.renewLease(leaseToken, this.leaseTtlMs);
+    if (!renewed) {
+      defaultLogger.warn(`failTask rejected for ${taskId}: invalid or expired lease token`);
+      return;
+    }
+    await this.leaseStore.releaseLease(leaseToken);
+
+    task.error = error;
+    if (task.attempts >= task.maxRetries) {
+      task.status = 'failed';
+      task.completedAt = new Date().toISOString();
     } else {
-      defaultLogger.warn(
-        `failTask called without lease token for ${taskId}; accepting in compatibility mode`
-      );
+      await this.taskQueue.requeueTask(task);
     }
 
+    job.status = deriveJobStatus(job.tasks);
+    await this.jobStore.saveJob(job);
+  }
+
+  async failStaleTask(taskId: string, error: string): Promise<void> {
+    const found = await this.jobStore.findTask(taskId);
+    if (!found) return;
+
+    const { job, task } = found;
+
+    // Coordinator override: stale tasks have expired leases, so we fail them
+    // without requiring a valid worker token.
     task.error = error;
     if (task.attempts >= task.maxRetries) {
       task.status = 'failed';

@@ -34,6 +34,6 @@
     }
   },
   "files": {
-    "ignore": ["node_modules", "dist", "*.lock", ".github", ".runs"]
+    "ignore": ["node_modules", "dist", "*.lock", ".github", ".runs", ".gjc"]
   }
 }

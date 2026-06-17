@@ -20,6 +20,7 @@ Historical planning artifacts remain in `.gjc/` for audit:
 
 - `src/distributed/job-store.ts` — `JobStore` (memory + Redis)
 - `src/distributed/task-queue.ts` — `TaskQueue` (memory + Redis)
+- `src/distributed/coordinator.ts` — `Coordinator` for external-worker polling
 - `src/distributed/lease-store.ts` — `LeaseStore` (memory + Redis)
 - `src/distributed/redis-client.ts` — shared `RedisConnection`
 - `src/distributed/queue-adapter.ts` — `QueueAdapter` interface + `QueueAdapterFacade`

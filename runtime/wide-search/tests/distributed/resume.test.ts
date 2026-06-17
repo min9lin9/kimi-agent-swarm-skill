@@ -38,7 +38,7 @@ describe('distributed resume with memory queue', () => {
     await adapter.completeTask(firstTask!.taskId, {
       sources: [],
       usageMetrics: { providerCalls: 0, apiCalls: 0 },
-    });
+    }, firstTask!.leaseToken!);
 
     const result = await runDistributedWideSearch({
       objective: 'Resume test',

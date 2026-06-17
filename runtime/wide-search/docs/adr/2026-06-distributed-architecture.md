@@ -1,6 +1,6 @@
 # ADR: `distributed/` Architecture Redesign
 
-**Status:** Accepted and implemented  
+**Status:** Accepted, implemented, and follow-ups completed  
 **Date:** 2026-06-17  
 **Deciders:** GJC (Planner/Architect/Critic consensus), user approval  
 **Related:** `.gjc/specs/deep-interview-kasw-distributed-refactor.md`, `.gjc/plans/ralplan/2026-06-16-1549-0935/stage-03-final.md`
@@ -30,7 +30,8 @@ src/distributed/
   queue-adapter.ts    QueueAdapter interface + QueueAdapterFacade
   memory-adapter.ts   MemoryQueueAdapter (facade wrapper)
   redis-adapter.ts    RedisQueueAdapter (facade wrapper)
-  worker.ts           workerLoop, pollJobToCompletion, task execution
+  coordinator.ts      Coordinator (external-worker polling + stale-task cleanup)
+  worker.ts           workerLoop, task execution helpers
   worker-pool.ts      WorkerPool, InProcessWorkerPool, ExternalWorkerPool
   job-status.ts       deriveJobStatus
   job-sizing.ts       computePerTaskMaxResults
@@ -126,8 +127,9 @@ export interface QueueAdapter {
   getJob(jobId: string): Promise<DistributedJob | undefined>;
   saveJob(job: DistributedJob): Promise<void>;
   claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined>;
-  completeTask(taskId: string, result: WorkerResult, leaseToken?: string): Promise<void>;
-  failTask(taskId: string, error: string, leaseToken?: string): Promise<void>;
+  completeTask(taskId: string, result: WorkerResult, leaseToken: string): Promise<void>;
+  failTask(taskId: string, error: string, leaseToken: string): Promise<void>;
+  failStaleTask(taskId: string, error: string): Promise<void>;
   getPendingTaskCount(jobId: string): Promise<number>;
   getRunningTaskCount(jobId: string): Promise<number>;
   quit?(): Promise<void>;
@@ -166,12 +168,12 @@ export interface WorkerPoolRunOptions {
 1. `claimLease(taskId, workerId, ttlMs)` returns a unique token when the task is running.
 2. `claimNextTask` calls `claimLease` and attaches the token to `task.leaseToken`.
 3. `completeTask(taskId, result, leaseToken)` / `failTask(taskId, error, leaseToken)` validate the token:
-   - If provided and valid: release the lease and record the result/failure.
-   - If provided and invalid/expired: reject (no-op) and log a warning.
-   - If missing: accept in **compatibility mode** with a deprecation warning.
+   - If valid: release the lease and record the result/failure.
+   - If invalid/expired: reject (no-op) and log a warning.
+   - Missing tokens are rejected.
 4. `releaseLease(token)` clears the lease. It is used for abandonment, cancellation, and internal revocation.
-5. `revokeStaleLeases(ttlMs)` is called by `pollJobToCompletion` to clean up expired leases.
-6. **Compatibility transition:** Phase 3 accepts optional tokens with warnings; Phase 4 will make tokens required and remove compatibility mode.
+5. `failStaleTask(taskId, error)` is a coordinator override that fails a task without token validation, used for stale-task cleanup.
+6. `revokeStaleLeases(ttlMs)` is called by `Coordinator` to clean up expired leases.
 
 ### `releaseLease` vs `completeTask`/`failTask`
 
@@ -217,9 +219,9 @@ runDistributedWideSearch
   -> adapter.createJob(tasks)
   -> ExternalWorkerPool.run(job)
        -> print {jobId}
-       -> pollJobToCompletion(adapter, jobId)
+       -> Coordinator.runToCompletion(jobId)
             -> revokeStaleLeases
-            -> fail stale running tasks
+            -> failStaleTask for stale running tasks
             -> return when completed/failed
   -> finalizeDistributedRun(completedJob)
 
@@ -234,7 +236,7 @@ CLI: kasw worker --job-id <id>
 |---|---|---|
 | 1 | Extract `deriveJobStatus` and `computePerTaskMaxResults`; remove inline duplication in `runner.ts` and `cli.ts`. | `bun test`, `bun run typecheck`, `bun run lint` |
 | 2 | Add `JobStore`/`TaskQueue`/`LeaseStore` and `RedisConnection`; rewrite `QueueAdapter` as facade. | All existing distributed tests pass |
-| 3 | Add token-based leases, validation, revocation; compatibility mode for missing tokens. | `lease-store.test.ts`, `queue-adapter-facade.test.ts` |
+| 3 | Add token-based leases, validation, revocation; `failStaleTask` for coordinator override. | `lease-store.test.ts`, `queue-adapter-facade.test.ts` |
 | 4 | Add `WorkerPool`, `InProcessWorkerPool`, `ExternalWorkerPool`; thin CLI worker. | `worker-pool.test.ts` |
 | 5 | Finalize ADR, diagrams, review. | ADR check, full test suite |
 
@@ -242,7 +244,7 @@ CLI: kasw worker --job-id <id>
 
 | Check | Command | Result |
 |---|---|---|
-| Full test suite | `bun test` | 140 pass / 8 skip / 0 fail |
+| Full test suite | `bun test` | 140 pass / 9 skip / 0 fail |
 | Type check | `bun run typecheck` | clean |
 | Lint | `bun run lint` | clean |
 | Resume semantics | `bun test tests/distributed/resume.test.ts` | pass |
@@ -262,12 +264,9 @@ Measured baseline: 4 non-test source files import `QueueAdapter` (`src/cli.ts`, 
 
 ## Follow-ups
 
-1. **Phase 4 completion:** Make lease tokens required and remove compatibility mode.
-2. **Coordinator class:** Promote `pollJobToCompletion` logic into an explicit `Coordinator` if more orchestration is added.
-3. **Redis atomicity:** Make `claimNextTask` atomic across list pop, task update, and running-set add (e.g., Lua script or Redis transaction).
-4. **Redis `revokeStaleLeases`:** Implement full lease-key scanning and stale-task requeue in `RedisLeaseStore`.
-5. **Memory cross-process safety:** Document that memory backend is single-process; external workers require Redis.
-6. **Biome `.gjc` ignore:** Decide whether to ignore `.gjc` runtime state in Biome/project config.
+1. **Redis atomicity:** Make `claimNextTask` atomic across list pop, task update, and running-set add (e.g., Lua script or Redis transaction).
+2. **Memory cross-process safety:** Document that memory backend is single-process; external workers require Redis.
+3. **CLI usage strings:** Verify no public CLI usage strings changed during the refactor.
 
 ## Test map
 
