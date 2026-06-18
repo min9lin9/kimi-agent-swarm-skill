@@ -287,10 +287,14 @@ After the initial implementation, a Ponytail-style audit was applied to `src/dis
 
 All changes preserved the existing test baseline and did not alter distributed behavior.
 
+## Backend selection guidance
+
+- **Memory backend (`--queue-type memory`)** is intended for single-process use only. All workers run in-process inside the same Node/Bun process, and job state is held in memory (with a filesystem cache for durability). Do not use the memory backend with `--workers 0` / external worker processes, because external workers cannot see the in-memory state of the coordinator process.
+- **Redis backend (`--queue-type redis`)** is required for external workers and any multi-process deployment. Redis provides the shared queue, job store, and lease store that external workers and the coordinator need.
+
 ## Follow-ups
 
-1. **Memory cross-process safety:** Document that memory backend is single-process; external workers require Redis.
-2. **CLI usage strings:** Verify no public CLI usage strings changed during the refactor.
+All identified follow-ups are complete.
 
 ## Test map
 

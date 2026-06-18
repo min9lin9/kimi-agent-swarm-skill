@@ -57,6 +57,11 @@ A Ponytail-style cleanup pass was applied after the follow-ups:
 - Unused store re-exports removed from adapter entry points.
 - Verification baseline unchanged: 140 pass / 9 skip / 0 fail.
 
+## Backend selection guidance
+
+- **Memory backend**: single-process only; do not use with external workers.
+- **Redis backend**: required for `--workers 0` / external worker deployments.
+
 ## Follow-ups
 
 See the ADR "Follow-ups" section. The most important are:
