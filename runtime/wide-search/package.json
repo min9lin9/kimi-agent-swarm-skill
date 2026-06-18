@@ -1,6 +1,6 @@
 {
   "name": "kimi-agent-swarm-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Evidence-backed wide-search CLI with provider registry, distributed execution, and benchmark leaderboard",
   "type": "module",
   "bin": {
