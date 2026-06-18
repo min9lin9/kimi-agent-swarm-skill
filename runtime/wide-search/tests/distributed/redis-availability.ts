@@ -1,6 +1,8 @@
 import { createConnection } from 'node:net';
 
-export function isRedisAvailable(url = process.env.REDIS_URL ?? 'redis://localhost:6379'): Promise<boolean> {
+export function isRedisAvailable(
+  url = process.env.REDIS_URL ?? 'redis://localhost:6379'
+): Promise<boolean> {
   return new Promise((resolve) => {
     try {
       const parsed = new URL(url);

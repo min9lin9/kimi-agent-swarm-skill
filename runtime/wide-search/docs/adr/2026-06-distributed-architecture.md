@@ -34,7 +34,6 @@ src/distributed/
   worker.ts           workerLoop, task execution helpers
   worker-pool.ts      WorkerPool, InProcessWorkerPool, ExternalWorkerPool
   job-status.ts       deriveJobStatus
-  job-sizing.ts       computePerTaskMaxResults
   task-splitter.ts    (unchanged)
 ```
 
@@ -65,7 +64,7 @@ Decompose `QueueAdapter` into `JobStore`, `TaskQueue`, `LeaseStore` plus a compa
 
 ### Option B: Refined single `QueueAdapter`
 
-Keep one `QueueAdapter` interface but add lease methods, extract `deriveJobStatus`, and extract `computePerTaskMaxResults`.
+Keep one `QueueAdapter` interface but add lease methods and extract `deriveJobStatus`.
 
 **Pros:** Smaller surface, fewer import changes.  
 **Cons:** Does not fully separate concerns; Redis-specific optimizations leak back into the generic interface.
@@ -234,7 +233,7 @@ CLI: kasw worker --job-id <id>
 
 | Phase | Work | Verification |
 |---|---|---|
-| 1 | Extract `deriveJobStatus` and `computePerTaskMaxResults`; remove inline duplication in `runner.ts` and `cli.ts`. | `bun test`, `bun run typecheck`, `bun run lint` |
+| 1 | Extract `deriveJobStatus`; keep per-task sizing inline at the runner/worker entry points. | `bun test`, `bun run typecheck`, `bun run lint` |
 | 2 | Add `JobStore`/`TaskQueue`/`LeaseStore` and `RedisConnection`; rewrite `QueueAdapter` as facade. | All existing distributed tests pass |
 | 3 | Add token-based leases, validation, revocation; `failStaleTask` for coordinator override. | `lease-store.test.ts`, `queue-adapter-facade.test.ts` |
 | 4 | Add `WorkerPool`, `InProcessWorkerPool`, `ExternalWorkerPool`; thin CLI worker. | `worker-pool.test.ts` |
@@ -307,4 +306,3 @@ All identified follow-ups are complete.
 | `WorkerPool` | `tests/distributed/worker-pool.test.ts` |
 | End-to-end distributed run | `tests/distributed/runner.test.ts`, `tests/distributed/redis-runner.test.ts` |
 | Job status derivation | `tests/distributed/job-status.test.ts` |
-| Per-task max results | `tests/distributed/job-sizing.test.ts` |

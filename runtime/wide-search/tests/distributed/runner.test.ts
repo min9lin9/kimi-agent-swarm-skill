@@ -100,25 +100,31 @@ describe('runDistributedWideSearch', () => {
     const accepted = await adapter.claimNextTask(job.jobId, 'worker-1');
     expect(accepted).toBeDefined();
     if (!accepted) throw new Error('expected first task to be claimable');
-    await adapter.completeTask(accepted.taskId, {
-      sources: [
-        {
-          id: 'S001',
-          title: 'Accepted source',
-          url: 'https://example.test/source',
-          sourceClass: 'primary',
-          discoveredBy: 'test',
-          scores: { relevance: 5, authority: 5 },
-          claims: ['A useful source survived before another task failed.'],
-        },
-      ],
-      usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    });
+    if (!accepted.leaseToken) throw new Error('expected first task to have a lease token');
+    await adapter.completeTask(
+      accepted.taskId,
+      {
+        sources: [
+          {
+            id: 'S001',
+            title: 'Accepted source',
+            url: 'https://example.test/source',
+            sourceClass: 'primary',
+            discoveredBy: 'test',
+            scores: { relevance: 5, authority: 5 },
+            claims: ['A useful source survived before another task failed.'],
+          },
+        ],
+        usageMetrics: { providerCalls: 1, apiCalls: 1 },
+      },
+      accepted.leaseToken
+    );
 
     const failed = await adapter.claimNextTask(job.jobId, 'worker-2');
     expect(failed).toBeDefined();
     if (!failed) throw new Error('expected second task to be claimable');
-    await adapter.failTask(failed.taskId, 'fixture task failed');
+    if (!failed.leaseToken) throw new Error('expected second task to have a lease token');
+    await adapter.failTask(failed.taskId, 'fixture task failed', failed.leaseToken);
 
     await expect(
       runDistributedWideSearch({

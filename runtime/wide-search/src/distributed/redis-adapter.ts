@@ -1,9 +1,8 @@
-import { QueueAdapterFacade } from './queue-adapter';
-import { RedisConnection } from './redis-client';
 import { RedisJobStore } from './job-store';
 import { RedisLeaseStore } from './lease-store';
+import { QueueAdapterFacade } from './queue-adapter';
+import { RedisConnection } from './redis-client';
 import { RedisTaskQueue } from './task-queue';
-
 
 export interface RedisAdapterOptions {
   redisUrl?: string;

@@ -17,7 +17,6 @@ describe('MemoryLeaseStore', () => {
     const store = await createStore();
     const token = await store.claimLease('job-1-task-0001', 'job-1', 'worker-1', 1000);
 
-    expect(token).toBeDefined();
     expect(token).toContain('job-1-task-0001');
   });
 
@@ -25,8 +24,8 @@ describe('MemoryLeaseStore', () => {
     const store = await createStore();
     const token = await store.claimLease('job-1-task-0001', 'job-1', 'worker-1', 1000);
 
-    await store.releaseLease(token!);
-    const renewed = await store.renewLease(token!, 1000);
+    await store.releaseLease(token);
+    const renewed = await store.renewLease(token, 1000);
 
     expect(renewed).toBe(false);
   });
@@ -36,7 +35,7 @@ describe('MemoryLeaseStore', () => {
     const token = await store.claimLease('job-1-task-0001', 'job-1', 'worker-1', 50);
 
     await new Promise((resolve) => setTimeout(resolve, 30));
-    const renewed = await store.renewLease(token!, 1000);
+    const renewed = await store.renewLease(token, 1000);
 
     expect(renewed).toBe(true);
   });
@@ -46,7 +45,7 @@ describe('MemoryLeaseStore', () => {
     const token = await store.claimLease('job-1-task-0001', 'job-1', 'worker-1', 10);
 
     await new Promise((resolve) => setTimeout(resolve, 30));
-    const renewed = await store.renewLease(token!, 1000);
+    const renewed = await store.renewLease(token, 1000);
 
     expect(renewed).toBe(false);
   });

@@ -12,6 +12,37 @@ describe('QueueAdapterFacade token validation', () => {
     return new MemoryQueueAdapter({ workDir });
   }
 
+  test('default lease still completes after the default task timeout', async () => {
+    const adapter = await createAdapter();
+    const job = await adapter.createJob({
+      objective: 'test',
+      executionProfile: 'fixture',
+      providerName: 'mock',
+      searchDepth: 'standard',
+      queueType: 'memory',
+      status: 'pending',
+      tasks: buildTasksFromPlans('job-long-task', [{ queryFamily: 'a', query: 'q1' }], 1),
+    });
+    const now = Date.now();
+    const realNow = Date.now;
+    Date.now = () => now;
+
+    try {
+      const task = await adapter.claimNextTask(job.jobId, 'worker-1');
+      Date.now = () => now + 301_000;
+      await adapter.completeTask(
+        task!.taskId,
+        { sources: [], usageMetrics: { providerCalls: 1, apiCalls: 1 } },
+        task!.leaseToken!
+      );
+    } finally {
+      Date.now = realNow;
+    }
+
+    const loaded = await adapter.getJob(job.jobId);
+    expect(loaded?.status).toBe('completed');
+  });
+
   test('accepts valid lease token on completeTask', async () => {
     const adapter = await createAdapter();
     const job = await adapter.createJob({

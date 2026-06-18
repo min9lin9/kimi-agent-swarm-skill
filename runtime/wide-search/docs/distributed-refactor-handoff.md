@@ -28,7 +28,6 @@ Historical planning artifacts remain in `.gjc/` for audit:
 - `src/distributed/worker.ts` — `workerLoop`, `pollJobToCompletion`, task execution helpers
 - `src/distributed/worker-pool.ts` — `WorkerPool`, `InProcessWorkerPool`, `ExternalWorkerPool`
 - `src/distributed/job-status.ts` — `deriveJobStatus`
-- `src/distributed/job-sizing.ts` — `computePerTaskMaxResults`
 - `src/distributed/runner.ts` — simplified orchestration using `WorkerPool`
 - `src/cli.ts` — `handleWorker` now uses `ExternalWorkerPool.runOnce`
 

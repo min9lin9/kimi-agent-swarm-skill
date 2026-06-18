@@ -52,10 +52,14 @@ describeOrSkip('RedisQueueAdapter', () => {
     expect(task?.status).toBe('running');
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(1);
 
-    await adapter.completeTask(task!.taskId, {
-      sources: [],
-      usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    }, task!.leaseToken!);
+    await adapter.completeTask(
+      task!.taskId,
+      {
+        sources: [],
+        usageMetrics: { providerCalls: 1, apiCalls: 1 },
+      },
+      task!.leaseToken!
+    );
     expect(await adapter.getRunningTaskCount(job.jobId)).toBe(0);
 
     const loaded = await adapter.getJob(job.jobId);
@@ -92,7 +96,6 @@ describeOrSkip('RedisQueueAdapter', () => {
     const failedJob = await adapter.getJob(job.jobId);
     expect(failedJob?.tasks[0].status).toBe('failed');
   });
-
 
   test('revokes stale leases and clears running count', async () => {
     const job = await adapter.createJob({

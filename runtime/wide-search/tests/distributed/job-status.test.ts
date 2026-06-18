@@ -16,6 +16,10 @@ function task(taskId: string, status: DistributedTask['status']): DistributedTas
 }
 
 describe('deriveJobStatus', () => {
+  test('returns running for an empty task list', () => {
+    expect(deriveJobStatus([])).toBe('running');
+  });
+
   test('returns completed when all tasks completed', () => {
     const status = deriveJobStatus([task('task-1', 'completed'), task('task-2', 'completed')]);
 
