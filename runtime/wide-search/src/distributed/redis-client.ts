@@ -15,6 +15,7 @@ export interface RedisClient {
 	scard(key: string): Promise<number>;
 	keys(pattern: string): Promise<string[]>;
 	del(...keys: string[]): Promise<number>;
+	eval(...args: (string | number)[]): Promise<unknown>;
 }
 
 export interface RedisConnectionOptions {

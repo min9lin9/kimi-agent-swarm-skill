@@ -66,6 +66,9 @@ export class QueueAdapterFacade implements QueueAdapter {
   ): Promise<DistributedJob> {
     const created = await this.jobStore.createJob(job);
     await this.taskQueue.enqueueTasks(created.jobId, created.tasks);
+    // Persist the job again so backend-specific task mutations (e.g. jobId)
+    // are reflected in the canonical job record.
+    await this.jobStore.saveJob(created);
     return created;
   }
 
@@ -83,10 +86,23 @@ export class QueueAdapterFacade implements QueueAdapter {
 
   async claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined> {
     const task = await this.taskQueue.claimNextTask(jobId, workerId);
-    if (task) {
-      const token = await this.leaseStore.claimLease(task.taskId, workerId, this.leaseTtlMs);
-      task.leaseToken = token;
+    if (!task) return undefined;
+
+    const token = await this.leaseStore.claimLease(task.taskId, jobId, workerId, this.leaseTtlMs);
+    task.leaseToken = token;
+
+    // Sync the canonical job record with the claimed task state. Redis backends
+    // update task keys atomically but do not rewrite the job blob on claim.
+    const job = await this.jobStore.getJob(jobId);
+    if (job) {
+      const idx = job.tasks.findIndex((t) => t.taskId === task.taskId);
+      if (idx !== -1) {
+        job.tasks[idx] = task;
+        job.status = deriveJobStatus(job.tasks);
+        await this.jobStore.saveJob(job);
+      }
     }
+
     return task;
   }
 
@@ -119,6 +135,7 @@ export class QueueAdapterFacade implements QueueAdapter {
 
     job.status = deriveJobStatus(job.tasks);
     await this.jobStore.saveJob(job);
+    await this.taskQueue.updateTask(task);
   }
 
   async failTask(taskId: string, error: string, leaseToken: string): Promise<void> {
@@ -127,6 +144,7 @@ export class QueueAdapterFacade implements QueueAdapter {
 
     const { job, task } = found;
     await this.failTaskCore(job, task, error);
+    await this.taskQueue.updateTask(task);
   }
 
   private async failTaskCore(job: DistributedJob, task: DistributedTask, error: string): Promise<void> {
@@ -149,6 +167,7 @@ export class QueueAdapterFacade implements QueueAdapter {
     // Coordinator override: stale tasks have expired leases, so we fail them
     // without requiring a valid worker token.
     await this.failTaskCore(found.job, found.task, error);
+    await this.taskQueue.updateTask(found.task);
   }
 
   async getPendingTaskCount(jobId: string): Promise<number> {

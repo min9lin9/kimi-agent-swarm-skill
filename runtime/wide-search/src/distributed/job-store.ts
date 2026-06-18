@@ -127,7 +127,16 @@ export class RedisJobStore implements JobStore {
 		const client = await this.getClient();
 		const text = await client.get(this.jobKey(jobId));
 		if (!text) return undefined;
-		return JSON.parse(text) as DistributedJob;
+		const job = JSON.parse(text) as DistributedJob;
+		// Refresh each task from its canonical task key to avoid stale state
+		// from concurrent read-modify-write races across workers.
+		for (let i = 0; i < job.tasks.length; i += 1) {
+			const taskText = await client.get(this.taskKey(job.tasks[i].taskId));
+			if (taskText) {
+				job.tasks[i] = JSON.parse(taskText) as DistributedTask;
+			}
+		}
+		return job;
 	}
 
 	async saveJob(job: DistributedJob): Promise<void> {
@@ -140,9 +149,11 @@ export class RedisJobStore implements JobStore {
 		const client = await this.getClient();
 		const taskText = await client.get(this.taskKey(taskId));
 		if (!taskText) return undefined;
-		const task = JSON.parse(taskText) as DistributedTask;
-		const job = await this.getJob(task.jobId);
+		const taskInfo = JSON.parse(taskText) as DistributedTask;
+		const job = await this.getJob(taskInfo.jobId);
 		if (!job) return undefined;
+		const task = job.tasks.find((t) => t.taskId === taskId);
+		if (!task) return undefined;
 		return { job, task };
 	}
 

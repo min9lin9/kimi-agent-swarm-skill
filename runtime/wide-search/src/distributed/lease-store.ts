@@ -3,6 +3,7 @@ import type { RedisClient } from './redis-client';
 
 export interface LeaseRecord {
 	taskId: string;
+	jobId: string;
 	workerId: string;
 	issuedAt: number;
 	ttlMs: number;
@@ -11,7 +12,7 @@ export interface LeaseRecord {
 export interface LeaseStore {
 	readonly type: string;
 
-	claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined>;
+	claimLease(taskId: string, jobId: string, workerId: string, ttlMs: number): Promise<string | undefined>;
 	renewLease(token: string, ttlMs: number): Promise<boolean>;
 	releaseLease(token: string): Promise<void>;
 	getRunningCount(jobId: string): Promise<number>;
@@ -31,9 +32,9 @@ export class MemoryLeaseStore implements LeaseStore {
 		this.jobStore = options.jobStore;
 	}
 
-	async claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
+	async claimLease(taskId: string, jobId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
 		const token = `${taskId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
-		this.leases.set(token, { taskId, workerId, issuedAt: Date.now(), ttlMs });
+		this.leases.set(token, { taskId, jobId, workerId, issuedAt: Date.now(), ttlMs });
 		return token;
 	}
 
@@ -59,11 +60,11 @@ export class MemoryLeaseStore implements LeaseStore {
 		return job.tasks.filter((t) => t.status === 'running').length;
 	}
 
-	async revokeStaleLeases(_ttlMs: number): Promise<string[]> {
+	async revokeStaleLeases(ttlMs: number): Promise<string[]> {
 		const now = Date.now();
 		const revoked: string[] = [];
 		for (const [token, lease] of this.leases.entries()) {
-			if (now > lease.issuedAt + lease.ttlMs) {
+			if (now > lease.issuedAt + ttlMs) {
 				this.leases.delete(token);
 				revoked.push(lease.taskId);
 			}
@@ -95,14 +96,13 @@ export class RedisLeaseStore implements LeaseStore {
 		return `${this.keyPrefix}:lease:${token}`;
 	}
 
-	async claimLease(taskId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
+	async claimLease(taskId: string, jobId: string, workerId: string, ttlMs: number): Promise<string | undefined> {
 		const client = await this.getClient();
 		const token = `${taskId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
-		const jobId = taskId.split('-task-')[0];
 		await client.sadd(this.runningKey(jobId), taskId);
 		await client.set(
 			this.leaseKey(token),
-			JSON.stringify({ taskId, workerId, issuedAt: Date.now(), ttlMs })
+			JSON.stringify({ taskId, jobId, workerId, issuedAt: Date.now(), ttlMs })
 		);
 		return token;
 	}
@@ -129,8 +129,7 @@ export class RedisLeaseStore implements LeaseStore {
 		await client.del(this.leaseKey(token));
 		if (!text) return;
 		const lease = JSON.parse(text) as LeaseRecord;
-		const jobId = lease.taskId.split('-task-')[0];
-		await client.srem(this.runningKey(jobId), lease.taskId);
+		await client.srem(this.runningKey(lease.jobId), lease.taskId);
 	}
 
 	async getRunningCount(jobId: string): Promise<number> {
@@ -150,9 +149,8 @@ export class RedisLeaseStore implements LeaseStore {
 			if (!text) continue;
 
 			const lease = JSON.parse(text) as LeaseRecord;
-			if (now > lease.issuedAt + lease.ttlMs) {
-				const jobId = lease.taskId.split('-task-')[0];
-				await client.srem(this.runningKey(jobId), lease.taskId);
+			if (now > lease.issuedAt + ttlMs) {
+				await client.srem(this.runningKey(lease.jobId), lease.taskId);
 				await client.del(key);
 				revoked.push(lease.taskId);
 			}

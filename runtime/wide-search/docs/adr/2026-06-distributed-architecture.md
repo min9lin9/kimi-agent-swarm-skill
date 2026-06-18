@@ -262,6 +262,18 @@ If any of the following triggers during Phase 2, fall back to Option B (keep sin
 
 Measured baseline: 4 non-test source files import `QueueAdapter` (`src/cli.ts`, `src/distributed/runner.ts`, `src/distributed/memory-adapter.ts`, `src/distributed/redis-adapter.ts`). The 8-site threshold allows the count to more than double.
 
+## Redis atomic `claimNextTask`
+
+`RedisTaskQueue.claimNextTask` is implemented as a single Redis `EVAL` Lua script:
+
+1. `LPOP` the next task ID from the job queue.
+2. `GET` the task JSON from its canonical task key.
+3. Decode with `cjson`, set `status='running'`, increment `attempts`, assign `workerId`/`startedAt`.
+4. `SET` the updated task JSON back to the task key.
+5. Return the updated task JSON.
+
+This removes the read-modify-write race between listing a task as pending and marking it running. The facade then claims the lease and syncs the updated task back into the job blob so `getJob` reflects the latest state.
+
 ## Ponytail refactor
 
 After the initial implementation, a Ponytail-style audit was applied to `src/distributed/`:
@@ -277,9 +289,8 @@ All changes preserved the existing test baseline and did not alter distributed b
 
 ## Follow-ups
 
-1. **Redis atomicity:** Make `claimNextTask` atomic across list pop, task update, and running-set add (e.g., Lua script or Redis transaction).
-2. **Memory cross-process safety:** Document that memory backend is single-process; external workers require Redis.
-3. **CLI usage strings:** Verify no public CLI usage strings changed during the refactor.
+1. **Memory cross-process safety:** Document that memory backend is single-process; external workers require Redis.
+2. **CLI usage strings:** Verify no public CLI usage strings changed during the refactor.
 
 ## Test map
 

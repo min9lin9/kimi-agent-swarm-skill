@@ -8,6 +8,7 @@ export interface TaskQueue {
 	enqueueTasks(jobId: string, tasks: DistributedTask[]): Promise<void>;
 	claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined>;
 	requeueTask(task: DistributedTask): Promise<void>;
+	updateTask(task: DistributedTask): Promise<void>;
 	countPending(jobId: string): Promise<number>;
 }
 
@@ -66,6 +67,15 @@ export class MemoryTaskQueue implements TaskQueue {
 		await this.jobStore.saveJob(job);
 	}
 
+	async updateTask(task: DistributedTask): Promise<void> {
+		const job = await this.jobStore.getJob(task.jobId);
+		if (!job) return;
+		const existing = job.tasks.find((t) => t.taskId === task.taskId);
+		if (!existing) return;
+		Object.assign(existing, task);
+		await this.jobStore.saveJob(job);
+	}
+
 	async countPending(jobId: string): Promise<number> {
 		const job = await this.jobStore.getJob(jobId);
 		if (!job) return 0;
@@ -96,29 +106,31 @@ export class RedisTaskQueue implements TaskQueue {
 		return `${this.keyPrefix}:queue:${jobId}`;
 	}
 
-	async enqueueTasks(_jobId: string, tasks: DistributedTask[]): Promise<void> {
+	async enqueueTasks(jobId: string, tasks: DistributedTask[]): Promise<void> {
 		const client = await this.getClient();
 		for (const task of tasks) {
+			task.jobId = jobId;
 			await client.set(this.taskKey(task.taskId), JSON.stringify(task));
-			await client.rpush(this.queueKey(task.jobId), task.taskId);
+			await client.rpush(this.queueKey(jobId), task.taskId);
 		}
 	}
 
 	async claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined> {
 		const client = await this.getClient();
-		const taskId = await client.lpop(this.queueKey(jobId));
-		if (!taskId) return undefined;
-
-		const taskText = await client.get(this.taskKey(taskId));
-		if (!taskText) return undefined;
-
-		const task = JSON.parse(taskText) as DistributedTask;
-		task.status = 'running';
-		task.workerId = workerId;
-		task.attempts += 1;
-		task.startedAt = new Date().toISOString();
-		await client.set(this.taskKey(taskId), JSON.stringify(task));
-		return task;
+		const script = `local taskId = redis.call('LPOP', KEYS[1])
+if not taskId then return nil end
+local taskJson = redis.call('GET', KEYS[2] .. ':' .. taskId)
+if not taskJson then return nil end
+local task = cjson.decode(taskJson)
+task.status = 'running'
+task.workerId = ARGV[1]
+task.attempts = task.attempts + 1
+task.startedAt = ARGV[2]
+redis.call('SET', KEYS[2] .. ':' .. taskId, cjson.encode(task))
+return cjson.encode(task)`;
+		const result = await client.eval(script, 2, this.queueKey(jobId), `${this.keyPrefix}:task`, workerId, new Date().toISOString());
+		if (!result) return undefined;
+		return JSON.parse(result as string) as DistributedTask;
 	}
 
 	async requeueTask(task: DistributedTask): Promise<void> {
@@ -128,6 +140,11 @@ export class RedisTaskQueue implements TaskQueue {
 		task.startedAt = undefined;
 		await client.set(this.taskKey(task.taskId), JSON.stringify(task));
 		await client.rpush(this.queueKey(task.jobId), task.taskId);
+	}
+
+	async updateTask(task: DistributedTask): Promise<void> {
+		const client = await this.getClient();
+		await client.set(this.taskKey(task.taskId), JSON.stringify(task));
 	}
 
 	async countPending(jobId: string): Promise<number> {

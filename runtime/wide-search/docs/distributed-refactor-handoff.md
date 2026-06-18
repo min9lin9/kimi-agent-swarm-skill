@@ -39,6 +39,14 @@ Historical planning artifacts remain in `.gjc/` for audit:
 - `bun run lint`: clean
 - `bun test tests/distributed/resume.test.ts`: pass
 
+## Redis atomic claim
+
+- `RedisTaskQueue.claimNextTask` now uses a single Redis `EVAL` Lua script.
+- Fixed jobId propagation through lease records and task keys.
+- `getJob` refreshes each task from its canonical task key to avoid stale state.
+- CI Redis detection now uses `node:net` instead of `redis-cli`, so GitHub Actions Redis service is correctly used.
+- Verification baseline: 147 pass / 0 skip / 0 fail.
+
 ## Ponytail refactor
 
 A Ponytail-style cleanup pass was applied after the follow-ups:
