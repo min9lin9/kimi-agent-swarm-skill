@@ -18,7 +18,6 @@ import type {
 } from '../types';
 import { defaultLogger } from '../logger';
 import type { QueueAdapter } from './queue-adapter';
-import { Coordinator } from './coordinator';
 
 function accumulateMetrics(into: UsageMetrics, from: UsageMetrics): void {
 	into.providerCalls += from.providerCalls;
@@ -113,21 +112,6 @@ export async function workerLoop(
 	}
 }
 
-export async function pollJobToCompletion(
-	adapter: QueueAdapter,
-	jobId: string,
-	timeoutMs = 30 * 60 * 1000,
-	pollIntervalMs = 1000,
-	taskTimeoutMs = 5 * 60 * 1000
-): Promise<DistributedJob> {
-	const coordinator = new Coordinator(adapter, {
-		taskTimeoutMs,
-		pollIntervalMs,
-		totalTimeoutMs: timeoutMs,
-	});
-	return coordinator.runToCompletion(jobId);
-}
-
 export async function finalizeDistributedRun(
 	completedJob: DistributedJob,
 	options: {
@@ -167,8 +151,8 @@ export async function finalizeDistributedRun(
 		.filter((t) => t.status === 'completed' && t.result)
 		.reduce(
 			(acc, t) => ({
-				providerCalls: acc.providerCalls + (t.result?.usageMetrics.providerCalls ?? 0),
-				apiCalls: acc.apiCalls + (t.result?.usageMetrics.apiCalls ?? 0),
+				providerCalls: acc.providerCalls + t.result!.usageMetrics.providerCalls,
+				apiCalls: acc.apiCalls + t.result!.usageMetrics.apiCalls,
 				estimatedCostUsd: acc.estimatedCostUsd,
 			}),
 			{ providerCalls: 0, apiCalls: 0, estimatedCostUsd: 0 }

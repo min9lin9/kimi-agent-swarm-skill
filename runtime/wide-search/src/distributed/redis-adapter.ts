@@ -4,9 +4,6 @@ import { RedisJobStore } from './job-store';
 import { RedisLeaseStore } from './lease-store';
 import { RedisTaskQueue } from './task-queue';
 
-export { RedisJobStore } from './job-store';
-export { RedisLeaseStore } from './lease-store';
-export { RedisTaskQueue } from './task-queue';
 
 export interface RedisAdapterOptions {
   redisUrl?: string;

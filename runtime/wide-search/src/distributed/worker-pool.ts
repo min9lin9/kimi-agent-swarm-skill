@@ -1,6 +1,7 @@
 import type { BudgetOptions, DistributedJob, ExecutionProfile, SearchDepth, UsageMetrics } from '../types';
 import type { QueueAdapter } from './queue-adapter';
-import { workerLoop, pollJobToCompletion } from './worker';
+import { workerLoop } from './worker';
+import { Coordinator } from './coordinator';
 
 export interface WorkerPoolRunOptions {
   adapter: QueueAdapter;
@@ -84,20 +85,18 @@ export interface ExternalWorkerPoolOptions {
 export class ExternalWorkerPool implements WorkerPool {
   readonly type = 'external';
   private readonly options: ExternalWorkerPoolOptions;
+  private readonly coordinator: Coordinator;
 
   constructor(options: ExternalWorkerPoolOptions) {
     this.options = options;
+    this.coordinator = new Coordinator(options.adapter, {
+      taskTimeoutMs: options.taskTimeoutMs,
+    });
   }
 
-  async run(job: DistributedJob): Promise<DistributedJob> {
+  async run(job: DistributedJob, _options: WorkerPoolRunOptions): Promise<DistributedJob> {
     console.log(JSON.stringify({ jobId: job.jobId }));
-    return pollJobToCompletion(
-      this.options.adapter,
-      job.jobId,
-      undefined,
-      undefined,
-      this.options.taskTimeoutMs
-    );
+    return this.coordinator.runToCompletion(job.jobId);
   }
 
   async runOnce(jobId: string, workerId: string): Promise<void> {

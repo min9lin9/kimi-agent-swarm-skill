@@ -244,7 +244,7 @@ CLI: kasw worker --job-id <id>
 
 | Check | Command | Result |
 |---|---|---|
-| Full test suite | `bun test` | 140 pass / 9 skip / 0 fail |
+| Full test suite | `bun test` | 140 pass / 9 skip / 0 fail (2026-06-18) |
 | Type check | `bun run typecheck` | clean |
 | Lint | `bun run lint` | clean |
 | Resume semantics | `bun test tests/distributed/resume.test.ts` | pass |
@@ -261,6 +261,19 @@ If any of the following triggers during Phase 2, fall back to Option B (keep sin
 - The internal-split PR cannot be completed in a single module/directory unit.
 
 Measured baseline: 4 non-test source files import `QueueAdapter` (`src/cli.ts`, `src/distributed/runner.ts`, `src/distributed/memory-adapter.ts`, `src/distributed/redis-adapter.ts`). The 8-site threshold allows the count to more than double.
+
+## Ponytail refactor
+
+After the initial implementation, a Ponytail-style audit was applied to `src/distributed/`:
+
+- Removed the stale Phase-3 compatibility comment from `QueueAdapterFacade`.
+- Extracted `validateAndReleaseLease` and `failTaskCore` helpers to eliminate duplication between `completeTask`, `failTask`, and `failStaleTask`.
+- Promoted `Coordinator` to the canonical external-worker polling path; `ExternalWorkerPool` now owns a `Coordinator` instance instead of calling `pollJobToCompletion`.
+- Removed the now-unused `pollJobToCompletion` helper and its re-export from `runner.ts`.
+- Removed unused store re-exports from `memory-adapter.ts` and `redis-adapter.ts`.
+- Simplified `finalizeDistributedRun` metric aggregation where the filter already guarantees `result` exists.
+
+All changes preserved the existing test baseline and did not alter distributed behavior.
 
 ## Follow-ups
 

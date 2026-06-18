@@ -29,7 +29,7 @@ import { buildTasksFromPlans, splitFixtureTasks, splitWebSearchTasks } from './t
 import { ExternalWorkerPool, InProcessWorkerPool } from './worker-pool';
 import { finalizeDistributedRun } from './worker';
 
-export { workerLoop, pollJobToCompletion } from './worker';
+export { workerLoop } from './worker';
 
 function createQueueAdapter(options: DistributedRunOptions, workDir: string): QueueAdapter {
 	if (options.queueType === 'redis') {

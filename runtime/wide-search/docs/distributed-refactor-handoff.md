@@ -39,6 +39,16 @@ Historical planning artifacts remain in `.gjc/` for audit:
 - `bun run lint`: clean
 - `bun test tests/distributed/resume.test.ts`: pass
 
+## Ponytail refactor
+
+A Ponytail-style cleanup pass was applied after the follow-ups:
+
+- `QueueAdapterFacade` duplication removed via `validateAndReleaseLease` / `failTaskCore` helpers.
+- `Coordinator` is now the single source of truth for external-worker polling.
+- `pollJobToCompletion` helper removed.
+- Unused store re-exports removed from adapter entry points.
+- Verification baseline unchanged: 140 pass / 9 skip / 0 fail.
+
 ## Follow-ups
 
 See the ADR "Follow-ups" section. The most important are:
