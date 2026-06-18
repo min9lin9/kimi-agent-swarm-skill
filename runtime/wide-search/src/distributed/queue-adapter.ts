@@ -1,9 +1,9 @@
 import { defaultLogger } from '../logger';
+import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
 import { deriveJobStatus } from './job-status';
 import type { JobStore } from './job-store';
 import type { LeaseStore } from './lease-store';
 import type { TaskQueue } from './task-queue';
-import type { DistributedJob, DistributedTask, WorkerResult } from '../types';
 
 export interface QueueAdapter {
   readonly type: string;
@@ -16,6 +16,7 @@ export interface QueueAdapter {
   saveJob(job: DistributedJob): Promise<void>;
 
   claimNextTask(jobId: string, workerId: string): Promise<DistributedTask | undefined>;
+  requeueTask?(task: DistributedTask): Promise<void>;
   completeTask(taskId: string, result: WorkerResult, leaseToken: string): Promise<void>;
   failTask(taskId: string, error: string, leaseToken: string): Promise<void>;
   failStaleTask(taskId: string, error: string): Promise<void>;
@@ -26,15 +27,11 @@ export interface QueueAdapter {
   revokeStaleLeases?(ttlMs?: number): Promise<string[]>;
 }
 
-export function makeJobId(): string {
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).slice(2, 8);
-  return `job-${timestamp}-${random}`;
-}
+export const makeJobId = (): string =>
+  `job-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-export function makeTaskId(jobId: string, index: number): string {
-  return `${jobId}-task-${String(index + 1).padStart(4, '0')}`;
-}
+export const makeTaskId = (jobId: string, index: number): string =>
+  `${jobId}-task-${String(index + 1).padStart(4, '0')}`;
 
 export interface QueueAdapterFacadeOptions {
   type: string;
@@ -52,7 +49,7 @@ export class QueueAdapterFacade implements QueueAdapter {
   private readonly jobStore: JobStore;
   private readonly taskQueue: TaskQueue;
   private readonly leaseStore: LeaseStore;
-  private readonly leaseTtlMs = 30_000;
+  private readonly leaseTtlMs = Number.MAX_VALUE;
 
   constructor(options: QueueAdapterFacadeOptions) {
     this.type = options.type;
@@ -90,6 +87,7 @@ export class QueueAdapterFacade implements QueueAdapter {
 
     const token = await this.leaseStore.claimLease(task.taskId, jobId, workerId, this.leaseTtlMs);
     task.leaseToken = token;
+    await this.taskQueue.updateTask(task);
 
     // Sync the canonical job record with the claimed task state. Redis backends
     // update task keys atomically but do not rewrite the job blob on claim.
@@ -104,6 +102,11 @@ export class QueueAdapterFacade implements QueueAdapter {
     }
 
     return task;
+  }
+
+  async requeueTask(task: DistributedTask): Promise<void> {
+    if (task.leaseToken) await this.leaseStore.releaseLease(task.leaseToken);
+    await this.taskQueue.requeueTask(task);
   }
 
   private async validateAndReleaseLease(
@@ -147,7 +150,11 @@ export class QueueAdapterFacade implements QueueAdapter {
     await this.taskQueue.updateTask(task);
   }
 
-  private async failTaskCore(job: DistributedJob, task: DistributedTask, error: string): Promise<void> {
+  private async failTaskCore(
+    job: DistributedJob,
+    task: DistributedTask,
+    error: string
+  ): Promise<void> {
     task.error = error;
     if (task.attempts >= task.maxRetries) {
       task.status = 'failed';

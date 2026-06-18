@@ -1,7 +1,13 @@
-import type { BudgetOptions, DistributedJob, ExecutionProfile, SearchDepth, UsageMetrics } from '../types';
+import type {
+  BudgetOptions,
+  DistributedJob,
+  ExecutionProfile,
+  SearchDepth,
+  UsageMetrics,
+} from '../types';
+import { Coordinator } from './coordinator';
 import type { QueueAdapter } from './queue-adapter';
 import { workerLoop } from './worker';
-import { Coordinator } from './coordinator';
 
 export interface WorkerPoolRunOptions {
   adapter: QueueAdapter;
@@ -37,12 +43,10 @@ export class InProcessWorkerPool implements WorkerPool {
       workDir,
     } = options;
 
-    const workerMetrics: UsageMetrics[] = [];
     const workerPromises: Promise<void>[] = [];
 
     for (let i = 0; i < workers; i += 1) {
       const metrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
-      workerMetrics.push(metrics);
       workerPromises.push(
         workerLoop(
           adapter,

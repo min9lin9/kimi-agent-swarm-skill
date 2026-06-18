@@ -3,13 +3,10 @@ import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { MemoryQueueAdapter } from '../../src/distributed/memory-adapter';
-import {
-  buildTasksFromPlans,
-  splitFixtureTasks,
-} from '../../src/distributed/task-splitter';
-import { ExternalWorkerPool, InProcessWorkerPool } from '../../src/distributed/worker-pool';
 import { deriveJobStatus } from '../../src/distributed/job-status';
+import { MemoryQueueAdapter } from '../../src/distributed/memory-adapter';
+import { buildTasksFromPlans, splitFixtureTasks } from '../../src/distributed/task-splitter';
+import { ExternalWorkerPool, InProcessWorkerPool } from '../../src/distributed/worker-pool';
 
 describe('WorkerPool', () => {
   async function createAdapter(): Promise<MemoryQueueAdapter> {
@@ -17,7 +14,9 @@ describe('WorkerPool', () => {
     return new MemoryQueueAdapter({ workDir });
   }
 
-  async function createFixtureJob(adapter: MemoryQueueAdapter): Promise<ReturnType<typeof adapter.createJob>> {
+  async function createFixtureJob(
+    adapter: MemoryQueueAdapter
+  ): Promise<ReturnType<typeof adapter.createJob>> {
     const plans = await splitFixtureTasks(
       'fixture-paul-graham-corpus',
       join(import.meta.dir, '../../fixtures'),
