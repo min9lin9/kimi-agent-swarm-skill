@@ -123,6 +123,7 @@ export class RedisLeaseStore implements LeaseStore {
     if (!text) return false;
     const lease = JSON.parse(text) as LeaseRecord;
     if (Date.now() > lease.issuedAt + lease.ttlMs) {
+      await client.srem(this.runningKey(lease.jobId), lease.taskId);
       await client.del(this.leaseKey(token));
       return false;
     }
