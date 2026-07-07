@@ -2,13 +2,14 @@
 
 ## Verdict
 
-Status: PASS after F2/F4 blocker fixes.
+Status: PASS after final F2 assertion blocker fix.
 
 Scope reviewed:
 
 - Full changed TypeScript/test set from `origin/main...HEAD`.
 - Current working-tree F2 fix: `runtime/wide-search/tests/markdown.test.ts` split into `runtime/wide-search/tests/markdown-strict.test.ts`.
 - Current working-tree F2 assertion fix: listed plain TypeScript assertions were replaced with typed parser helpers and JSON boundary decoders.
+- Final F2 assertion blocker fix: `runtime/wide-search/tests/strict-claims.test.ts` now reads generated claim artifacts through typed JSON boundary helpers instead of `as Claim[] | undefined` assertions.
 - Current working-tree F4 fix: public-reader auth-wall and oversized-response tests now use opt-in HTTP hostname fetches that reach the fetcher.
 
 ## F2/F4 Blocker Fix Update
@@ -22,6 +23,7 @@ Changed files:
 - `runtime/wide-search/tests/cli-test-utils.ts`: added object/string JSON helpers for CLI tests.
 - `runtime/wide-search/tests/cli-inspect.test.ts`: removed plain output-shape assertions.
 - `runtime/wide-search/tests/cli-leaderboard-export.test.ts`: removed the `runDir` output assertion.
+- `runtime/wide-search/tests/strict-claims.test.ts`: removed the five multiline `as Claim[] | undefined` assertions and replaced them with `readClaimArray`, `isClaim`, and small value-set boundary checks.
 - `runtime/wide-search/tests/providers/public-reader.test.ts`: keeps provider fetch-path tests; auth-wall and oversized tests now use `http://example.com/...`, assert the fetcher was called through `http://93.184.216.34/...`, and the HTTPS hostname fail-closed test separately asserts no fetch.
 - `runtime/wide-search/tests/providers/public-reader-url.test.ts`: split URL/IP validation tests out of the provider fetch-path file to keep both files below the LOC ceiling.
 
@@ -49,10 +51,10 @@ F2 assertion coverage:
 
 ```bash
 files=$({ git diff --name-only origin/main...HEAD -- '*.ts' '*.tsx' '*.mts' '*.cts'; git diff --name-only -- '*.ts' '*.tsx' '*.mts' '*.cts'; git ls-files --others --exclude-standard -- '*.ts' '*.tsx' '*.mts' '*.cts'; } | sort -u); rg -n 'as any|as unknown|@ts-ignore|@ts-expect-error|eslint-disable|biome-ignore|no-excuse-ok|SIZE_OK|allow: SIZE_OK|debt:|ponytail:|!\.' $files || true
-git diff --unified=0 origin/main -- '*.ts' '*.tsx' '*.mts' '*.cts' | rg -P '^\+(?!\+)(?!(?:\s*//)).*\sas\s+(?!const\b)[A-Za-z_][A-Za-z0-9_<>{}[\]|&?, :]*(?:[;,)={]|$)' || true
+bun --eval "<AST diff scan using TypeScript parser; see Final F2 Assertion Blocker Verification below>"
 ```
 
-- Binary observable: first scan only reported pre-existing `runtime/wide-search/src/distributed/worker.ts` escape hatches already present on `origin/main`; second scan for added plain assertions had no output.
+- Binary observable: escape-hatch scan only reported pre-existing `runtime/wide-search/src/distributed/worker.ts` escape hatches already present on `origin/main`; AST diff scan for added plain assertions, including multiline `as` expressions, had no output.
 - Captured artifact path: this file.
 
 ## Skill Lenses Applied
@@ -111,6 +113,7 @@ Top results:
  217 runtime/wide-search/src/types.ts
  216 runtime/wide-search/src/verifier.ts
  210 runtime/wide-search/src/cli.ts
+ 204 runtime/wide-search/tests/strict-claims.test.ts
  203 runtime/wide-search/src/cli-contract.ts
  191 runtime/wide-search/src/markdown.ts
  169 runtime/wide-search/tests/providers/public-reader.test.ts
@@ -121,7 +124,7 @@ Top results:
   49 runtime/wide-search/src/cli-inspect-json.ts
 ```
 
-Result: PASS. No changed TypeScript/test file is at or above 250 pure LOC. `tests/providers/public-reader.test.ts` is now 169 pure LOC; `tests/providers/public-reader-url.test.ts` is 84 pure LOC.
+Result: PASS. No changed TypeScript/test file is at or above 250 pure LOC. `tests/strict-claims.test.ts` is 204 pure LOC, in the warning band but below the defect threshold; split before adding more cases there. `tests/providers/public-reader.test.ts` is now 169 pure LOC; `tests/providers/public-reader-url.test.ts` is 84 pure LOC.
 
 ### Escape Hatches
 
@@ -294,8 +297,79 @@ Observed result:
 Ran 8 tests across 2 files.
 ```
 
+## Final F2 Assertion Blocker Verification
+
+Strict-claims assertion fix:
+
+- Scenario: generated strict-claim artifact assertions in `tests/strict-claims.test.ts`.
+- Invocation: `bun test tests/strict-claims.test.ts`
+- Binary observable: `2 pass`, `0 fail`, `14 expect() calls`.
+- Captured artifact path: this file.
+
+Diff-only plain assertion scan:
+
+- Scenario: newly added TypeScript `as T` assertions in the diff from `origin/main`, including multiline assertions where the `as` keyword and asserted type span separate added lines.
+- Invocation:
+
+```bash
+bun --eval "
+import ts from 'typescript';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+const diff = execFileSync('git', ['diff', '--unified=0', 'origin/main', '--', '*.ts', '*.tsx', '*.mts', '*.cts'], { encoding: 'utf8' });
+const addedLinesByFile = new Map();
+let file = '';
+let line = 0;
+for (const diffLine of diff.split('\n')) {
+  const fileMatch = /^\+\+\+ b\/(.+)$/.exec(diffLine);
+  if (fileMatch?.[1]) { file = fileMatch[1]; if (!addedLinesByFile.has(file)) addedLinesByFile.set(file, new Set()); continue; }
+  const hunkMatch = /^@@ .* \+(\d+)(?:,\d+)? @@/.exec(diffLine);
+  if (hunkMatch?.[1]) { line = Number(hunkMatch[1]); continue; }
+  if (diffLine.startsWith('+++') || file === '') continue;
+  if (diffLine.startsWith('+')) { addedLinesByFile.get(file)?.add(line); line += 1; continue; }
+  if (!diffLine.startsWith('-') && line > 0) line += 1;
+}
+const findings = [];
+for (const [path, addedLines] of addedLinesByFile) {
+  const source = ts.createSourceFile(path, readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true);
+  const visit = (node) => {
+    if (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) {
+      const start = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+      const end = source.getLineAndCharacterOfPosition(node.getEnd()).line + 1;
+      const touchesAddedLine = Array.from(addedLines).some((addedLine) => start <= addedLine && addedLine <= end);
+      const assertionText = node.getText(source);
+      if (touchesAddedLine && !/\bas const\b/.test(assertionText)) findings.push(path + ':' + start + ': ' + assertionText.split('\n')[0]);
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+}
+if (findings.length > 0) { console.log(findings.join('\n')); process.exit(1); }
+"
+```
+
+- Binary observable: no output, exit 0.
+- Captured artifact path: this file.
+
+Diff-only escape-hatch scan:
+
+- Scenario: newly added TypeScript escape hatches in the diff from `origin/main`.
+- Invocation:
+
+```bash
+bash -lc "git diff --unified=0 origin/main -- '*.ts' '*.tsx' '*.mts' '*.cts' | rg '^\+.*(as any|as unknown|@ts-ignore|@ts-expect-error|eslint-disable|biome-ignore|no-excuse-ok|SIZE_OK|allow: SIZE_OK|debt:|ponytail:|!\.)'; status=$?; if [ $status -eq 1 ]; then exit 0; fi; exit $status"
+```
+
+- Binary observable: no output, exit 0.
+- Captured artifact path: this file.
+
 ## Final Verification Gates
 
+- Strict-claims focused tests:
+  - Scenario: strict claim verification JSON artifacts.
+  - Invocation: `bun test tests/strict-claims.test.ts`
+  - Observable: `2 pass`, `0 fail`, `14 expect() calls`.
+  - Artifact path: this file.
 - Markdown focused tests:
   - Scenario: old/new markdown rendering suites.
   - Invocation: `bun test tests/markdown.test.ts tests/markdown-strict.test.ts`
@@ -323,7 +397,7 @@ Ran 8 tests across 2 files.
   - Artifact path: this file.
 - Diff-only escape-hatch scan:
   - Scenario: new TypeScript escape hatches.
-  - Invocation: `git diff --unified=0 -- '*.ts' '*.tsx' '*.mts' '*.cts' | rg '^\+.*(as any|as unknown|@ts-ignore|@ts-expect-error|eslint-disable|biome-ignore|no-excuse-ok|SIZE_OK|allow: SIZE_OK|debt:|ponytail:|!\.)'`
+  - Invocation: `bash -lc "git diff --unified=0 origin/main -- '*.ts' '*.tsx' '*.mts' '*.cts' | rg '^\+.*(as any|as unknown|@ts-ignore|@ts-expect-error|eslint-disable|biome-ignore|no-excuse-ok|SIZE_OK|allow: SIZE_OK|debt:|ponytail:|!\.)'; status=$?; if [ $status -eq 1 ]; then exit 0; fi; exit $status"`
   - Observable: no matches.
   - Artifact path: this file.
 
