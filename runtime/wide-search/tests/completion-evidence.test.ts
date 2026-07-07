@@ -30,6 +30,39 @@ const acceptedSources: readonly EnrichedSource[] = [
 ];
 
 describe('completion evidence verification', () => {
+  test('rejects secret-shaped evidence past the recursive scan depth', async () => {
+    const runDir = await makeRunDir('wide-search-completion-evidence-deep-secret-');
+    await writeJsonl(join(runDir, 'source-ledger.jsonl'), acceptedSources);
+    await writeJsonl(join(runDir, 'claim-ledger.jsonl'), [
+      {
+        id: 'C001',
+        claim: 'Covered claim',
+        sourceIds: ['S001'],
+        confidence: 'high',
+        freshness: 'current',
+      },
+    ]);
+
+    await writeFile(
+      join(runDir, 'completion-evidence.json'),
+      `${JSON.stringify({
+        changedFiles: ['src/verifier.ts'],
+        commands: [
+          {
+            command: 'bun test',
+            exitCode: 0,
+            output: [[[[[[[[[[['OPENAI_API_KEY=secret']]]]]]]]]]],
+          },
+        ],
+      })}\n`
+    );
+
+    const report = await verifyRun({ runDir, requireCompletionEvidence: true });
+
+    expect(report.status).toBe('failed');
+    expect(report.failures).toContain('unsafe completion evidence contains secret-shaped content');
+  });
+
   test('rejects redis url api key authorization and sk shaped completion evidence', async () => {
     const runDir = await makeRunDir('wide-search-completion-evidence-secrets-');
     await writeJsonl(join(runDir, 'source-ledger.jsonl'), acceptedSources);

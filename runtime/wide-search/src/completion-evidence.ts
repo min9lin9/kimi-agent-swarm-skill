@@ -24,7 +24,7 @@ const SECRET_TEXT_PATTERN =
 
 function containsSecretShape(value: unknown, depth = 0): boolean {
   if (depth > 8) {
-    return false;
+    return true;
   }
   if (typeof value === 'string') {
     return SECRET_TEXT_PATTERN.test(value);
