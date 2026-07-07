@@ -103,6 +103,10 @@ Print a concise summary of a run.
 kasw inspect --run-dir <run-dir>
 ```
 
+Distributed runs include a `distributedJob` block with job status, queue type, worker mode,
+task counts, stale/running and retry counts, and the next recovery command. Secret-shaped queue
+credentials are not printed.
+
 ### `export`
 
 Export a run to `json`, `csv`, `html`, or `svg`.
