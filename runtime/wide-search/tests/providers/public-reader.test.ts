@@ -24,6 +24,10 @@ describe('validatePublicReaderUrl', () => {
       ok: false,
       reason: 'private_address',
     });
+    expect(await validatePublicReaderUrl('https://user:pass@example.com/', resolver)).toEqual({
+      ok: false,
+      reason: 'userinfo_not_supported',
+    });
   });
 
   test('revalidates DNS answers before fetching hostnames', async () => {
@@ -44,6 +48,28 @@ describe('validatePublicReaderUrl', () => {
       ok: false,
       reason: 'hostname_not_supported',
     });
+  });
+
+  test('accepts hostname fetches only with explicit opt-in', async () => {
+    const resolver = async () => ['93.184.216.34'];
+
+    expect(
+      await validatePublicReaderUrl('https://example.com/page', resolver, { allowHostnames: true })
+    ).toEqual({
+      ok: true,
+      url: new URL('https://example.com/page'),
+    });
+  });
+
+  test('rejects blocked hostnames even with opt-in', async () => {
+    const resolver = async () => ['93.184.216.34'];
+
+    for (const url of ['https://printer.local/status', 'http://metadata.google.internal/']) {
+      expect(await validatePublicReaderUrl(url, resolver, { allowHostnames: true })).toEqual({
+        ok: false,
+        reason: 'blocked_host',
+      });
+    }
   });
 });
 
@@ -76,6 +102,26 @@ describe('isPublicInternetIp', () => {
 });
 
 describe('PublicReaderProvider', () => {
+  test('does not fetch hostnames without explicit opt-in', async () => {
+    const fetchedUrls: string[] = [];
+    const provider = new PublicReaderProvider({
+      resolver: async () => ['93.184.216.34'],
+      fetcher: async (url) => {
+        fetchedUrls.push(url);
+        return new Response('should not fetch');
+      },
+    });
+
+    const sources = await provider.search({
+      objective: 'Read https://example.com/research-note for evidence',
+      depth: 'standard',
+      maxResults: 5,
+    });
+
+    expect(sources).toEqual([]);
+    expect(fetchedUrls).toEqual([]);
+  });
+
   test('reads explicit public URLs from the objective', async () => {
     const provider = new PublicReaderProvider({
       resolver: async () => ['93.184.216.34'],
@@ -126,6 +172,68 @@ describe('PublicReaderProvider', () => {
 
     expect(sources).toEqual([]);
     expect(fetchedUrls).toEqual(['https://example.com/redirect']);
+  });
+
+  test('does not fetch private DNS answers after opt-in', async () => {
+    const fetchedUrls: string[] = [];
+    const provider = new PublicReaderProvider({
+      resolver: async () => ['10.0.0.7'],
+      allowHostnames: true,
+      fetcher: async (url) => {
+        fetchedUrls.push(url);
+        return new Response('should not fetch');
+      },
+    });
+
+    const sources = await provider.search({
+      objective: 'Read https://example.com/private-dns',
+      depth: 'standard',
+      maxResults: 5,
+    });
+
+    expect(sources).toEqual([]);
+    expect(fetchedUrls).toEqual([]);
+  });
+
+  test('does not fetch past redirect loops', async () => {
+    const fetchedUrls: string[] = [];
+    const provider = new PublicReaderProvider({
+      resolver: async () => ['93.184.216.34'],
+      allowHostnames: true,
+      maxRedirects: 1,
+      fetcher: async (url) => {
+        fetchedUrls.push(url);
+        return new Response('', {
+          headers: { location: 'https://example.com/redirect' },
+          status: 302,
+        });
+      },
+    });
+
+    const sources = await provider.search({
+      objective: 'Read https://example.com/redirect',
+      depth: 'standard',
+      maxResults: 5,
+    });
+
+    expect(sources).toEqual([]);
+    expect(fetchedUrls).toEqual(['https://example.com/redirect', 'https://example.com/redirect']);
+  });
+
+  test('drops auth walls without returning a source', async () => {
+    const provider = new PublicReaderProvider({
+      resolver: async () => ['93.184.216.34'],
+      allowHostnames: true,
+      fetcher: async () => new Response('sign in to continue', { status: 200 }),
+    });
+
+    const sources = await provider.search({
+      objective: 'Read https://example.com/auth-wall',
+      depth: 'standard',
+      maxResults: 5,
+    });
+
+    expect(sources).toEqual([]);
   });
 
   test('drops oversized responses without buffering them as sources', async () => {

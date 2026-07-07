@@ -9,7 +9,15 @@ import { TavilySearchProvider } from './tavily-provider';
 
 export type ProviderCredentialType = 'apiKey' | 'token';
 
-export type ProviderFactory = (credential: string, metrics?: UsageMetrics) => SearchProvider;
+export interface ProviderFactoryOptions {
+  readonly allowPublicReaderHostnames?: boolean;
+}
+
+export type ProviderFactory = (
+  credential: string,
+  metrics?: UsageMetrics,
+  options?: ProviderFactoryOptions
+) => SearchProvider;
 
 export interface ProviderDescriptor {
   name: string;
@@ -75,7 +83,11 @@ export const PROVIDER_REGISTRY: ProviderDescriptor[] = [
   },
   {
     name: 'public-reader',
-    factory: (_credential, metrics) => new PublicReaderProvider({ metrics }),
+    factory: (_credential, metrics, options) =>
+      new PublicReaderProvider({
+        metrics,
+        allowHostnames: options?.allowPublicReaderHostnames,
+      }),
     envVar: undefined,
     credentialType: 'apiKey',
     credentialTypeLabel: 'none',

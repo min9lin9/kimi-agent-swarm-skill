@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -50,6 +50,7 @@ describe('CLI command contract', () => {
         'job-123',
         '--task-timeout-ms',
         '1234',
+        '--allow-public-reader-hostnames',
       ]);
 
       expect(options).toEqual({
@@ -80,8 +81,31 @@ describe('CLI command contract', () => {
           taskTimeoutMs: 1234,
         },
         strictClaims: true,
+        allowPublicReaderHostnames: true,
       });
     }
+  });
+
+  test('run command maps public-reader hostname opt-in from local config', async () => {
+    const configuredWorkDir = await mkdtemp(join(tmpdir(), 'wide-search-public-reader-'));
+    await writeFile(
+      join(configuredWorkDir, '.kasw.json'),
+      JSON.stringify({
+        providers: { 'public-reader': { allowHostnames: true } },
+        defaults: { provider: 'public-reader', profile: 'web-search' },
+      })
+    );
+
+    const options = await buildRunOptionsForCli([
+      'contract objective',
+      '--work-dir',
+      configuredWorkDir,
+    ]);
+
+    expect(options.providerName).toBe('public-reader');
+    expect(options.allowPublicReaderHostnames).toBe(true);
+
+    await rm(configuredWorkDir, { recursive: true, force: true });
   });
 
   test('verify command maps flags into VerifyRunOptions', () => {

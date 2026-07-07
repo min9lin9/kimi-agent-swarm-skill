@@ -26,6 +26,7 @@ export async function runWideSearch({
   replayRunId,
   distributed,
   strictClaims = false,
+  allowPublicReaderHostnames = false,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   let replayedFrom: string | undefined;
 
@@ -69,6 +70,7 @@ export async function runWideSearch({
       useCache,
       distributed,
       strictClaims,
+      allowPublicReaderHostnames,
     });
   }
 
@@ -127,6 +129,7 @@ export async function runWideSearch({
       workDir,
       metrics: usageMetrics,
       checkBudget: false,
+      allowPublicReaderHostnames,
     });
 
     const run: Run = {

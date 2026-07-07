@@ -33,7 +33,8 @@ async function executeTask(
   maxResults: number | undefined,
   useCache: boolean,
   metrics: UsageMetrics,
-  workDir: string
+  workDir: string,
+  allowPublicReaderHostnames: boolean
 ): Promise<WorkerResult> {
   const taskMetrics: UsageMetrics = { providerCalls: 0, apiCalls: 0 };
   const baseOptions = {
@@ -45,6 +46,7 @@ async function executeTask(
     metrics: taskMetrics,
     workDir,
     checkBudget: false,
+    allowPublicReaderHostnames,
   };
 
   const result = profile.startsWith('fixture')
@@ -69,7 +71,8 @@ export async function workerLoop(
   useCache: boolean,
   budget: BudgetOptions,
   metrics: UsageMetrics,
-  workDir: string
+  workDir: string,
+  allowPublicReaderHostnames = false
 ): Promise<void> {
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -95,7 +98,8 @@ export async function workerLoop(
         perTaskMaxResults,
         useCache,
         metrics,
-        workDir
+        workDir,
+        allowPublicReaderHostnames
       );
       checkBudget(providerName, metrics, budget);
       await adapter.completeTask(task.taskId, result, task.leaseToken!);

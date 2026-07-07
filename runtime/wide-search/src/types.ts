@@ -1,3 +1,14 @@
+import type { DistributedRunOptions } from './distributed/types';
+
+export type {
+  DistributedJob,
+  DistributedJobStatus,
+  DistributedRunOptions,
+  DistributedTask,
+  DistributedTaskStatus,
+  WorkerResult,
+} from './distributed/types';
+
 export type SearchDepth = 'light' | 'standard' | 'deep' | 'maximum';
 
 export type ExecutionProfile =
@@ -146,62 +157,7 @@ export interface RunWideSearchOptions {
   replayRunId?: string;
   distributed?: DistributedRunOptions;
   strictClaims?: boolean;
-}
-
-export interface DistributedRunOptions {
-  enabled: boolean;
-  workers?: number;
-  maxRetries?: number;
-  resumeJobId?: string;
-  queueType?: 'memory' | 'redis';
-  redisUrl?: string;
-  redisPassword?: string;
-  redisUsername?: string;
-  redisKeyPrefix?: string;
-  taskTimeoutMs?: number;
-}
-
-export interface DistributedJob {
-  jobId: string;
-  objective: string;
-  executionProfile: ExecutionProfile;
-  providerName: string;
-  searchDepth: SearchDepth;
-  queueType: 'memory' | 'redis';
-  status: DistributedJobStatus;
-  tasks: DistributedTask[];
-  useCache?: boolean;
-  budget?: BudgetOptions;
-  workDir?: string;
-  perTaskMaxResults?: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type DistributedJobStatus = 'pending' | 'running' | 'completed' | 'failed';
-
-export interface DistributedTask {
-  taskId: string;
-  jobId: string;
-  queryFamily: string;
-  query: string;
-  status: DistributedTaskStatus;
-  attempts: number;
-  maxRetries: number;
-  workerId?: string;
-  result?: WorkerResult;
-  error?: string;
-  startedAt?: string;
-  completedAt?: string;
-  leaseToken?: string;
-}
-
-export type DistributedTaskStatus = 'pending' | 'running' | 'completed' | 'failed';
-
-export interface WorkerResult {
-  sources: Source[];
-  usageMetrics: UsageMetrics;
-  claims?: Claim[];
+  allowPublicReaderHostnames?: boolean;
 }
 
 export interface LoadSourcesOptions {
@@ -216,6 +172,7 @@ export interface LoadSourcesOptions {
   useCache?: boolean;
   sourceIds?: string[];
   workDir?: string;
+  allowPublicReaderHostnames?: boolean;
 }
 
 export interface VerifyRunOptions {

@@ -20,6 +20,7 @@ export interface WorkerPoolRunOptions {
   useCache: boolean;
   budget: BudgetOptions;
   workDir: string;
+  allowPublicReaderHostnames?: boolean;
 }
 
 export interface WorkerPool {
@@ -41,6 +42,7 @@ export class InProcessWorkerPool implements WorkerPool {
       useCache,
       budget,
       workDir,
+      allowPublicReaderHostnames = false,
     } = options;
 
     const workerPromises: Promise<void>[] = [];
@@ -59,7 +61,8 @@ export class InProcessWorkerPool implements WorkerPool {
           useCache,
           budget,
           metrics,
-          workDir
+          workDir,
+          allowPublicReaderHostnames
         )
       );
     }
@@ -84,6 +87,7 @@ export interface ExternalWorkerPoolOptions {
   useCache: boolean;
   budget: BudgetOptions;
   workDir: string;
+  allowPublicReaderHostnames?: boolean;
 }
 
 export class ExternalWorkerPool implements WorkerPool {
@@ -113,6 +117,7 @@ export class ExternalWorkerPool implements WorkerPool {
       useCache,
       budget,
       workDir,
+      allowPublicReaderHostnames = false,
     } = this.options;
 
     await workerLoop(
@@ -126,7 +131,8 @@ export class ExternalWorkerPool implements WorkerPool {
       useCache,
       budget,
       { providerCalls: 0, apiCalls: 0 },
-      workDir
+      workDir,
+      allowPublicReaderHostnames
     );
   }
 }
