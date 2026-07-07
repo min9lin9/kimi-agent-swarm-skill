@@ -5,13 +5,18 @@ This guide explains how to use the repository's Kimi Agent Swarm-style prompt co
 The integration is intentionally conservative:
 
 - it does not claim hosted Kimi Agent Swarm parity;
-- it does not bypass authentication, private pages, or paywalls;
+- it respects private or restricted access boundaries;
 - it preserves host-specific approval and verification boundaries;
 - it keeps public web content as untrusted evidence, not instructions.
 
 ## Claude Code
 
-### One-off development run
+Two Claude Code paths are provided:
+
+1. **Full plugin development** via `claude --plugin-dir ./claude-plugin`. This loads the plugin manifest, namespaced skill, and router hook.
+2. **Standalone skill install** via `scripts/install-claude-code-plugin.sh`. This copies only the skill into `.claude/skills` for short-name invocation.
+
+### Full plugin development run
 
 From this repository:
 
@@ -19,35 +24,47 @@ From this repository:
 claude --plugin-dir ./claude-plugin
 ```
 
-Then invoke the skill in Claude Code:
+Then invoke the namespaced plugin skill in Claude Code:
 
 ```text
-/kimi-agent-swarm --wide-search "Compare open-source AI browser agent repos"
+/kimi-agent-swarm:kimi-agent-swarm --wide-search "Compare open-source AI browser agent repos"
 ```
 
-### User install
+The plugin path also loads the lightweight `UserPromptSubmit` router hook.
+
+### User standalone skill install
 
 ```bash
 ./scripts/install-claude-code-plugin.sh user
 ```
 
-Restart Claude Code or run `/reload-plugins` after install.
+This copies the skill to:
 
-### Project install
+```text
+${CLAUDE_HOME:-~/.claude}/skills/kimi-agent-swarm
+```
+
+Restart Claude Code or run `/reload-plugins` after install, then invoke:
+
+```text
+/kimi-agent-swarm --wide-search "Compare open-source AI browser agent repos"
+```
+
+### Project standalone skill install
 
 ```bash
 ./scripts/install-claude-code-plugin.sh project /path/to/project
 ```
 
-This copies the bundled plugin to:
+This copies the skill to:
 
 ```text
-/path/to/project/.claude/plugins/kimi-agent-swarm
+/path/to/project/.claude/skills/kimi-agent-swarm
 ```
 
 ### Claude Code behavior
 
-The plugin provides:
+The plugin package provides:
 
 - `skills/kimi-agent-swarm/SKILL.md`: the main Claude Code skill;
 - `hooks/hooks.json`: a lightweight `UserPromptSubmit` router hint;
@@ -125,7 +142,7 @@ export INSANE_SEARCH_URLS="https://example.com/a https://example.com/b"
 export INSANE_SEARCH_TIMEOUT_MS=120000
 ```
 
-The provider stops at authentication or paywall boundaries and reports them as failures.
+The provider stops when a page requires non-public access.
 
 ## Fablize-Style Verification Discipline
 
