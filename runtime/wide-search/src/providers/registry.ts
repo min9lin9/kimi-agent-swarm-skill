@@ -2,6 +2,7 @@ import type { ProviderPricing, UsageMetrics } from '../types';
 import { BraveSearchProvider } from './brave-provider';
 import { GitHubSearchProvider } from './github-provider';
 import { MockSearchProvider } from './mock-search-provider';
+import { PublicReaderProvider } from './public-reader';
 import type { SearchProvider } from './search-provider';
 import { SerperSearchProvider } from './serper-provider';
 import { TavilySearchProvider } from './tavily-provider';
@@ -71,6 +72,16 @@ export const PROVIDER_REGISTRY: ProviderDescriptor[] = [
     pricing: { perCallUsd: 0 },
     defaultMaxResults: 100,
     description: 'GitHub repository search',
+  },
+  {
+    name: 'public-reader',
+    factory: (_credential, metrics) => new PublicReaderProvider({ metrics }),
+    envVar: undefined,
+    credentialType: 'apiKey',
+    credentialTypeLabel: 'none',
+    pricing: { perCallUsd: 0 },
+    defaultMaxResults: 20,
+    description: 'public HTTP(S) URL reader with private-network and auth-wall guards',
   },
 ];
 

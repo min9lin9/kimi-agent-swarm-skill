@@ -50,6 +50,7 @@ export async function runDistributedWideSearch({
   useCache = false,
   replayRunId,
   distributed = { enabled: true },
+  strictClaims = false,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   let replayedFrom: string | undefined;
 
@@ -139,6 +140,7 @@ export async function runDistributedWideSearch({
       distributed: true,
       providerName: effectiveProviderName,
       estimate,
+      strictClaims,
     });
     await rmdir(runDir).catch(() => {});
     return { runId, runDir, verification };
@@ -240,6 +242,7 @@ export async function runDistributedWideSearch({
       budget,
       distributed: true,
       providerName: effectiveProviderName,
+      strictClaims,
     });
 
     return {

@@ -6,6 +6,7 @@ export * from './search-provider';
 export { BraveSearchProvider } from './brave-provider';
 export { GitHubSearchProvider } from './github-provider';
 export { MockSearchProvider } from './mock-search-provider';
+export { PublicReaderProvider } from './public-reader';
 export {
   PROVIDER_REGISTRY,
   getProviderDescriptor,

@@ -43,6 +43,25 @@ describe('runDistributedWideSearch', () => {
     expect(jobJson.tasks.every((t: { status: string }) => t.status === 'completed')).toBe(true);
   });
 
+  test('strict fixture distributed run writes strict claim artifacts', async () => {
+    const workDir = await mkdtemp(join(tmpdir(), 'wide-search-dist-strict-'));
+
+    const result = await runDistributedWideSearch({
+      objective: 'Strict distributed fixture',
+      profile: 'fixture',
+      workDir,
+      strictClaims: true,
+      distributed: { enabled: true, workers: 2 },
+    });
+
+    expect(result.verification.strictClaims?.enabled).toBe(true);
+    expect(result.verification.strictClaims?.unresolved).toBeGreaterThan(0);
+    expect(result.verification.status).toBe('failed');
+    expect(await readFile(join(result.runDir, 'verified-claims.json'), 'utf8')).toBeDefined();
+    expect(await readFile(join(result.runDir, 'unresolved-claims.json'), 'utf8')).toBeDefined();
+    expect(await readFile(join(result.runDir, 'refuted-claims.json'), 'utf8')).toBeDefined();
+  });
+
   test('web-search distributed run aborts with BudgetExceededError during execution', async () => {
     const workDir = await mkdtemp(join(tmpdir(), 'wide-search-dist-budget-'));
 
@@ -64,16 +83,19 @@ describe('runDistributedWideSearch', () => {
 
     // The static estimate is 5 provider calls; allow 5 so the estimate passes,
     // then fail on the 6th task during execution.
-    await expect(
-      runDistributedWideSearch({
+    try {
+      await runDistributedWideSearch({
         objective: 'AI browser agent repos',
         profile: 'web-search',
         providerName: 'mock',
         workDir,
         distributed: { enabled: true, workers: 1, resumeJobId: job.jobId, queueType: 'memory' },
         budget: { maxProviderCalls: 5 },
-      })
-    ).rejects.toBeInstanceOf(BudgetExceededError);
+      });
+      throw new Error('expected distributed run to exceed provider call budget');
+    } catch (error) {
+      expect(error).toBeInstanceOf(BudgetExceededError);
+    }
   });
 
   test('resume rejects mixed completed and failed terminal tasks', async () => {
@@ -126,13 +148,19 @@ describe('runDistributedWideSearch', () => {
     if (!failed.leaseToken) throw new Error('expected second task to have a lease token');
     await adapter.failTask(failed.taskId, 'fixture task failed', failed.leaseToken);
 
-    await expect(
-      runDistributedWideSearch({
+    try {
+      await runDistributedWideSearch({
         objective: 'Summarize mixed terminal job',
         profile: 'fixture-paul-graham-corpus',
         workDir,
         distributed: { enabled: true, workers: 1, resumeJobId: job.jobId, queueType: 'memory' },
-      })
-    ).rejects.toThrow('Distributed job failed');
+      });
+      throw new Error('expected mixed terminal job to fail');
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+      if (error instanceof Error) {
+        expect(error.message).toContain('Distributed job failed');
+      }
+    }
   });
 });

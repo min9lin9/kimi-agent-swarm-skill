@@ -4,6 +4,7 @@ import {
   BraveSearchProvider,
   GitHubSearchProvider,
   MockSearchProvider,
+  PublicReaderProvider,
   SerperSearchProvider,
   TavilySearchProvider,
   createSearchProvider,
@@ -19,6 +20,7 @@ describe('createSearchProvider', () => {
       { name: 'tavily', expected: TavilySearchProvider },
       { name: 'brave', expected: BraveSearchProvider },
       { name: 'github', expected: GitHubSearchProvider },
+      { name: 'public-reader', expected: PublicReaderProvider },
     ];
 
     for (const { name, expected } of cases) {
@@ -41,6 +43,7 @@ describe('registry metadata', () => {
     expect(names).toContain('tavily');
     expect(names).toContain('brave');
     expect(names).toContain('github');
+    expect(names).toContain('public-reader');
 
     for (const name of names) {
       const descriptor = getProviderDescriptor(name);

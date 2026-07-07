@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-07-07
+
+### Added
+
+- Strict claim verification artifacts via `--strict-claims`, including verified, unresolved, and refuted claim ledgers.
+- Completion evidence verification with `--require-completion-evidence`.
+- `public-reader` provider for explicit public HTTP(S) URLs with private-network, DNS, redirect, size, and auth-wall guards.
+
+### Changed
+
+- Strict synthesis omits unresolved/refuted strict claims from definitive claim tables.
+- Extracted claim analysis, strict claim classification, and completion evidence validation into smaller modules.
+
 ## [1.0.0] - 2026-06-14
 
 ### Added
