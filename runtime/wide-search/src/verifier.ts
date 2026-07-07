@@ -200,7 +200,7 @@ export async function verifyRun({
 
   let strictClaimReport: StrictClaimReport | undefined;
   if (strictClaims) {
-    const strictResult = classifyStrictClaims(claims ?? []);
+    const strictResult = classifyStrictClaims(claims ?? [], sources ?? []);
     strictClaimReport = strictResult.report;
     if (strictResult.unresolvedClaims.length > 0) {
       failures.push(

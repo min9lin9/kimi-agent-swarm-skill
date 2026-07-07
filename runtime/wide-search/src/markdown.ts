@@ -81,11 +81,8 @@ function visibleClaimsForSynthesis(
     return claims;
   }
 
-  const unresolvedClaimIds = new Set(verification.strictClaims.unresolvedClaimIds);
-  const refutedClaimIds = new Set(verification.strictClaims.refutedClaimIds);
-  return claims.filter(
-    (claim) => !unresolvedClaimIds.has(claim.id) && !refutedClaimIds.has(claim.id)
-  );
+  const verifiedClaimIds = new Set(verification.strictClaims.verifiedClaimIds);
+  return claims.filter((claim) => verifiedClaimIds.has(claim.id));
 }
 
 function renderVerificationDetails(verification: VerificationReport | undefined): string {
