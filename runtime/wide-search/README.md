@@ -1,6 +1,8 @@
 # kimi-agent-swarm-cli
 
-Evidence-backed wide-search CLI for the Kimi Agent Swarm. It turns a research objective into a structured evidence package: scored sources, extracted claims, verification reports, and exportable synthesis documents.
+Evidence-backed wide-search CLI for the unofficial Codex/Kimi skill pack. It turns a research objective into a structured evidence package: scored sources, extracted claims, verification reports, completion evidence, and exportable synthesis documents.
+
+Current package version: `1.0.2`.
 
 ## Install
 
@@ -60,7 +62,7 @@ kasw research "<objective>" [options]
 | Flag | Description |
 | --- | --- |
 | `--profile <profile>` | Execution profile (see below). Default: `fixture` |
-| `--provider <name>` | Search provider: `mock`, `serper`, `tavily`, `brave`, `github`. Default: `mock` |
+| `--provider <name>` | Search provider: `mock`, `serper`, `tavily`, `brave`, `github`, `public-reader`. Default: `mock` |
 | `--provider-name <name>` | Alias for `--provider` |
 | `--provider-command <cmd>` | External command for `local-command` profile |
 | `--provider-args <args>` | Space-separated arguments passed to `--provider-command` |
@@ -71,6 +73,7 @@ kasw research "<objective>" [options]
 | `--max-api-calls <n>` | Abort if API calls exceed budget |
 | `--dry-run` | Print cost estimate without executing or writing run artifacts |
 | `--use-cache` | Reuse cached provider responses when available |
+| `--allow-public-reader-hostnames` | Let `public-reader` fetch normal DNS-validated public hostnames. Default: IP literals only |
 | `--replay <run-id>` | Rerun a previous run with the same inputs |
 | `--distributed` | Execute using distributed worker tasks |
 | `--workers <n>` | Number of in-process workers for distributed runs. Default: `4` |
@@ -102,6 +105,10 @@ Print a concise summary of a run.
 ```bash
 kasw inspect --run-dir <run-dir>
 ```
+
+Distributed runs include a `distributedJob` block with job status, queue type, worker mode,
+task counts, stale/running and retry counts, and the next recovery command. Secret-shaped queue
+credentials are not printed.
 
 ### `export`
 
@@ -256,6 +263,7 @@ Credentials are resolved in this order: environment variable → config file →
 | `tavily` | `TAVILY_API_KEY` | AI-native search |
 | `brave` | `BRAVE_API_KEY` | Brave Search API |
 | `github` | `GITHUB_TOKEN` | GitHub repository search (token raises rate limits) |
+| `public-reader` | none | Reads explicit public HTTP(S) URLs from the objective. Hostnames require opt-in; private networks, metadata hosts, `.local`, userinfo URLs, auth walls, oversized responses, and unsafe redirects stay blocked |
 
 Set keys in your shell:
 
@@ -277,6 +285,8 @@ For CI or development, each live provider can run in deterministic mock mode by 
 
 When a `*_MOCK=1` variable is set, the provider always returns bundled fixture results and does not call the external API, even if a credential is configured. This is useful for reproducible tests without removing saved API keys.
 
+`public-reader` has no credential mode. It only reads URLs present in the objective and rejects private network targets, non-HTTP(S) protocols, auth walls, private redirects, and oversized responses.
+
 ## Configuration file
 
 Config files are JSON. Two locations are supported:
@@ -296,7 +306,8 @@ Config files are JSON. Two locations are supported:
 {
   "providers": {
     "tavily": { "apiKey": "tvly-..." },
-    "github": { "token": "ghp_..." }
+    "github": { "token": "ghp_..." },
+    "public-reader": { "allowHostnames": true }
   },
   "defaults": {
     "provider": "tavily",
@@ -306,7 +317,7 @@ Config files are JSON. Two locations are supported:
 }
 ```
 
-Provider entries accept either `apiKey` or `token`; both are treated as the credential when resolving provider authentication.
+Provider entries accept either `apiKey` or `token`; both are treated as the credential when resolving provider authentication. For `public-reader`, `allowHostnames: true` is the config equivalent of `--allow-public-reader-hostnames`; without it, only public IP literal URLs are eligible.
 
 ## Cache, replay, and dry-run
 
@@ -389,6 +400,8 @@ A benchmark passes when recall ≥ 0.5 and citation accuracy ≥ 0.8. URL covera
 | --- | --- |
 | `0` | Success |
 | `1` | Invalid usage, unknown command, validation error, or runtime failure |
+
+Strict claim verification separates verified, unresolved, and refuted high-risk claims. Runs that require completion evidence reject missing or secret-shaped evidence before treating a synthesis as complete.
 
 Errors print a concise message to `stderr`. Common error cases:
 

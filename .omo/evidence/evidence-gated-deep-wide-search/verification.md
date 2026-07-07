@@ -27,5 +27,5 @@
 - Reviewer 1 strict verifier/completion evidence -> OK after unclassified claims and structured secret evidence fixes.
 - Reviewer 2 public-reader security -> OK after IPv4-mapped IPv6 canonical hex fix.
 - Reviewer 3 CLI/e2e/distributed strict propagation -> OK after forwarding `strictClaims` through distributed runs.
-- Reviewer 4 slop/size -> OK after provider address split kept changed files under 250 pure LOC.
+- Reviewer 4 slop/size -> F2 follow-up split oversized integrated CLI coverage: `tests/cli.test.ts` 118 pure LOC, `tests/cli-inspect.test.ts` 181 pure LOC, `tests/cli-leaderboard-export.test.ts` 64 pure LOC, `tests/cli-test-utils.ts` 38 pure LOC.
 - Reviewer 5 packaging/release -> OK after final prepublish and pack dry-run.

@@ -18,6 +18,7 @@ export { TavilySearchProvider } from './tavily-provider';
 export interface CreateSearchProviderOptions {
   credential?: string;
   metrics?: UsageMetrics;
+  allowPublicReaderHostnames?: boolean;
 }
 
 export function createSearchProvider(
@@ -29,9 +30,9 @@ export function createSearchProvider(
     throw new Error(`Unknown search provider: ${name}`);
   }
 
-  const { credential, metrics } = options;
+  const { credential, metrics, allowPublicReaderHostnames } = options;
   const resolvedCredential =
     credential ?? (descriptor.envVar ? process.env[descriptor.envVar] : '');
 
-  return descriptor.factory(resolvedCredential ?? '', metrics);
+  return descriptor.factory(resolvedCredential ?? '', metrics, { allowPublicReaderHostnames });
 }

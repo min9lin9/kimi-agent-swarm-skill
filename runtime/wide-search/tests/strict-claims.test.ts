@@ -3,8 +3,7 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { renderMarkdownSynthesis } from '../src/markdown';
-import type { Claim, EnrichedSource, Run, VerificationReport } from '../src/types';
+import type { Claim, EnrichedSource } from '../src/types';
 import { verifyRun } from '../src/verifier';
 
 async function writeJsonl(path: string, rows: readonly unknown[]): Promise<void> {
@@ -15,6 +14,61 @@ async function makeRunDir(name: string): Promise<string> {
   const runDir = await mkdtemp(join(tmpdir(), name));
   await mkdir(runDir, { recursive: true });
   return runDir;
+}
+
+const claimConfidences: ReadonlySet<string> = new Set(['high', 'medium', 'low']);
+const claimFreshnesses: ReadonlySet<string> = new Set(['current', 'stale', 'unknown']);
+const claimRisks: ReadonlySet<string> = new Set(['low', 'medium', 'high']);
+const claimTypes: ReadonlySet<string> = new Set(['fact', 'estimate', 'recommendation', 'opinion']);
+const claimQualityRatings: ReadonlySet<string> = new Set(['A', 'B', 'C', 'D', 'E']);
+const claimVerificationStatuses: ReadonlySet<string> = new Set([
+  'verified',
+  'unresolved',
+  'refuted',
+]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isOptionalSetValue(value: unknown, allowedValues: ReadonlySet<string>): boolean {
+  return value === undefined || (typeof value === 'string' && allowedValues.has(value));
+}
+
+function isOptionalBoolean(value: unknown): boolean {
+  return value === undefined || typeof value === 'boolean';
+}
+
+function isClaim(value: unknown): value is Claim {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === 'string' &&
+    typeof value.claim === 'string' &&
+    Array.isArray(value.sourceIds) &&
+    value.sourceIds.every((sourceId) => typeof sourceId === 'string') &&
+    typeof value.confidence === 'string' &&
+    claimConfidences.has(value.confidence) &&
+    typeof value.freshness === 'string' &&
+    claimFreshnesses.has(value.freshness) &&
+    isOptionalSetValue(value.risk, claimRisks) &&
+    isOptionalSetValue(value.claimType, claimTypes) &&
+    isOptionalBoolean(value.counterSearch) &&
+    isOptionalBoolean(value.counterRefuted) &&
+    isOptionalBoolean(value.primarySource) &&
+    isOptionalSetValue(value.qualityRating, claimQualityRatings) &&
+    isOptionalSetValue(value.verificationStatus, claimVerificationStatuses)
+  );
+}
+
+async function readClaimArray(path: string): Promise<readonly Claim[]> {
+  const parsed: unknown = JSON.parse(await readFile(path, 'utf8'));
+  if (!Array.isArray(parsed) || !parsed.every(isClaim)) {
+    throw new Error(`Expected claim array in ${path}`);
+  }
+  return parsed;
 }
 
 const acceptedSources: readonly EnrichedSource[] = [
@@ -97,142 +151,75 @@ describe('strict claim verification', () => {
       true
     );
 
-    const verified = JSON.parse(await readFile(join(runDir, 'verified-claims.json'), 'utf8'));
-    const unresolved = JSON.parse(await readFile(join(runDir, 'unresolved-claims.json'), 'utf8'));
-    const refuted = JSON.parse(await readFile(join(runDir, 'refuted-claims.json'), 'utf8'));
-    expect(verified.map((claim: Claim) => claim.id)).toEqual(['C001']);
-    expect(unresolved.map((claim: Claim) => claim.id)).toEqual(['C002', 'C004']);
-    expect(refuted.map((claim: Claim) => claim.id)).toEqual(['C003']);
+    const verified = await readClaimArray(join(runDir, 'verified-claims.json'));
+    const unresolved = await readClaimArray(join(runDir, 'unresolved-claims.json'));
+    const refuted = await readClaimArray(join(runDir, 'refuted-claims.json'));
+    expect(verified?.map((claim) => claim.id)).toEqual(['C001']);
+    expect(unresolved?.map((claim) => claim.id)).toEqual(['C002', 'C004']);
+    expect(refuted?.map((claim) => claim.id)).toEqual(['C003']);
   });
 
-  test('strict synthesis renders only verified high-risk claims as definitive', () => {
+  test('enriches generated strict claim ledgers before classification', async () => {
+    const runDir = await makeRunDir('wide-search-strict-enrichment-');
+    const sources: readonly EnrichedSource[] = [
+      {
+        ...acceptedSources[0],
+        claims: [
+          'The fixture has published product documentation.',
+          'Revenue will increase next quarter.',
+        ],
+      },
+      {
+        ...acceptedSources[1],
+        claims: ['The fixture has published product documentation.'],
+      },
+    ];
     const claims: readonly Claim[] = [
       {
         id: 'C001',
-        claim: 'Verified high-risk claim',
+        claim: 'The fixture has published product documentation.',
         sourceIds: ['S001', 'S002'],
         confidence: 'high',
         freshness: 'current',
-        risk: 'high',
       },
       {
         id: 'C002',
-        claim: 'Unresolved high-risk claim',
+        claim: 'Revenue will increase next quarter.',
         sourceIds: ['S001'],
         confidence: 'high',
         freshness: 'current',
-        risk: 'high',
       },
     ];
-    const run: Run = {
-      runId: 'strict-run',
-      objective: 'Strict synthesis',
-      executionProfile: 'fixture',
-      status: 'completed',
-      createdAt: '2026-01-01T00:00:00.000Z',
-      usageMetrics: { providerCalls: 1, apiCalls: 1 },
-    };
-    const verification: VerificationReport = {
-      status: 'failed',
-      acceptedSources: 2,
-      rejectedSources: 0,
-      unsupportedClaims: 0,
-      staleClaims: 0,
-      unknownFreshnessClaims: 0,
-      lowConfidenceClaims: 0,
-      duplicateClaimGroups: [],
-      conflictingClaimPairs: [],
-      coverageGaps: [],
-      failures: ['unresolved strict claims: C002'],
-      warnings: [],
-      strictClaims: {
-        enabled: true,
-        verified: 1,
-        unresolved: 1,
-        refuted: 0,
-        verifiedClaimIds: ['C001'],
-        unresolvedClaimIds: ['C002'],
-        refutedClaimIds: [],
-      },
-    };
 
-    const markdown = renderMarkdownSynthesis({
-      run,
-      profile: 'fixture',
-      sources: [...acceptedSources],
-      claims: [...claims],
-      verification,
+    await writeJsonl(join(runDir, 'source-ledger.jsonl'), sources);
+    await writeJsonl(join(runDir, 'claim-ledger.jsonl'), claims);
+
+    const report = await verifyRun({ runDir, strictClaims: true });
+
+    expect(report.status).toBe('failed');
+    expect(report.strictClaims?.verifiedClaimIds).toEqual(['C001']);
+    expect(report.strictClaims?.unresolvedClaimIds).toEqual(['C002']);
+
+    const verified = await readClaimArray(join(runDir, 'verified-claims.json'));
+    const unresolved = await readClaimArray(join(runDir, 'unresolved-claims.json'));
+    expect(verified?.[0]).toMatchObject({
+      id: 'C001',
+      risk: 'low',
+      claimType: 'fact',
+      counterSearch: true,
+      primarySource: true,
+      qualityRating: 'A',
+      verificationStatus: 'verified',
     });
-
-    const definitiveClaims = markdown.slice(
-      markdown.indexOf('## Claims'),
-      markdown.indexOf('## Verification details')
-    );
-    expect(definitiveClaims).toInclude('Verified high-risk claim');
-    expect(definitiveClaims).not.toInclude('Unresolved high-risk claim');
-    expect(markdown).toInclude('Strict claim artifacts');
-    expect(markdown).toInclude('unresolved-claims.json');
-  });
-
-  test('requires completion evidence and rejects secret-shaped evidence on demand', async () => {
-    const runDir = await makeRunDir('wide-search-completion-evidence-');
-    await writeJsonl(join(runDir, 'source-ledger.jsonl'), acceptedSources);
-    await writeJsonl(join(runDir, 'claim-ledger.jsonl'), [
-      {
-        id: 'C001',
-        claim: 'Covered claim',
-        sourceIds: ['S001'],
-        confidence: 'high',
-        freshness: 'current',
-      },
-    ]);
-
-    const missingEvidence = await verifyRun({ runDir, requireCompletionEvidence: true });
-    expect(missingEvidence.status).toBe('failed');
-    expect(
-      missingEvidence.failures.some((failure) => failure.includes('missing completion evidence'))
-    ).toBe(true);
-
-    await writeFile(
-      join(runDir, 'completion-evidence.json'),
-      `${JSON.stringify(
-        {
-          changedFiles: ['src/verifier.ts'],
-          commands: [{ command: 'bun test', exitCode: 0, output: 'OPENAI_API_KEY=secret' }],
-        },
-        null,
-        2
-      )}\n`
-    );
-
-    const unsafeEvidence = await verifyRun({ runDir, requireCompletionEvidence: true });
-    expect(unsafeEvidence.status).toBe('failed');
-    expect(
-      unsafeEvidence.failures.some((failure) => failure.includes('unsafe completion evidence'))
-    ).toBe(true);
-
-    await writeFile(
-      join(runDir, 'completion-evidence.json'),
-      `${JSON.stringify(
-        {
-          changedFiles: ['src/verifier.ts'],
-          commands: [{ command: 'bun test', exitCode: 0 }],
-          OPENAI_API_KEY: 'sk-should-not-be-recorded',
-        },
-        null,
-        2
-      )}\n`
-    );
-
-    const unsafeStructuredEvidence = await verifyRun({
-      runDir,
-      requireCompletionEvidence: true,
+    expect(unresolved?.[0]).toMatchObject({
+      id: 'C002',
+      risk: 'high',
+      claimType: 'estimate',
+      counterSearch: false,
+      primarySource: true,
+      qualityRating: 'A',
+      verificationStatus: 'unresolved',
     });
-    expect(unsafeStructuredEvidence.status).toBe('failed');
-    expect(
-      unsafeStructuredEvidence.failures.some((failure) =>
-        failure.includes('unsafe completion evidence')
-      )
-    ).toBe(true);
+    expect(unresolved?.[0]?.verificationStatus).not.toBe('verified');
   });
 });

@@ -20,11 +20,11 @@ function isCompletionCommand(value: unknown): value is CompletionCommandEvidence
 
 const SECRET_KEY_PATTERN = /(api[_-]?key|token|secret|password|cookie|authorization)/i;
 const SECRET_TEXT_PATTERN =
-  /(api[_-]?key|token|secret|password|cookie|authorization)\s*[:=]|bearer\s+\S+|sk-[A-Za-z0-9_-]{8,}/i;
+  /(api[_-]?key|token|secret|password|cookie|authorization)\s*[:=]|bearer\s+\S+|sk-[A-Za-z0-9_-]{8,}|rediss?:\/\/[^\/\s@]*:[^\/\s@]+@/i;
 
 function containsSecretShape(value: unknown, depth = 0): boolean {
   if (depth > 8) {
-    return false;
+    return true;
   }
   if (typeof value === 'string') {
     return SECRET_TEXT_PATTERN.test(value);

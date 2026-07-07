@@ -12,6 +12,7 @@ type UrlBlockReason =
   | 'unsupported_protocol'
   | 'private_address'
   | 'blocked_host'
+  | 'userinfo_not_supported'
   | 'hostname_not_supported';
 
 type PublicUrlCheck =
@@ -20,6 +21,7 @@ type PublicUrlCheck =
 
 type Resolver = (hostname: string) => Promise<readonly string[]>;
 type Fetcher = (url: string, init: RequestInit) => Promise<Response>;
+type FetchTarget = { readonly url: URL; readonly headers: Headers };
 
 export interface PublicReaderProviderOptions {
   readonly resolver?: Resolver;
@@ -36,6 +38,7 @@ interface PublicReaderUrlOptions {
 
 const DEFAULT_MAX_BYTES = 200_000;
 const DEFAULT_MAX_REDIRECTS = 3;
+const ACCEPT_HEADER = 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.1';
 
 const BLOCKED_HOSTS = new Set(['localhost', 'metadata.google.internal']);
 
@@ -53,6 +56,15 @@ function isBlockedHostname(hostname: string): boolean {
   return BLOCKED_HOSTS.has(host) || host.endsWith('.local');
 }
 
+function formatIpHost(address: string): string {
+  return isIP(address) === 6 ? `[${address}]` : address;
+}
+
+function urlForAddress(url: URL, address: string): URL {
+  const port = url.port ? `:${url.port}` : '';
+  return new URL(`${url.protocol}//${formatIpHost(address)}${port}${url.pathname}${url.search}`);
+}
+
 export async function validatePublicReaderUrl(
   rawUrl: string,
   resolver: Resolver = defaultResolver,
@@ -67,6 +79,10 @@ export async function validatePublicReaderUrl(
 
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     return { ok: false, reason: 'unsupported_protocol' };
+  }
+
+  if (url.username || url.password) {
+    return { ok: false, reason: 'userinfo_not_supported' };
   }
 
   const host = normalizeHost(url.hostname);
@@ -218,8 +234,13 @@ export class PublicReaderProvider implements SearchProvider {
   }
 
   private async fetchPublicUrl(url: URL, redirectCount: number): Promise<Response | undefined> {
-    const response = await this.fetcher(url.href, {
-      headers: { accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.1' },
+    const target = await this.fetchTargetFor(url);
+    if (!target) {
+      return undefined;
+    }
+
+    const response = await this.fetcher(target.url.href, {
+      headers: target.headers,
       redirect: 'manual',
     });
 
@@ -239,5 +260,26 @@ export class PublicReaderProvider implements SearchProvider {
     }
 
     return response.ok ? response : undefined;
+  }
+
+  private async fetchTargetFor(url: URL): Promise<FetchTarget | undefined> {
+    const headers = new Headers({ accept: ACCEPT_HEADER });
+    const host = normalizeHost(url.hostname);
+    if (isIP(host)) {
+      return { url, headers };
+    }
+
+    if (url.protocol === 'https:') {
+      return undefined;
+    }
+
+    const addresses = await this.resolver(host);
+    const address = addresses[0];
+    if (!address || addresses.some((candidate) => !isPublicInternetIp(candidate))) {
+      return undefined;
+    }
+
+    headers.set('host', url.host);
+    return { url: urlForAddress(url, address), headers };
   }
 }

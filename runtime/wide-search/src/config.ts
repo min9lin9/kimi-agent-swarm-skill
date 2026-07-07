@@ -8,6 +8,7 @@ import type { ExecutionProfile, SearchDepth } from './types';
 export interface ProviderConfig {
   apiKey?: string;
   token?: string;
+  allowHostnames?: boolean;
 }
 
 export interface KaswConfig {

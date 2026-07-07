@@ -43,6 +43,7 @@ jobs:
           bash -n scripts/install-codex-skill.sh
           bash -n scripts/install-kimi-code-skill.sh
           bash -n scripts/sync-prompt-engineering-upstream.sh
+          bash -n runtime/wide-search/scripts/publish.sh
 
       - name: Parse Kimi Code CLI skill metadata
         run: |
@@ -68,13 +69,9 @@ jobs:
         working-directory: runtime/wide-search
         run: bun install
 
-      - name: Type-check runtime
+      - name: Run runtime publish quality gate
         working-directory: runtime/wide-search
-        run: bun run typecheck
-
-      - name: Run wide-search runtime tests
-        working-directory: runtime/wide-search
-        run: bun test
+        run: bun run prepublishOnly
 
       - name: Smoke wide-search runtime CLI
         working-directory: runtime/wide-search

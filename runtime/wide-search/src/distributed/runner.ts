@@ -51,6 +51,7 @@ export async function runDistributedWideSearch({
   replayRunId,
   distributed = { enabled: true },
   strictClaims = false,
+  allowPublicReaderHostnames = false,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   let replayedFrom: string | undefined;
 
@@ -179,6 +180,7 @@ export async function runDistributedWideSearch({
         budget,
         workDir,
         perTaskMaxResults,
+        allowPublicReaderHostnames,
       });
     }
 
@@ -199,6 +201,7 @@ export async function runDistributedWideSearch({
             useCache,
             budget,
             workDir,
+            allowPublicReaderHostnames: job.allowPublicReaderHostnames ?? false,
           })
         : new InProcessWorkerPool();
 
@@ -213,6 +216,7 @@ export async function runDistributedWideSearch({
       useCache,
       budget,
       workDir,
+      allowPublicReaderHostnames: job.allowPublicReaderHostnames ?? false,
     });
 
     const { run, researchPlan, sources, claims } = await finalizeDistributedRun(completedJob, {

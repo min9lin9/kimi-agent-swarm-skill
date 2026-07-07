@@ -16,7 +16,8 @@
     "lint": "biome lint .",
     "format": "biome format . --write",
     "check": "biome check .",
-    "prepublishOnly": "bun run typecheck && bun run check && bun test",
+    "quality": "bun run typecheck && bun run check && bun test",
+    "prepublishOnly": "bun run quality",
     "pack": "npm pack"
   },
   "devDependencies": {

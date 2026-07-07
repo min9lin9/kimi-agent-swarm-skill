@@ -17,13 +17,15 @@ import { createSearchProvider, getProviderDescriptor } from './providers';
 import { scoreSource } from './scorer';
 import { extractClaims, loadFixtureSources } from './shared';
 import type {
-  BudgetOptions,
+  FinalizeRunOptions,
+  RunWideSearchTaskOptions,
+  RunWideSearchTaskResult,
+} from './shared-runtime-options';
+import type {
   Claim,
-  CostEstimate,
   EnrichedSource,
   ExecutionProfile,
   LoadSourcesOptions,
-  ResearchPlan,
   Run,
   SearchDepth,
   Source,
@@ -32,44 +34,11 @@ import type {
 } from './types';
 import { verifyRun } from './verifier';
 
-export interface RunWideSearchTaskOptions {
-  objective: string;
-  profile: ExecutionProfile;
-  providerName?: string;
-  providerCommand?: string;
-  providerArgs?: string[];
-  searchDepth?: SearchDepth;
-  useCache?: boolean;
-  budget?: BudgetOptions;
-  metrics?: UsageMetrics;
-  maxResults?: number;
-  sourceIds?: string[];
-  workDir?: string;
-  checkBudget?: boolean;
-}
-
-export interface RunWideSearchTaskResult {
-  sources: EnrichedSource[];
-  claims: Claim[];
-  usageMetrics: UsageMetrics;
-}
-
-export interface FinalizeRunOptions {
-  run: Run;
-  objective: string;
-  profile: ExecutionProfile;
-  sources: EnrichedSource[];
-  claims: Claim[];
-  plan?: ResearchPlan;
-  usageMetrics: UsageMetrics;
-  runDir: string;
-  budget?: BudgetOptions;
-  isDryRun?: boolean;
-  distributed?: boolean;
-  providerName: string;
-  estimate?: CostEstimate;
-  strictClaims?: boolean;
-}
+export type {
+  FinalizeRunOptions,
+  RunWideSearchTaskOptions,
+  RunWideSearchTaskResult,
+} from './shared-runtime-options';
 
 export function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
   if (profile === 'web-search') {
@@ -95,6 +64,7 @@ export async function loadSources({
   useCache,
   sourceIds,
   workDir,
+  allowPublicReaderHostnames = false,
 }: LoadSourcesOptions): Promise<Source[]> {
   if (profile.startsWith('fixture')) {
     const allSources = await loadFixtureSources(profile);
@@ -135,7 +105,11 @@ export async function loadSources({
 
     const config = await loadConfig(workDir);
     const credential = resolveProviderCredential(config, effectiveProvider);
-    const provider = createSearchProvider(effectiveProvider, { credential, metrics });
+    const provider = createSearchProvider(effectiveProvider, {
+      credential,
+      metrics,
+      allowPublicReaderHostnames,
+    });
     const sources = await provider.search({
       objective,
       depth,
@@ -166,6 +140,7 @@ export async function runWideSearchTask({
   sourceIds,
   workDir,
   checkBudget: shouldCheckBudget = true,
+  allowPublicReaderHostnames = false,
 }: RunWideSearchTaskOptions): Promise<RunWideSearchTaskResult> {
   const effectiveProviderName = resolveProviderName(profile, providerName);
   const usageMetrics: UsageMetrics = metrics ?? {
@@ -185,6 +160,7 @@ export async function runWideSearchTask({
     useCache,
     sourceIds,
     workDir,
+    allowPublicReaderHostnames,
   });
 
   const sources: EnrichedSource[] = rawSources.map((source) => scoreSource(source));
