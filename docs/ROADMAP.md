@@ -2,16 +2,16 @@
 
 This roadmap tracks the path from Codex prompt skill to evidence-backed wide-search product.
 
-## Current State: v0.7.0
+## Current State: v1.0.2
 
 Strengths:
 
 - Kimi Code CLI skill using built-in `AgentSwarm` and subagents
 - Bun + TypeScript wide-search runtime
 - 6 benchmark fixtures with golden answers
-- 5 search providers (mock, serper, tavily, brave, github)
+- 6 search providers (mock, serper, tavily, brave, github, public-reader)
 - source scorer with weighted scoring, domain authority, and freshness penalties
-- verifier with duplicate, conflict, freshness, confidence, broken-reference, and coverage-gap checks
+- strict claim verifier with duplicate, conflict, freshness, confidence, broken-reference, coverage-gap, unresolved/refuted claim, and completion-evidence checks
 - cost estimator, budget enforcement, and dry-run mode
 - config cascade (`~/.kasw/config.json`)
 - provider response caching and run replay
@@ -83,8 +83,10 @@ A 9.8+ product must provide:
    - Redis-backed distributed queue adapter ✓
    - retries and resume ✓
    - JSON/CSV export ✓
-8. v1.0 community & polish
+8. v1.0 community & polish ✓
    - benchmark leaderboard ✓
    - npm package ✓
+   - public-reader provider ✓
+   - strict claims and completion evidence ✓
    - Notion/Slack export
    - community provider registry

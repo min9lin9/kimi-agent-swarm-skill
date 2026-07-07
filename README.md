@@ -4,13 +4,13 @@
 
 Skill pack for refining rough user intent into a prompt contract, then routing the approved prompt into Kimi Agent Swarm-style research, Kimi Code subagent, Search Swarm+, or OMK-lite workflows.
 
-Status: `v0.7.0`
+Status: `v1.0.2`
 
 Includes:
 
 - `kimi-agent-swarm-prompt`: Codex-only skill.
 - `kimi-agent-swarm-cli`: Kimi Code CLI skill using the built-in `AgentSwarm` tool and subagents.
-- `runtime/wide-search`: local wide-search runtime with scorer, verifier, provider registry, caching, replay, distributed execution, and benchmark leaderboard.
+- `runtime/wide-search`: local wide-search runtime with scorer, strict claim verifier, completion evidence checks, six-provider registry, caching, replay, distributed execution, and benchmark leaderboard.
 - `bin/kasw`: single-entry CLI for research, export, benchmark, leaderboard, init, and distributed worker workflows.
 - Published on npm as `kimi-agent-swarm-cli`.
 
@@ -270,6 +270,7 @@ Providers:
 - `tavily`: Tavily AI search API (requires `TAVILY_API_KEY`, or `TAVILY_MOCK=1` for CI)
 - `brave`: Brave Search API (requires `BRAVE_API_KEY`, or `BRAVE_MOCK=1` for CI)
 - `github`: GitHub repository search (requires `GITHUB_TOKEN`, or `GITHUB_MOCK=1` for CI)
+- `public-reader`: fetches explicit public HTTP(S) URLs after private-network and auth-wall checks
 
 Examples:
 
@@ -379,7 +380,7 @@ Distributed execution:
 ./bin/kasw research --resume-job-id <job-id> --distributed
 ```
 
-The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, `distributed-job.json`, and optionally `export.json`/`export.csv`.
+The runtime writes `.runs/wide-search/<run-id>/` with `run.json`, `research-plan.json`, `source-ledger.jsonl`, `claim-ledger.jsonl`, `synthesis.md`, `verification-report.json`, strict claim artifacts, completion evidence, `distributed-job.json`, and optionally `export.json`/`export.csv`.
 
 Benchmark results are tracked in [BENCHMARKS.md](BENCHMARKS.md) and the live leaderboard:
 
@@ -474,7 +475,7 @@ Before publishing:
 - `scripts/install-kimi-code-skill.sh` installs into a temp `KIMI_CODE_HOME`.
 - `THIRD_PARTY_NOTICES.md` names upstream repo, license, snapshot commit, and included files.
 - README says unofficial and does not claim hosted Kimi Agent Swarm parity.
-- [docs/CODE_QUALITY.md](docs/CODE_QUALITY.md) quality gates pass.
+- [docs/CODE_QUALITY.md](docs/CODE_QUALITY.md) quality gates pass, including the runtime `prepublishOnly` gate.
 - [docs/CODE_REVIEW.md](docs/CODE_REVIEW.md) review checklist passes.
 - GitHub authentication is valid for the target owner.
 
