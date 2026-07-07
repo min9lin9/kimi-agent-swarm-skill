@@ -5,6 +5,7 @@ import type { SearchProvider } from './search-provider';
 export * from './search-provider';
 export { BraveSearchProvider } from './brave-provider';
 export { GitHubSearchProvider } from './github-provider';
+export { InsaneSearchProvider } from './insane-search-provider';
 export { MockSearchProvider } from './mock-search-provider';
 export {
   PROVIDER_REGISTRY,

@@ -1,6 +1,7 @@
 import type { ProviderPricing, UsageMetrics } from '../types';
 import { BraveSearchProvider } from './brave-provider';
 import { GitHubSearchProvider } from './github-provider';
+import { InsaneSearchProvider } from './insane-search-provider';
 import { MockSearchProvider } from './mock-search-provider';
 import type { SearchProvider } from './search-provider';
 import { SerperSearchProvider } from './serper-provider';
@@ -71,6 +72,16 @@ export const PROVIDER_REGISTRY: ProviderDescriptor[] = [
     pricing: { perCallUsd: 0 },
     defaultMaxResults: 100,
     description: 'GitHub repository search',
+  },
+  {
+    name: 'insane-search',
+    factory: (_credential, metrics) => new InsaneSearchProvider('', metrics),
+    envVar: undefined,
+    credentialType: 'apiKey',
+    credentialTypeLabel: 'none',
+    pricing: { perCallUsd: 0 },
+    defaultMaxResults: 10,
+    description: 'Public-page fallback reader via an insane-search-compatible command',
   },
 ];
 

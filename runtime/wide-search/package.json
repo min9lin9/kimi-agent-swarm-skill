@@ -1,7 +1,7 @@
 {
   "name": "kimi-agent-swarm-cli",
-  "version": "1.0.1",
-  "description": "Evidence-backed wide-search CLI with provider registry, distributed execution, and benchmark leaderboard",
+  "version": "1.1.0",
+  "description": "Evidence-backed wide-search CLI with provider registry, Claude Code and Gajae-Code adapters, distributed execution, and benchmark leaderboard",
   "type": "module",
   "bin": {
     "kasw": "src/cli.ts"
@@ -36,7 +36,10 @@
     "cli",
     "registry",
     "benchmark",
-    "distributed"
+    "distributed",
+    "claude-code",
+    "gajae-code",
+    "insane-search"
   ],
   "license": "MIT",
   "repository": {
