@@ -116,6 +116,74 @@ describe('renderMarkdownSynthesis', () => {
     expect(md).toInclude('current');
   });
 
+  test('renders only verified high-risk claims as definitive in strict mode', () => {
+    const claims: readonly Claim[] = [
+      {
+        id: 'C001',
+        claim: 'Verified high-risk claim',
+        sourceIds: ['S001'],
+        confidence: 'high',
+        freshness: 'current',
+        risk: 'high',
+      },
+      {
+        id: 'C002',
+        claim: 'Unresolved high-risk claim',
+        sourceIds: ['S001'],
+        confidence: 'high',
+        freshness: 'current',
+        risk: 'high',
+      },
+      {
+        id: 'C003',
+        claim: 'Refuted high-risk claim',
+        sourceIds: ['S001'],
+        confidence: 'high',
+        freshness: 'current',
+        risk: 'high',
+      },
+      {
+        id: 'C004',
+        claim: 'Unclassified fallback claim',
+        sourceIds: ['S001'],
+        confidence: 'high',
+        freshness: 'current',
+      },
+    ];
+    const verification: VerificationReport = {
+      ...baseVerification,
+      status: 'failed',
+      failures: ['unresolved strict claims: C002'],
+      strictClaims: {
+        enabled: true,
+        verified: 1,
+        unresolved: 1,
+        refuted: 1,
+        verifiedClaimIds: ['C001'],
+        unresolvedClaimIds: ['C002'],
+        refutedClaimIds: ['C003'],
+      },
+    };
+
+    const markdown = renderMarkdownSynthesis({
+      run: baseRun,
+      profile: 'fixture',
+      sources: [baseSource],
+      claims: [...claims],
+      verification,
+    });
+
+    const definitiveClaims = markdown.slice(
+      markdown.indexOf('## Claims'),
+      markdown.indexOf('## Verification details')
+    );
+    expect(definitiveClaims).toInclude('Verified high-risk claim');
+    expect(definitiveClaims).not.toInclude('Unresolved high-risk claim');
+    expect(definitiveClaims).not.toInclude('Refuted high-risk claim');
+    expect(definitiveClaims).not.toInclude('Unclassified fallback claim');
+    expect(markdown).toInclude('Strict claim artifacts');
+  });
+
   test('escapes markdown-sensitive characters in free text', () => {
     const md = renderMarkdownSynthesis({
       run: baseRun,
