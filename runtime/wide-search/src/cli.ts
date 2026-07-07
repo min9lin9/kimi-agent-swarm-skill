@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +17,7 @@ import {
   validateEnum,
 } from './cli-contract';
 import { maxResultsForDepth } from './costs';
+import { summarizeDistributedJob } from './distributed/job-inspect';
 import { MemoryQueueAdapter } from './distributed/memory-adapter';
 import type { QueueAdapter } from './distributed/queue-adapter';
 import { RedisQueueAdapter } from './distributed/redis-adapter';
@@ -26,7 +28,7 @@ import { clearLeaderboard, compareRuns, generateHtmlReport, getLeaderboard } fro
 import { defaultLogger, setDefaultLoggerLevel } from './logger';
 import { PROVIDER_REGISTRY, listProviderNames } from './providers';
 import { runWideSearch } from './runtime';
-import type { ExecutionProfile, RunWideSearchResult } from './types';
+import type { DistributedJob, ExecutionProfile, RunWideSearchResult } from './types';
 import { verifyRun } from './verifier';
 
 async function inspectRun(runDir: string): Promise<{
@@ -37,6 +39,7 @@ async function inspectRun(runDir: string): Promise<{
   verificationStatus: string;
   acceptedSources: number;
   rejectedSources: number;
+  distributedJob?: ReturnType<typeof summarizeDistributedJob>;
 }> {
   const run = JSON.parse(await readFile(join(runDir, 'run.json'), 'utf8')) as {
     runId: string;
@@ -51,7 +54,7 @@ async function inspectRun(runDir: string): Promise<{
     acceptedSources: number;
     rejectedSources: number;
   };
-  return {
+  const inspected = {
     runId: run.runId,
     objective: run.objective,
     executionProfile: run.executionProfile,
@@ -60,6 +63,11 @@ async function inspectRun(runDir: string): Promise<{
     acceptedSources: verification.acceptedSources,
     rejectedSources: verification.rejectedSources,
   };
+  const jobPath = join(runDir, 'distributed-job.json');
+  if (!existsSync(jobPath)) return inspected;
+
+  const job = JSON.parse(await readFile(jobPath, 'utf8')) as DistributedJob;
+  return { ...inspected, distributedJob: summarizeDistributedJob(job) };
 }
 
 async function handleRun(args: string[]): Promise<void> {
