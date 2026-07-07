@@ -206,6 +206,7 @@ async function handleRun(args: string[]): Promise<void> {
     'standard';
 
   const useCache = getBooleanFlag(parsed, 'use-cache');
+  const strictClaims = getBooleanFlag(parsed, 'strict-claims');
   const distributedEnabled = getBooleanFlag(parsed, 'distributed');
   const workers = getNumberFlag(parsed, 'workers');
   const maxRetries = getNumberFlag(parsed, 'max-retries');
@@ -255,6 +256,7 @@ async function handleRun(args: string[]): Promise<void> {
     useCache,
     replayRunId,
     distributed,
+    strictClaims,
   });
   console.log(JSON.stringify(result, null, 2));
 }
@@ -266,7 +268,11 @@ async function handleVerify(args: string[]): Promise<void> {
     return;
   }
   const runDir = getFlag(parsed, 'run-dir');
-  const result = await verifyRun({ runDir });
+  const result = await verifyRun({
+    runDir,
+    strictClaims: getBooleanFlag(parsed, 'strict-claims'),
+    requireCompletionEvidence: getBooleanFlag(parsed, 'require-completion-evidence'),
+  });
   console.log(JSON.stringify(result, null, 2));
 }
 
@@ -493,6 +499,9 @@ function printUsage(exitCode = 1): void {
     '    --use-cache                   reuse cached provider responses when available'
   );
   defaultLogger.error(
+    '    --strict-claims               write strict claim artifacts and gate synthesis'
+  );
+  defaultLogger.error(
     '    --replay <run-id>             rerun a previous run with the same inputs'
   );
   defaultLogger.error('    --distributed                 execute using distributed worker tasks');
@@ -514,6 +523,8 @@ function printUsage(exitCode = 1): void {
   defaultLogger.error(
     '    --task-timeout-ms <n>         max time a distributed task may stay running (default: 300000)'
   );
+  defaultLogger.error('');
+  defaultLogger.error('  verify --run-dir <dir> [--strict-claims] [--require-completion-evidence]');
   defaultLogger.error('');
   defaultLogger.error(
     '  worker --job-id <id> [--worker-id <id>] [--work-dir <dir>] [--queue-type <memory|redis>]'

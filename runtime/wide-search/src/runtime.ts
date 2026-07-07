@@ -25,6 +25,7 @@ export async function runWideSearch({
   useCache = false,
   replayRunId,
   distributed,
+  strictClaims = false,
 }: RunWideSearchOptions = {}): Promise<RunWideSearchResult> {
   let replayedFrom: string | undefined;
 
@@ -67,6 +68,7 @@ export async function runWideSearch({
       budget,
       useCache,
       distributed,
+      strictClaims,
     });
   }
 
@@ -101,6 +103,7 @@ export async function runWideSearch({
         isDryRun: true,
         providerName: effectiveProviderName,
         estimate,
+        strictClaims,
       });
       await rmdir(runDir).catch(() => {});
       return { runId, runDir, verification };
@@ -164,6 +167,7 @@ export async function runWideSearch({
       runDir,
       budget,
       providerName: effectiveProviderName,
+      strictClaims,
     });
 
     return {

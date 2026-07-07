@@ -41,12 +41,27 @@ export type ClaimConfidence = 'high' | 'medium' | 'low';
 
 export type ClaimFreshness = 'current' | 'stale' | 'unknown';
 
+export type ClaimRisk = 'low' | 'medium' | 'high';
+
+export type ClaimType = 'fact' | 'estimate' | 'recommendation' | 'opinion';
+
+export type ClaimQualityRating = 'A' | 'B' | 'C' | 'D' | 'E';
+
+export type ClaimVerificationStatus = 'verified' | 'unresolved' | 'refuted';
+
 export interface Claim {
   id: string;
   claim: string;
   sourceIds: string[];
   confidence: ClaimConfidence;
   freshness: ClaimFreshness;
+  risk?: ClaimRisk;
+  claimType?: ClaimType;
+  counterSearch?: boolean;
+  counterRefuted?: boolean;
+  primarySource?: boolean;
+  qualityRating?: ClaimQualityRating;
+  verificationStatus?: ClaimVerificationStatus;
 }
 
 export interface UsageMetrics {
@@ -105,6 +120,17 @@ export interface VerificationReport {
   coverageGaps: string[];
   failures: string[];
   warnings: string[];
+  strictClaims?: StrictClaimReport;
+}
+
+export interface StrictClaimReport {
+  enabled: boolean;
+  verified: number;
+  unresolved: number;
+  refuted: number;
+  verifiedClaimIds: string[];
+  unresolvedClaimIds: string[];
+  refutedClaimIds: string[];
 }
 
 export interface RunWideSearchOptions {
@@ -119,6 +145,7 @@ export interface RunWideSearchOptions {
   useCache?: boolean;
   replayRunId?: string;
   distributed?: DistributedRunOptions;
+  strictClaims?: boolean;
 }
 
 export interface DistributedRunOptions {
@@ -194,6 +221,8 @@ export interface LoadSourcesOptions {
 export interface VerifyRunOptions {
   runDir?: string;
   minAcceptedSources?: number;
+  strictClaims?: boolean;
+  requireCompletionEvidence?: boolean;
 }
 
 export interface RunWideSearchResult {

@@ -68,6 +68,7 @@ export interface FinalizeRunOptions {
   distributed?: boolean;
   providerName: string;
   estimate?: CostEstimate;
+  strictClaims?: boolean;
 }
 
 export function resolveProviderName(profile: ExecutionProfile, providerName?: string): string {
@@ -211,6 +212,7 @@ export async function finalizeRun({
   distributed = false,
   providerName,
   estimate,
+  strictClaims = false,
 }: FinalizeRunOptions): Promise<{ run: Run; verification: VerificationReport }> {
   if (isDryRun) {
     if (estimate) {
@@ -255,7 +257,7 @@ export async function finalizeRun({
     `${claims.map((claim) => JSON.stringify(claim)).join('\n')}\n`
   );
 
-  const verification = await verifyRun({ runDir, minAcceptedSources: 1 });
+  const verification = await verifyRun({ runDir, minAcceptedSources: 1, strictClaims });
   const synthesis = renderMarkdownSynthesis({ run, profile, sources, claims, verification });
   await writeFile(join(runDir, 'synthesis.md'), synthesis);
 

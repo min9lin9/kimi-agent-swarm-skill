@@ -73,6 +73,21 @@ function renderClaimsTable(claims: Claim[]): string {
   return [header, separator, ...rows].join('\n');
 }
 
+function visibleClaimsForSynthesis(
+  claims: Claim[],
+  verification: VerificationReport | undefined
+): Claim[] {
+  if (!verification?.strictClaims?.enabled) {
+    return claims;
+  }
+
+  const unresolvedClaimIds = new Set(verification.strictClaims.unresolvedClaimIds);
+  const refutedClaimIds = new Set(verification.strictClaims.refutedClaimIds);
+  return claims.filter(
+    (claim) => !unresolvedClaimIds.has(claim.id) && !refutedClaimIds.has(claim.id)
+  );
+}
+
 function renderVerificationDetails(verification: VerificationReport | undefined): string {
   if (!verification) {
     return '*No verification report available.*';
@@ -127,6 +142,19 @@ function renderVerificationDetails(verification: VerificationReport | undefined)
     }
   }
 
+  if (verification.strictClaims?.enabled) {
+    lines.push(
+      '',
+      '### Strict claim artifacts',
+      `- **Verified claims:** ${verification.strictClaims.verified}`,
+      `- **Unresolved claims:** ${verification.strictClaims.unresolved}`,
+      `- **Refuted claims:** ${verification.strictClaims.refuted}`,
+      '- `verified-claims.json`',
+      '- `unresolved-claims.json`',
+      '- `refuted-claims.json`'
+    );
+  }
+
   return lines.join('\n');
 }
 
@@ -140,6 +168,7 @@ export function renderMarkdownSynthesis(options: {
   const { run, profile, sources, claims, verification } = options;
   const accepted = sources.filter((source) => source.decision === 'accepted');
   const rejected = sources.filter((source) => source.decision === 'rejected');
+  const visibleClaims = visibleClaimsForSynthesis(claims, verification);
 
   const sections = [
     `# Wide-Search Synthesis: ${escapeMarkdownCell(run.objective)}`,
@@ -166,7 +195,7 @@ export function renderMarkdownSynthesis(options: {
     '',
     '## Claims',
     '',
-    renderClaimsTable(claims),
+    renderClaimsTable(visibleClaims),
     '',
     '## Verification details',
     '',
@@ -184,6 +213,9 @@ export function renderMarkdownSynthesis(options: {
     '- `source-ledger.jsonl`',
     '- `claim-ledger.jsonl`',
     verification ? '- `verification-report.json`' : null,
+    verification?.strictClaims?.enabled ? '- `verified-claims.json`' : null,
+    verification?.strictClaims?.enabled ? '- `unresolved-claims.json`' : null,
+    verification?.strictClaims?.enabled ? '- `refuted-claims.json`' : null,
     '- `run.json`',
   ];
 
