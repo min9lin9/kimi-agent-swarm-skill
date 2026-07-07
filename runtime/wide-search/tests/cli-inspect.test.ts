@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { parseCliJson, runCli } from './cli-test-utils';
+import { parseCliJsonObject, runCli } from './cli-test-utils';
 
 describe('CLI inspect integration', () => {
   let workDir: string;
@@ -90,21 +90,7 @@ describe('CLI inspect integration', () => {
     const { exitCode, stdout } = await runCli(['inspect', '--run-dir', runDir]);
 
     expect(exitCode).toBe(0);
-    const parsed = parseCliJson(stdout) as {
-      runId: string;
-      objective: string;
-      distributedJob?: {
-        jobId: string;
-        status: string;
-        queueType: string;
-        workerMode: string;
-        taskCounts: Record<string, number>;
-        staleRunningTasks: number;
-        retryableFailedTasks: number;
-        retryExhaustedTasks: number;
-        recoveryCommand: string;
-      };
-    };
+    const parsed = parseCliJsonObject(stdout);
     expect(parsed.runId).toBe('run-distributed-inspect');
     expect(parsed.objective).toBe('inspect distributed recovery');
     expect(parsed.distributedJob).toEqual({
@@ -175,17 +161,12 @@ describe('CLI inspect integration', () => {
     const { exitCode, stdout } = await runCli(['inspect', '--run-dir', runDir]);
 
     expect(exitCode).toBe(0);
-    const parsed = parseCliJson(stdout) as {
-      distributedJob?: {
-        queueType: string;
-        workerMode: string;
-        taskCounts: Record<string, number>;
-        recoveryCommand: string;
-      };
-    };
-    expect(parsed.distributedJob?.queueType).toBe('memory');
-    expect(parsed.distributedJob?.workerMode).toBe('in-process');
-    expect(parsed.distributedJob?.taskCounts.completed).toBe(1);
-    expect(parsed.distributedJob?.recoveryCommand).toBe('none: distributed job already completed');
+    const parsed = parseCliJsonObject(stdout);
+    expect(parsed.distributedJob).toMatchObject({
+      queueType: 'memory',
+      workerMode: 'in-process',
+      taskCounts: { completed: 1 },
+      recoveryCommand: 'none: distributed job already completed',
+    });
   });
 });

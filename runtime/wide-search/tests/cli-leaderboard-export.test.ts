@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { parseCliJson, runCli } from './cli-test-utils';
+import { jsonStringField, parseCliJsonObject, runCli } from './cli-test-utils';
 
 describe('CLI leaderboard and export integration', () => {
   let workDir: string;
@@ -27,7 +27,7 @@ describe('CLI leaderboard and export integration', () => {
     ]);
 
     expect(runResult.exitCode).toBe(0);
-    const { runDir } = parseCliJson(runResult.stdout) as { runDir: string };
+    const runDir = jsonStringField(parseCliJsonObject(runResult.stdout), 'runDir');
 
     const outPath = join(workDir, 'export.json');
     const exportResult = await runCli([

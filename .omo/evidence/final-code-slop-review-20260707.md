@@ -2,29 +2,74 @@
 
 ## Verdict
 
-Status: PASS after F2 rerun fix.
+Status: PASS after F2/F4 blocker fixes.
 
 Scope reviewed:
 
 - Full changed TypeScript/test set from `origin/main...HEAD`.
 - Current working-tree F2 fix: `runtime/wide-search/tests/markdown.test.ts` split into `runtime/wide-search/tests/markdown-strict.test.ts`.
-- No production behavior changes were made for this rerun fix.
+- Current working-tree F2 assertion fix: listed plain TypeScript assertions were replaced with typed parser helpers and JSON boundary decoders.
+- Current working-tree F4 fix: public-reader auth-wall and oversized-response tests now use opt-in HTTP hostname fetches that reach the fetcher.
+
+## F2/F4 Blocker Fix Update
+
+Changed files:
+
+- `runtime/wide-search/src/cli-contract.ts`: replaced generic enum assertions with an `isAllowedValue` type guard.
+- `runtime/wide-search/src/cli.ts`: replaced inspect JSON assertions with typed JSON boundary parsers.
+- `runtime/wide-search/src/cli-inspect-json.ts`: added typed inspect run/report decoders.
+- `runtime/wide-search/src/distributed/job-json.ts`: added a typed distributed-job decoder for inspect.
+- `runtime/wide-search/tests/cli-test-utils.ts`: added object/string JSON helpers for CLI tests.
+- `runtime/wide-search/tests/cli-inspect.test.ts`: removed plain output-shape assertions.
+- `runtime/wide-search/tests/cli-leaderboard-export.test.ts`: removed the `runDir` output assertion.
+- `runtime/wide-search/tests/providers/public-reader.test.ts`: keeps provider fetch-path tests; auth-wall and oversized tests now use `http://example.com/...`, assert the fetcher was called through `http://93.184.216.34/...`, and the HTTPS hostname fail-closed test separately asserts no fetch.
+- `runtime/wide-search/tests/providers/public-reader-url.test.ts`: split URL/IP validation tests out of the provider fetch-path file to keep both files below the LOC ceiling.
+
+F4 behavior coverage:
+
+- Scenario: auth-wall rejection after a real provider fetch path.
+- Invocation: `bun test tests/providers/public-reader.test.ts`.
+- Binary observable: `drops auth walls without returning a source` passed and asserts `fetchLog.fetchedUrls` equals `['http://93.184.216.34/auth-wall']`.
+- Captured artifact path: this file.
+
+- Scenario: oversized-response rejection after a real provider fetch path.
+- Invocation: `bun test tests/providers/public-reader.test.ts`.
+- Binary observable: `drops oversized responses without buffering them as sources` passed and asserts `fetchLog.fetchedUrls` equals `['http://93.184.216.34/large']`.
+- Captured artifact path: this file.
+
+- Scenario: HTTPS hostname fail-closed behavior remains separate.
+- Invocation: `bun test tests/providers/public-reader.test.ts`.
+- Binary observable: `fails closed for explicit HTTPS hostnames because IP fetch cannot preserve TLS host verification` passed and asserts `fetchLog.fetchedUrls` equals `[]`.
+- Captured artifact path: this file.
+
+F2 assertion coverage:
+
+- Scenario: added TypeScript plain assertions and assertion escape hatches.
+- Invocation:
+
+```bash
+files=$({ git diff --name-only origin/main...HEAD -- '*.ts' '*.tsx' '*.mts' '*.cts'; git diff --name-only -- '*.ts' '*.tsx' '*.mts' '*.cts'; git ls-files --others --exclude-standard -- '*.ts' '*.tsx' '*.mts' '*.cts'; } | sort -u); rg -n 'as any|as unknown|@ts-ignore|@ts-expect-error|eslint-disable|biome-ignore|no-excuse-ok|SIZE_OK|allow: SIZE_OK|debt:|ponytail:|!\.' $files || true
+git diff --unified=0 origin/main -- '*.ts' '*.tsx' '*.mts' '*.cts' | rg -P '^\+(?!\+)(?!(?:\s*//)).*\sas\s+(?!const\b)[A-Za-z_][A-Za-z0-9_<>{}[\]|&?, :]*(?:[;,)={]|$)' || true
+```
+
+- Binary observable: first scan only reported pre-existing `runtime/wide-search/src/distributed/worker.ts` escape hatches already present on `origin/main`; second scan for added plain assertions had no output.
+- Captured artifact path: this file.
 
 ## Skill Lenses Applied
 
 ### `omo:programming`
 
 - TypeScript reference was loaded before editing.
-- New code stayed in TypeScript test files only.
-- No new `as any`, `as unknown`, `@ts-ignore`, `@ts-expect-error`, `SIZE_OK`, `no-excuse-ok`, or non-null assertions were added.
-- Changed TypeScript/test files are below the 250 pure-LOC ceiling after the split.
+- New code stayed in TypeScript source/test files and replaces assertion escape hatches with typed boundaries.
+- No new `as any`, `as unknown`, plain `as T`, `@ts-ignore`, `@ts-expect-error`, `SIZE_OK`, `no-excuse-ok`, or non-null assertions were added.
+- Changed TypeScript/test files are below the 250 pure-LOC ceiling after the public-reader URL/provider test split.
 
 ### `omo:remove-ai-slops`
 
-- This pass did not remove production logic.
+- This pass did not weaken production security behavior.
 - The oversized-test blocker was handled by cohesive extraction: strict/high-risk markdown rendering coverage moved to `tests/markdown-strict.test.ts`.
 - Existing assertions were preserved and still drive the real renderer surface.
-- No new helper abstraction or parser dependency was added for the split.
+- No parser dependency was added; small typed JSON helpers are used only at CLI/test JSON boundaries.
 
 ## Command Evidence
 
@@ -60,21 +105,23 @@ files=$({ git diff --name-only origin/main...HEAD -- '*.ts' '*.tsx' '*.mts' '*.c
 Top results:
 
 ```text
- 249 runtime/wide-search/tests/providers/public-reader.test.ts
  240 runtime/wide-search/src/distributed/runner.ts
  237 runtime/wide-search/src/providers/public-reader.ts
  221 runtime/wide-search/src/shared-runtime.ts
  217 runtime/wide-search/src/types.ts
- 217 runtime/wide-search/src/cli.ts
  216 runtime/wide-search/src/verifier.ts
- 200 runtime/wide-search/src/cli-contract.ts
+ 210 runtime/wide-search/src/cli.ts
+ 203 runtime/wide-search/src/cli-contract.ts
  191 runtime/wide-search/src/markdown.ts
- 185 runtime/wide-search/tests/markdown.test.ts
- 181 runtime/wide-search/tests/cli-inspect.test.ts
+ 169 runtime/wide-search/tests/providers/public-reader.test.ts
+ 162 runtime/wide-search/tests/cli-inspect.test.ts
  110 runtime/wide-search/tests/markdown-strict.test.ts
+ 105 runtime/wide-search/src/distributed/job-json.ts
+  84 runtime/wide-search/tests/providers/public-reader-url.test.ts
+  49 runtime/wide-search/src/cli-inspect-json.ts
 ```
 
-Result: PASS. No changed TypeScript/test file is at or above 250 pure LOC. `tests/markdown.test.ts` is now 185 pure LOC; `tests/markdown-strict.test.ts` is 110 pure LOC.
+Result: PASS. No changed TypeScript/test file is at or above 250 pure LOC. `tests/providers/public-reader.test.ts` is now 169 pure LOC; `tests/providers/public-reader-url.test.ts` is 84 pure LOC.
 
 ### Escape Hatches
 
@@ -262,12 +309,12 @@ Ran 8 tests across 2 files.
 - Runtime lint/format:
   - Scenario: Biome check for runtime package.
   - Invocation: `bun run check`
-  - Observable: `Checked 109 files`, no fixes applied, exit 0.
+  - Observable: `Checked 112 files`, no fixes applied, exit 0.
   - Artifact path: this file.
 - Full runtime tests:
   - Scenario: full Bun test suite.
   - Invocation: `bun test`
-  - Observable: `170 pass`, `9 skip`, `0 fail`, `578 expect() calls`.
+  - Observable: `170 pass`, `9 skip`, `0 fail`, `577 expect() calls`.
   - Artifact path: this file.
 - Root diff whitespace:
   - Scenario: repository diff whitespace check.
@@ -282,7 +329,7 @@ Ran 8 tests across 2 files.
 
 ## Residual Risks
 
-- `runtime/wide-search/tests/providers/public-reader.test.ts` is 249 pure LOC. It is below the hard threshold but close enough that future additions should split by public-reader risk class.
+- Highest changed TypeScript pure LOC is `runtime/wide-search/src/distributed/runner.ts` at 240, below the hard threshold.
 - `runtime/wide-search/src/distributed/worker.ts` retains pre-existing escape hatches from `origin/main`.
 - The branch contains earlier security/public-reader/completion-evidence changes that this rerun intentionally did not modify.
 

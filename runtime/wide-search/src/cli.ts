@@ -16,15 +16,17 @@ import {
   validateEnum,
 } from './cli-contract';
 import { printUsage } from './cli-help';
+import { inspectRunFromJson, inspectVerificationFromJson } from './cli-inspect-json';
 import { handleLeaderboard } from './cli-leaderboard';
 import { handleWorker } from './cli-worker';
 import { summarizeDistributedJob } from './distributed/job-inspect';
+import { distributedJobFromJson } from './distributed/job-json';
 import { exportRun, supportedExportFormats } from './export';
 import { getInitInstructions, runInit } from './init';
 import { defaultLogger, setDefaultLoggerLevel } from './logger';
 import { PROVIDER_REGISTRY } from './providers';
 import { runWideSearch } from './runtime';
-import type { DistributedJob, ExecutionProfile, RunWideSearchResult } from './types';
+import type { ExecutionProfile, RunWideSearchResult } from './types';
 import { verifyRun } from './verifier';
 
 async function inspectRun(runDir: string): Promise<{
@@ -37,19 +39,10 @@ async function inspectRun(runDir: string): Promise<{
   rejectedSources: number;
   distributedJob?: ReturnType<typeof summarizeDistributedJob>;
 }> {
-  const run = JSON.parse(await readFile(join(runDir, 'run.json'), 'utf8')) as {
-    runId: string;
-    objective: string;
-    executionProfile: ExecutionProfile;
-    status: string;
-  };
-  const verification = JSON.parse(
+  const run = inspectRunFromJson(await readFile(join(runDir, 'run.json'), 'utf8'));
+  const verification = inspectVerificationFromJson(
     await readFile(join(runDir, 'verification-report.json'), 'utf8')
-  ) as {
-    status: string;
-    acceptedSources: number;
-    rejectedSources: number;
-  };
+  );
   const inspected = {
     runId: run.runId,
     objective: run.objective,
@@ -62,7 +55,7 @@ async function inspectRun(runDir: string): Promise<{
   const jobPath = join(runDir, 'distributed-job.json');
   if (!existsSync(jobPath)) return inspected;
 
-  const job = JSON.parse(await readFile(jobPath, 'utf8')) as DistributedJob;
+  const job = distributedJobFromJson(await readFile(jobPath, 'utf8'));
   return { ...inspected, distributedJob: summarizeDistributedJob(job) };
 }
 

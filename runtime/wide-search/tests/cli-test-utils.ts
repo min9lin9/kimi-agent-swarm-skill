@@ -14,6 +14,24 @@ export function parseCliJson(stdout: string): unknown {
   return JSON.parse(lines.slice(startIndex).join('\n'));
 }
 
+export function parseCliJsonObject(stdout: string): Record<string, unknown> {
+  const parsed = parseCliJson(stdout);
+  if (!isRecord(parsed)) {
+    throw new Error('CLI JSON output must be an object');
+  }
+  return parsed;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function jsonStringField(record: Record<string, unknown>, key: string): string {
+  const value = record[key];
+  if (typeof value !== 'string') throw new Error(`CLI JSON field ${key} must be a string`);
+  return value;
+}
+
 export function runCli(
   args: readonly string[],
   options: { readonly cwd?: string } = {}

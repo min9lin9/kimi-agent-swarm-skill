@@ -99,16 +99,20 @@ export function getNumberFlag(parsed: ParsedArgs, name: string): number | undefi
   return value;
 }
 
+function isAllowedValue<T extends string>(value: string, allowed: readonly T[]): value is T {
+  return allowed.some((allowedValue) => allowedValue === value);
+}
+
 export function validateEnum<T extends string>(
   name: string,
   value: string | undefined,
   allowed: readonly T[]
 ): T | undefined {
   if (value === undefined) return undefined;
-  if (!allowed.includes(value as T)) {
+  if (!isAllowedValue(value, allowed)) {
     throw new Error(`Invalid --${name}: "${value}". Allowed values: ${allowed.join(', ')}`);
   }
-  return value as T;
+  return value;
 }
 
 export async function buildRunOptionsForCli(
