@@ -69,6 +69,10 @@ describe('CLI integration', () => {
     const { exitCode, stderr } = await runCli(['--help']);
     expect(exitCode).toBe(0);
     expect(stderr).toInclude('Usage:');
+    expect(stderr).toInclude('--strict-claims');
+    expect(stderr).toInclude('--require-completion-evidence');
+    expect(stderr).toInclude('--task-timeout-ms');
+    expect(stderr).toInclude('public-reader');
   });
 
   test('providers prints a valid JSON provider list', async () => {
@@ -78,6 +82,7 @@ describe('CLI integration', () => {
     expect(Array.isArray(providers)).toBe(true);
     expect(providers.some((p: { name: string }) => p.name === 'mock')).toBe(true);
     expect(providers.some((p: { name: string }) => p.name === 'serper')).toBe(true);
+    expect(providers.some((p: { name: string }) => p.name === 'public-reader')).toBe(true);
   });
 
   test('run with objective parses it correctly and returns dry-run result', async () => {
