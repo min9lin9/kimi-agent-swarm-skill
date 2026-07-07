@@ -60,7 +60,7 @@ kasw research "<objective>" [options]
 | Flag | Description |
 | --- | --- |
 | `--profile <profile>` | Execution profile (see below). Default: `fixture` |
-| `--provider <name>` | Search provider: `mock`, `serper`, `tavily`, `brave`, `github`. Default: `mock` |
+| `--provider <name>` | Search provider: `mock`, `serper`, `tavily`, `brave`, `github`, `public-reader`. Default: `mock` |
 | `--provider-name <name>` | Alias for `--provider` |
 | `--provider-command <cmd>` | External command for `local-command` profile |
 | `--provider-args <args>` | Space-separated arguments passed to `--provider-command` |
@@ -71,6 +71,7 @@ kasw research "<objective>" [options]
 | `--max-api-calls <n>` | Abort if API calls exceed budget |
 | `--dry-run` | Print cost estimate without executing or writing run artifacts |
 | `--use-cache` | Reuse cached provider responses when available |
+| `--allow-public-reader-hostnames` | Let `public-reader` fetch normal DNS-validated public hostnames. Default: IP literals only |
 | `--replay <run-id>` | Rerun a previous run with the same inputs |
 | `--distributed` | Execute using distributed worker tasks |
 | `--workers <n>` | Number of in-process workers for distributed runs. Default: `4` |
@@ -256,6 +257,7 @@ Credentials are resolved in this order: environment variable → config file →
 | `tavily` | `TAVILY_API_KEY` | AI-native search |
 | `brave` | `BRAVE_API_KEY` | Brave Search API |
 | `github` | `GITHUB_TOKEN` | GitHub repository search (token raises rate limits) |
+| `public-reader` | none | Reads explicit HTTP(S) URLs from the objective. Hostnames require opt-in; private networks, metadata hosts, `.local`, userinfo URLs, auth walls, oversized responses, and unsafe redirects stay blocked |
 
 Set keys in your shell:
 
@@ -296,7 +298,8 @@ Config files are JSON. Two locations are supported:
 {
   "providers": {
     "tavily": { "apiKey": "tvly-..." },
-    "github": { "token": "ghp_..." }
+    "github": { "token": "ghp_..." },
+    "public-reader": { "allowHostnames": true }
   },
   "defaults": {
     "provider": "tavily",
@@ -306,7 +309,7 @@ Config files are JSON. Two locations are supported:
 }
 ```
 
-Provider entries accept either `apiKey` or `token`; both are treated as the credential when resolving provider authentication.
+Provider entries accept either `apiKey` or `token`; both are treated as the credential when resolving provider authentication. For `public-reader`, `allowHostnames: true` is the config equivalent of `--allow-public-reader-hostnames`; without it, only public IP literal URLs are eligible.
 
 ## Cache, replay, and dry-run
 

@@ -158,6 +158,9 @@ export async function buildRunOptionsForCli(
 
   const useCache = getBooleanFlag(parsed, 'use-cache');
   const strictClaims = getBooleanFlag(parsed, 'strict-claims');
+  const allowPublicReaderHostnames =
+    getBooleanFlag(parsed, 'allow-public-reader-hostnames') ||
+    config.providers['public-reader']?.allowHostnames === true;
   const distributedEnabled = getBooleanFlag(parsed, 'distributed');
   const workers = getNumberFlag(parsed, 'workers');
   const maxRetries = getNumberFlag(parsed, 'max-retries');
@@ -208,6 +211,7 @@ export async function buildRunOptionsForCli(
     replayRunId,
     distributed,
     strictClaims,
+    allowPublicReaderHostnames,
   };
 }
 

@@ -70,6 +70,7 @@ describe('CLI integration', () => {
     expect(exitCode).toBe(0);
     expect(stderr).toInclude('Usage:');
     expect(stderr).toInclude('--strict-claims');
+    expect(stderr).toInclude('--allow-public-reader-hostnames');
     expect(stderr).toInclude('--require-completion-evidence');
     expect(stderr).toInclude('--task-timeout-ms');
     expect(stderr).toInclude('public-reader');

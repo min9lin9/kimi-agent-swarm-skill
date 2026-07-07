@@ -12,6 +12,7 @@ type UrlBlockReason =
   | 'unsupported_protocol'
   | 'private_address'
   | 'blocked_host'
+  | 'userinfo_not_supported'
   | 'hostname_not_supported';
 
 type PublicUrlCheck =
@@ -67,6 +68,10 @@ export async function validatePublicReaderUrl(
 
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     return { ok: false, reason: 'unsupported_protocol' };
+  }
+
+  if (url.username || url.password) {
+    return { ok: false, reason: 'userinfo_not_supported' };
   }
 
   const host = normalizeHost(url.hostname);
