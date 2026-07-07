@@ -1,0 +1,23 @@
+{
+  "name": "kimi-agent-swarm",
+  "version": "0.8.0",
+  "description": "Claude Code plugin for Kimi Agent Swarm-style prompt contracts, evidence-backed wide search, Gajae-Code handoffs, fablize-style verification discipline, and public URL fallback through an insane-search-compatible provider.",
+  "author": {
+    "name": "min9lin9",
+    "url": "https://github.com/min9lin9"
+  },
+  "homepage": "https://github.com/min9lin9/kimi-agent-swarm-skill",
+  "repository": "https://github.com/min9lin9/kimi-agent-swarm-skill",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "skills",
+    "wide-search",
+    "research",
+    "gajae-code",
+    "verification",
+    "insane-search",
+    "kimi"
+  ],
+  "skills": ["./skills/kimi-agent-swarm"]
+}
