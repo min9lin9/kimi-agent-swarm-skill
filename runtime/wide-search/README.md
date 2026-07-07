@@ -1,6 +1,8 @@
 # kimi-agent-swarm-cli
 
-Evidence-backed wide-search CLI for the Kimi Agent Swarm. It turns a research objective into a structured evidence package: scored sources, extracted claims, verification reports, and exportable synthesis documents.
+Evidence-backed wide-search CLI for the unofficial Codex/Kimi skill pack. It turns a research objective into a structured evidence package: scored sources, extracted claims, verification reports, completion evidence, and exportable synthesis documents.
+
+Current package version: `1.0.2`.
 
 ## Install
 
@@ -261,7 +263,7 @@ Credentials are resolved in this order: environment variable → config file →
 | `tavily` | `TAVILY_API_KEY` | AI-native search |
 | `brave` | `BRAVE_API_KEY` | Brave Search API |
 | `github` | `GITHUB_TOKEN` | GitHub repository search (token raises rate limits) |
-| `public-reader` | none | Reads explicit HTTP(S) URLs from the objective. Hostnames require opt-in; private networks, metadata hosts, `.local`, userinfo URLs, auth walls, oversized responses, and unsafe redirects stay blocked |
+| `public-reader` | none | Reads explicit public HTTP(S) URLs from the objective. Hostnames require opt-in; private networks, metadata hosts, `.local`, userinfo URLs, auth walls, oversized responses, and unsafe redirects stay blocked |
 
 Set keys in your shell:
 
@@ -282,6 +284,8 @@ For CI or development, each live provider can run in deterministic mock mode by 
 - `GITHUB_MOCK=1`
 
 When a `*_MOCK=1` variable is set, the provider always returns bundled fixture results and does not call the external API, even if a credential is configured. This is useful for reproducible tests without removing saved API keys.
+
+`public-reader` has no credential mode. It only reads URLs present in the objective and rejects private network targets, non-HTTP(S) protocols, auth walls, private redirects, and oversized responses.
 
 ## Configuration file
 
@@ -396,6 +400,8 @@ A benchmark passes when recall ≥ 0.5 and citation accuracy ≥ 0.8. URL covera
 | --- | --- |
 | `0` | Success |
 | `1` | Invalid usage, unknown command, validation error, or runtime failure |
+
+Strict claim verification separates verified, unresolved, and refuted high-risk claims. Runs that require completion evidence reject missing or secret-shaped evidence before treating a synthesis as complete.
 
 Errors print a concise message to `stderr`. Common error cases:
 

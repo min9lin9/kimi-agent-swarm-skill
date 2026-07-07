@@ -11,11 +11,12 @@ rg "/Users/|/private|Documents/Codex|dmae97" . -g '!docs/GITHUB_RELEASE.md' -g '
 ruby -e 'require "yaml"; YAML.load_file("skills/kimi-agent-swarm-prompt/agents/openai.yaml"); puts "openai.yaml ok"'
 bash -n scripts/install-codex-skill.sh
 bash -n scripts/sync-prompt-engineering-upstream.sh
+bash -n runtime/wide-search/scripts/publish.sh
 tmpdir=$(mktemp -d); CODEX_HOME="$tmpdir" scripts/install-codex-skill.sh
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/SKILL.md"
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/references/wide-search-mode.md"
 test -f "$tmpdir/skills/kimi-agent-swarm-prompt/vendor/prompt-engineering-skills/LICENSE"
-(cd runtime/wide-search && npm test)
+(cd runtime/wide-search && bun install && bun run prepublishOnly)
 ```
 
 Expected result:
@@ -26,13 +27,13 @@ Expected result:
 - Clean temp install succeeds.
 - Wide-search reference is included in the installed skill.
 - Vendored prompt-engineering license is included in the installed skill.
-- Wide-search runtime fixture tests pass.
+- Wide-search runtime typecheck, Biome check, and fixture-backed tests pass.
 
 ## Continuous Integration
 
 The same packaging checks run in GitHub Actions via `.github/workflows/quality.yml` on pull requests, pushes to `main`, and manual dispatch.
 
-CI is intentionally network-free. It verifies the skill package, docs-safe metadata, shell scripts, temp `CODEX_HOME` install, and fixture-backed wide-search runtime tests without calling Kimi, hosted Agent Swarm, or external providers.
+CI is intentionally network-free. It verifies the skill package, docs-safe metadata, shell scripts, temp `CODEX_HOME` install, and the runtime `prepublishOnly` gate without calling Kimi, hosted Agent Swarm, npm publishing, or external providers.
 
 ## Skill Quality Checklist
 
