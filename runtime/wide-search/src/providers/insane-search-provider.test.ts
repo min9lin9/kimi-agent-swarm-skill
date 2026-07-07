@@ -3,10 +3,28 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import type { UsageMetrics } from '../types';
 import { InsaneSearchProvider } from './insane-search-provider';
 
-const ORIGINAL_ENV = { ...process.env };
+const INSANE_SEARCH_ENV_KEYS = [
+  'INSANE_SEARCH_MOCK',
+  'INSANE_SEARCH_URLS',
+  'INSANE_SEARCH_COMMAND',
+  'INSANE_SEARCH_ARGS',
+  'INSANE_SEARCH_CWD',
+  'INSANE_SEARCH_TIMEOUT_MS',
+] as const;
+
+const ORIGINAL_ENV = Object.fromEntries(
+  INSANE_SEARCH_ENV_KEYS.map((key) => [key, process.env[key]])
+) as Record<(typeof INSANE_SEARCH_ENV_KEYS)[number], string | undefined>;
 
 afterEach(() => {
-  process.env = { ...ORIGINAL_ENV };
+  for (const key of INSANE_SEARCH_ENV_KEYS) {
+    const value = ORIGINAL_ENV[key];
+    if (value === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = value;
+    }
+  }
 });
 
 describe('InsaneSearchProvider', () => {
