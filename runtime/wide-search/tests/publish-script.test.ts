@@ -14,12 +14,16 @@ interface ScriptResult {
   readonly stderr: string;
 }
 
-function runPublishScript(fakeBinDir: string): Promise<ScriptResult> {
+function runPublishScript(
+  fakeBinDir: string,
+  env: Record<string, string | undefined> = {}
+): Promise<ScriptResult> {
   return new Promise((resolve, reject) => {
     const child = spawn('bash', ['scripts/publish.sh', '--dry-run'], {
       cwd: rootDir,
       env: {
         ...process.env,
+        ...env,
         NPM_TOKEN: probeValue,
         PATH: `${fakeBinDir}:${process.env.PATH ?? ''}`,
       },
@@ -55,7 +59,7 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
-async function writeFakeBun(fakeBinDir: string): Promise<void> {
+async function writeFakeBun(fakeBinDir: string, version = '1.0.2'): Promise<void> {
   await writeFile(
     join(fakeBinDir, 'bun'),
     `#!/usr/bin/env bash
@@ -64,7 +68,7 @@ if [[ "$1" == "-p" && "$2" == *".name"* ]]; then
   exit 0
 fi
 if [[ "$1" == "-p" && "$2" == *".version"* ]]; then
-  echo "1.0.2"
+  echo "${version}"
   exit 0
 fi
 echo "fake bun $*" >&2
@@ -151,6 +155,40 @@ exit 0
       expect(output).not.toInclude('npm publish --access public');
       expect(npmCalls).not.toInclude('pack');
       expect(npmCalls).not.toInclude('publish');
+    } finally {
+      await rm(fakeBinDir, { recursive: true, force: true });
+    }
+    expect(await pathExists(fakeBinDir)).toBe(false);
+  });
+
+  test('pins npm registry during publish preflight', async () => {
+    const fakeBinDir = await mkdtemp(join(tmpdir(), 'kasw-publish-bin-'));
+    const npmLogPath = join(fakeBinDir, 'npm-calls.log');
+    try {
+      await writeFakeBun(fakeBinDir, '9.9.9-test');
+      await writeFile(
+        join(fakeBinDir, 'npm'),
+        `#!/usr/bin/env bash
+printf '%s\\n' "$*" >> "${npmLogPath}"
+if [[ "$1" == "view" ]]; then
+  echo "npm ERR! code E404" >&2
+  exit 1
+fi
+if [[ "$1" == "pack" ]]; then
+  exit 0
+fi
+exit 0
+`
+      );
+      await chmod(join(fakeBinDir, 'npm'), 0o755);
+
+      const result = await runPublishScript(fakeBinDir, {
+        NPM_CONFIG_REGISTRY: 'https://evil.invalid/',
+      });
+
+      const npmCalls = await readFile(npmLogPath, 'utf8');
+      expect(result.exitCode).toBe(0);
+      expect(npmCalls).toInclude('--registry https://registry.npmjs.org/');
     } finally {
       await rm(fakeBinDir, { recursive: true, force: true });
     }

@@ -81,8 +81,8 @@ kasw research "<objective>" [options]
 | `--queue-type <memory\|redis>` | Distributed queue backend. Default: `memory` |
 | `--resume-job-id <id>` | Resume a previous distributed job |
 | `--redis-url <url>` | Redis URL (defaults to `REDIS_URL` env) |
-| `--redis-password <password>` | Redis password (defaults to `REDIS_PASSWORD` env) |
-| `--redis-username <username>` | Redis username (defaults to `REDIS_USERNAME` env) |
+
+Supply Redis credentials with `REDIS_URL`, `REDIS_PASSWORD`, or `REDIS_USERNAME`. The `--redis-password` and `--redis-username` flags remain accepted for compatibility but are deprecated because command-line arguments can be exposed in process listings.
 
 Pass `--` to stop flag parsing and treat everything after it as the objective:
 
@@ -184,8 +184,8 @@ kasw worker --job-id <id> [options]
 | `--work-dir <dir>` | Working directory for memory queue state |
 | `--queue-type <memory\|redis>` | Queue backend |
 | `--redis-url <url>` | Redis URL (defaults to `REDIS_URL` env) |
-| `--redis-password <password>` | Redis password (defaults to `REDIS_PASSWORD` env) |
-| `--redis-username <username>` | Redis username (defaults to `REDIS_USERNAME` env) |
+
+Supply Redis credentials with `REDIS_URL`, `REDIS_PASSWORD`, or `REDIS_USERNAME`. The `--redis-password` and `--redis-username` flags remain accepted for compatibility but are deprecated.
 
 ## Execution profiles
 

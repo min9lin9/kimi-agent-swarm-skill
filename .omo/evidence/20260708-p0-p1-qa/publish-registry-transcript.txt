@@ -1,0 +1,11 @@
+$ cd runtime/wide-search && bun test tests/publish-script.test.ts -t "pins npm registry"
+bun test v1.3.14 (0d9b296a)
+
+tests/publish-script.test.ts:
+(pass) publish helper > pins npm registry during publish preflight [43.54ms]
+
+ 1 pass
+ 2 filtered out
+ 0 fail
+ 3 expect() calls
+Ran 1 test across 1 file. [101.00ms]

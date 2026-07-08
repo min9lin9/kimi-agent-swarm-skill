@@ -1,0 +1,13 @@
+$ cd runtime/wide-search && bun test tests/providers/public-reader.test.ts -t "continues after one"
+bun test v1.3.14 (0d9b296a)
+
+tests/providers/public-reader.test.ts:
+(pass) PublicReaderProvider > continues after one URL fetch throws [20.16ms]
+(pass) PublicReaderProvider > continues after one hostname resolver throws [0.66ms]
+(pass) PublicReaderProvider > continues after one URL fetch throws a non-Error value [4.38ms]
+
+ 3 pass
+ 9 filtered out
+ 0 fail
+ 6 expect() calls
+Ran 3 tests across 1 file. [87.00ms]

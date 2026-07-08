@@ -196,4 +196,65 @@ describe('PublicReaderProvider', () => {
     expect(sources).toEqual([]);
     expect(fetchLog.fetchedUrls).toEqual(['http://93.184.216.34/large']);
   });
+
+  test('continues after one URL fetch throws', async () => {
+    const provider = new PublicReaderProvider({
+      ...publicHostnameOptions,
+      fetcher: async (url) => {
+        if (url.includes('/bad')) {
+          throw new Error('transient fetch failure');
+        }
+        return new Response('<html><body>Good public text.</body></html>');
+      },
+    });
+
+    const sources = await provider.search({
+      objective: 'Read http://example.com/bad and http://example.com/good',
+      ...standardSearch,
+    });
+
+    expect(sources).toHaveLength(1);
+    expect(sources[0]?.url).toBe('http://example.com/good');
+  });
+
+  test('continues after one hostname resolver throws', async () => {
+    const provider = new PublicReaderProvider({
+      resolver: async (hostname) => {
+        if (hostname === 'bad.example.com') {
+          throw new Error('dns failure');
+        }
+        return ['93.184.216.34'];
+      },
+      allowHostnames: true,
+      fetcher: async () => new Response('<html><body>Resolved public text.</body></html>'),
+    });
+
+    const sources = await provider.search({
+      objective: 'Read http://bad.example.com/a and http://good.example.com/b',
+      ...standardSearch,
+    });
+
+    expect(sources).toHaveLength(1);
+    expect(sources[0]?.url).toBe('http://good.example.com/b');
+  });
+
+  test('continues after one URL fetch throws a non-Error value', async () => {
+    const provider = new PublicReaderProvider({
+      ...publicHostnameOptions,
+      fetcher: async (url) => {
+        if (url.includes('/bad')) {
+          return Promise.reject('transient fetch failure');
+        }
+        return new Response('<html><body>Good public text.</body></html>');
+      },
+    });
+
+    const sources = await provider.search({
+      objective: 'Read http://example.com/bad and http://example.com/good',
+      ...standardSearch,
+    });
+
+    expect(sources).toHaveLength(1);
+    expect(sources[0]?.url).toBe('http://example.com/good');
+  });
 });

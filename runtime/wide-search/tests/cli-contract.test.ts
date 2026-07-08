@@ -1,9 +1,14 @@
-import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, spyOn, test } from 'bun:test';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { buildRunOptionsForCli, buildVerifyOptionsForCli } from '../src/cli-contract';
+import {
+  buildRunOptionsForCli,
+  buildVerifyOptionsForCli,
+  parseCliArgs,
+  warnDeprecatedRedisCredentialFlags,
+} from '../src/cli-contract';
 
 describe('CLI command contract', () => {
   let workDir: string;
@@ -121,5 +126,17 @@ describe('CLI command contract', () => {
       strictClaims: true,
       requireCompletionEvidence: true,
     });
+  });
+
+  test('redis credential deprecation warning handles bare flags', () => {
+    const warnSpy = spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      warnDeprecatedRedisCredentialFlags(parseCliArgs(['--redis-password']));
+      expect(warnSpy).toHaveBeenCalledWith(
+        'Deprecated: pass Redis credentials with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME instead of --redis-password/--redis-username.'
+      );
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });

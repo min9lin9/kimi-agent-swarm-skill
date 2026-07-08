@@ -1,0 +1,11 @@
+$ cd runtime/wide-search && bun test tests/command-provider.test.ts -t "kills a provider command that ignores SIGTERM after timeout"
+bun test v1.3.14 (0d9b296a)
+
+tests/command-provider.test.ts:
+(pass) loadCommandSources > kills a provider command that ignores SIGTERM after timeout [1374.57ms]
+
+ 1 pass
+ 6 filtered out
+ 0 fail
+ 2 expect() calls
+Ran 1 test across 1 file. [1401.00ms]

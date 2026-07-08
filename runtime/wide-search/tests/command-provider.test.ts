@@ -1,4 +1,7 @@
 import { describe, expect, test } from 'bun:test';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import { loadCommandSources } from '../src/command-provider';
 
@@ -65,7 +68,11 @@ describe('loadCommandSources', () => {
     try {
       await loadCommandSources({ providerCommand, providerArgs, objective: 'failing test' });
     } catch (error) {
-      expect((error as Error).message).toInclude('provider failed');
+      if (error instanceof Error) {
+        expect(error.message).toInclude('provider failed');
+        return;
+      }
+      throw error;
     }
   });
 
@@ -73,5 +80,56 @@ describe('loadCommandSources', () => {
     await expect(loadCommandSources({ objective: 'missing command' })).rejects.toThrow(
       'local-command profile requires providerCommand'
     );
+  });
+
+  test('times out a provider command that does not exit', async () => {
+    await expect(
+      loadCommandSources({
+        providerCommand: 'node',
+        providerArgs: ['-e', 'setInterval(() => {}, 1000);'],
+        objective: 'hanging provider',
+        timeoutMs: 50,
+      })
+    ).rejects.toThrow('timed out');
+  });
+
+  test('rejects provider output above the configured byte limit', async () => {
+    await expect(
+      loadCommandSources({
+        providerCommand: 'node',
+        providerArgs: ['-e', `console.log(${JSON.stringify('x'.repeat(128))});`],
+        objective: 'oversized provider',
+        maxOutputBytes: 64,
+      })
+    ).rejects.toThrow('exceeded output limit');
+  });
+
+  test('kills a provider command that ignores SIGTERM after timeout', async () => {
+    const tempDir = await mkdtemp(join(tmpdir(), 'kasw-provider-timeout-'));
+    const pidPath = join(tempDir, 'provider.pid');
+
+    try {
+      await expect(
+        loadCommandSources({
+          providerCommand: 'node',
+          providerArgs: [
+            '-e',
+            [
+              `require('fs').writeFileSync(${JSON.stringify(pidPath)}, String(process.pid));`,
+              'process.on("SIGTERM", () => {});',
+              'setInterval(() => {}, 1000);',
+            ].join(''),
+          ],
+          objective: 'stubborn provider',
+          timeoutMs: 250,
+        })
+      ).rejects.toThrow('timed out');
+
+      const pid = Number(await readFile(pidPath, 'utf8'));
+      await Bun.sleep(1_100);
+      expect(() => process.kill(pid, 0)).toThrow();
+    } finally {
+      await rm(tempDir, { recursive: true, force: true });
+    }
   });
 });

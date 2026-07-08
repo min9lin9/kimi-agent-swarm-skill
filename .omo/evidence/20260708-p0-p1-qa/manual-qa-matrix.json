@@ -1,0 +1,101 @@
+{
+  "manualQa": {
+    "by": "codex-parent",
+    "status": "passed",
+    "evidence": "P0/P1 readiness QA passed with artifact-backed CLI and test transcripts; cleanup removed generated run directories, leaving only .runs/wide-search parent directories.",
+    "surfaceEvidence": [
+      {
+        "id": "surface-ignore-and-redis-cli",
+        "criterionRef": "secret-ignore-redis-argv-deprecation",
+        "surface": "cli",
+        "invocation": "git check-ignore -v .kasw.json runtime/wide-search/.kasw.json; cd runtime/wide-search && bun src/cli.ts --help; bun src/cli.ts run --objective smoke --distributed --queue-type memory --redis-password --dry-run",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-redis-cli-and-ignore"]
+      },
+      {
+        "id": "surface-local-command-sigkill",
+        "criterionRef": "local-command-timeout-output-cap",
+        "surface": "cli-test",
+        "invocation": "cd runtime/wide-search && bun test tests/command-provider.test.ts -t 'kills a provider command that ignores SIGTERM after timeout'",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-local-command-sigterm-kill"]
+      },
+      {
+        "id": "surface-public-reader-isolation",
+        "criterionRef": "public-reader-per-url-exception-isolation",
+        "surface": "cli-test",
+        "invocation": "cd runtime/wide-search && bun test tests/providers/public-reader.test.ts -t 'continues after one'",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-public-reader-isolation"]
+      },
+      {
+        "id": "surface-publish-registry-pin",
+        "criterionRef": "npm-registry-pin",
+        "surface": "cli-test",
+        "invocation": "cd runtime/wide-search && bun test tests/publish-script.test.ts -t 'pins npm registry'",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-publish-registry"]
+      }
+    ],
+    "adversarialCases": [
+      {
+        "id": "adv-stubborn-provider-ignores-sigterm",
+        "criterionRef": "local-command-timeout-output-cap",
+        "scenario": "provider traps SIGTERM and keeps event loop alive",
+        "expectedBehavior": "loadCommandSources rejects on timeout and SIGKILL fallback leaves no live pid",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-local-command-sigterm-kill"]
+      },
+      {
+        "id": "adv-public-reader-fetch-dns-failures",
+        "criterionRef": "public-reader-per-url-exception-isolation",
+        "scenario": "one URL fetch rejects, resolver rejects, and fetch rejects with non-Error value",
+        "expectedBehavior": "failed URL is skipped and next public URL still returns one source",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-public-reader-isolation"]
+      },
+      {
+        "id": "adv-hostile-npm-registry-env",
+        "criterionRef": "npm-registry-pin",
+        "scenario": "NPM_CONFIG_REGISTRY points to https://evil.invalid/",
+        "expectedBehavior": "publish helper calls npm with --registry https://registry.npmjs.org/",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-publish-registry"]
+      },
+      {
+        "id": "adv-bare-redis-password-flag",
+        "criterionRef": "secret-ignore-redis-argv-deprecation",
+        "scenario": "operator passes bare --redis-password",
+        "expectedBehavior": "CLI prints deprecation warning and help no longer lists secret argv flags",
+        "verdict": "passed",
+        "artifactRefs": ["artifact-redis-cli-and-ignore"]
+      }
+    ],
+    "artifactRefs": [
+      {
+        "id": "artifact-redis-cli-and-ignore",
+        "kind": "cli-transcript",
+        "description": "Root and package .kasw.json ignore checks plus Redis help/deprecation runtime probe.",
+        "path": ".omo/evidence/20260708-p0-p1-qa/redis-cli-and-ignore-transcript.txt"
+      },
+      {
+        "id": "artifact-local-command-sigterm-kill",
+        "kind": "cli-transcript",
+        "description": "Focused test proving SIGTERM-ignoring provider is killed after timeout.",
+        "path": ".omo/evidence/20260708-p0-p1-qa/local-command-sigterm-kill-transcript.txt"
+      },
+      {
+        "id": "artifact-public-reader-isolation",
+        "kind": "cli-transcript",
+        "description": "Focused tests for fetch, DNS, and non-Error per-URL public-reader failures.",
+        "path": ".omo/evidence/20260708-p0-p1-qa/public-reader-isolation-transcript.txt"
+      },
+      {
+        "id": "artifact-publish-registry",
+        "kind": "cli-transcript",
+        "description": "Focused publish helper test proving npmjs registry pinning overrides hostile env registry.",
+        "path": ".omo/evidence/20260708-p0-p1-qa/publish-registry-transcript.txt"
+      }
+    ]
+  }
+}

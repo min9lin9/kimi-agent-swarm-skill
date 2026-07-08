@@ -1,0 +1,40 @@
+$ git check-ignore -v .kasw.json runtime/wide-search/.kasw.json
+.gitignore:10:.kasw.json	.kasw.json
+runtime/wide-search/.gitignore:28:.kasw.json	runtime/wide-search/.kasw.json
+
+$ cd runtime/wide-search && bun src/cli.ts --help | grep redis
+    Redis credentials should be supplied with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME
+    Redis credentials should be supplied with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME
+
+$ cd runtime/wide-search && bun src/cli.ts run --objective smoke --distributed --queue-type memory --redis-password --dry-run
+Deprecated: pass Redis credentials with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME instead of --redis-password/--redis-username.
+Provider: mock
+Provider calls: 0
+API calls: 0
+Estimated cost: $0.0000
+Actual cost: $0.0000
+Notes: Dry run: no distributed tasks executed.
+{
+  "runId": "2026-07-08T05-40-53-704Z-y3gf65",
+  "runDir": "/home/burt/Documents/kimi-agent-swarm-skill/runtime/wide-search/.runs/wide-search/2026-07-08T05-40-53-704Z-y3gf65",
+  "verification": {
+    "status": "passed",
+    "acceptedSources": 0,
+    "rejectedSources": 0,
+    "unsupportedClaims": 0,
+    "staleClaims": 0,
+    "unknownFreshnessClaims": 0,
+    "lowConfidenceClaims": 0,
+    "duplicateClaimGroups": [],
+    "conflictingClaimPairs": [],
+    "coverageGaps": [],
+    "failures": [],
+    "warnings": [
+      "dry-run: no sources or claims evaluated"
+    ]
+  }
+}
+
+$ cleanup generated run dirs
+runtime/wide-search/.runs
+runtime/wide-search/.runs/wide-search

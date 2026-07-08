@@ -56,10 +56,7 @@ export function printUsage(exitCode = 1): void {
   defaultLogger.error('    --resume-job-id <id>          resume a previous distributed job');
   defaultLogger.error('    --redis-url <url>             Redis URL (defaults to REDIS_URL env)');
   defaultLogger.error(
-    '    --redis-password <password>   Redis password (defaults to REDIS_PASSWORD env)'
-  );
-  defaultLogger.error(
-    '    --redis-username <username>   Redis username (defaults to REDIS_USERNAME env)'
+    '    Redis credentials should be supplied with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME'
   );
   defaultLogger.error(
     '    --task-timeout-ms <n>         max time a distributed task may stay running (default: 300000)'
@@ -72,10 +69,7 @@ export function printUsage(exitCode = 1): void {
   );
   defaultLogger.error('    --redis-url <url>             Redis URL (defaults to REDIS_URL env)');
   defaultLogger.error(
-    '    --redis-password <password>   Redis password (defaults to REDIS_PASSWORD env)'
-  );
-  defaultLogger.error(
-    '    --redis-username <username>   Redis username (defaults to REDIS_USERNAME env)'
+    '    Redis credentials should be supplied with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME'
   );
   defaultLogger.error('  init [--non-interactive] [--local] [--work-dir <dir>]');
   defaultLogger.error('  verify --run-dir <dir>');

@@ -15,9 +15,10 @@ fi
 
 package_name="$(bun -p 'require("./package.json").name')"
 package_version="$(bun -p 'require("./package.json").version')"
+npm_registry="https://registry.npmjs.org/"
 
 set +e
-published_version="$(npm view "${package_name}@${package_version}" version 2>&1)"
+published_version="$(npm view --registry "$npm_registry" "${package_name}@${package_version}" version 2>&1)"
 npm_view_status=$?
 set -e
 if [[ $npm_view_status -ne 0 && "$published_version" != *"E404"* && "$published_version" != *"404"* ]]; then
@@ -34,11 +35,11 @@ echo "Running publish quality gate..."
 bun run prepublishOnly
 
 echo "Packing..."
-npm pack --dry-run
+npm pack --dry-run --registry "$npm_registry"
 
 if [[ "$dry_run" == true ]]; then
   echo "Publish dry-run complete. To publish, run:"
 else
   echo "Publish preflight complete. To publish, run:"
 fi
-echo "  npm publish --access public"
+echo "  npm publish --access public --registry $npm_registry"

@@ -1,4 +1,11 @@
-import { QUEUE_TYPES, getBooleanFlag, getFlag, parseCliArgs, validateEnum } from './cli-contract';
+import {
+  QUEUE_TYPES,
+  getBooleanFlag,
+  getFlag,
+  parseCliArgs,
+  validateEnum,
+  warnDeprecatedRedisCredentialFlags,
+} from './cli-contract';
 import { printUsage } from './cli-help';
 import { maxResultsForDepth } from './costs';
 import { MemoryQueueAdapter } from './distributed/memory-adapter';
@@ -8,6 +15,7 @@ import { ExternalWorkerPool } from './distributed/worker-pool';
 
 export async function handleWorker(args: string[]): Promise<void> {
   const parsed = parseCliArgs(args);
+  warnDeprecatedRedisCredentialFlags(parsed);
   if (getBooleanFlag(parsed, 'help')) {
     printUsage(0);
     return;

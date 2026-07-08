@@ -7,6 +7,10 @@
     "kasw": "src/cli.ts"
   },
   "files": ["src", "fixtures", "README.md", "CHANGELOG.md", "LICENSE"],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "engines": {
     "bun": ">=1.0.0"
   },

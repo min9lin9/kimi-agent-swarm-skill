@@ -1,4 +1,5 @@
 import { loadConfig } from './config';
+import { defaultLogger } from './logger';
 import { listProviderNames } from './providers';
 import type {
   BudgetOptions,
@@ -99,6 +100,18 @@ export function getNumberFlag(parsed: ParsedArgs, name: string): number | undefi
   return value;
 }
 
+export function warnDeprecatedRedisCredentialFlags(parsed: ParsedArgs): void {
+  if (
+    parsed.flags['redis-password'] === undefined &&
+    parsed.flags['redis-username'] === undefined
+  ) {
+    return;
+  }
+  defaultLogger.warn(
+    'Deprecated: pass Redis credentials with REDIS_URL, REDIS_PASSWORD, or REDIS_USERNAME instead of --redis-password/--redis-username.'
+  );
+}
+
 function isAllowedValue<T extends string>(value: string, allowed: readonly T[]): value is T {
   return allowed.some((allowedValue) => allowedValue === value);
 }
@@ -120,6 +133,7 @@ export async function buildRunOptionsForCli(
   env: Record<string, string | undefined> = process.env
 ): Promise<RunWideSearchOptions> {
   const parsed = parseCliArgs(args);
+  warnDeprecatedRedisCredentialFlags(parsed);
   const workDir = getFlag(parsed, 'work-dir') ?? process.cwd();
   const config = await loadConfig(workDir);
 

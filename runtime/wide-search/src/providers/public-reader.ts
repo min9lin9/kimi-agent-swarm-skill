@@ -51,6 +51,14 @@ async function defaultResolver(hostname: string): Promise<readonly string[]> {
   return answers.map((answer) => answer.address);
 }
 
+async function resolveHostname(hostname: string, resolver: Resolver): Promise<readonly string[]> {
+  try {
+    return await resolver(hostname);
+  } catch {
+    return [];
+  }
+}
+
 function isBlockedHostname(hostname: string): boolean {
   const host = normalizeHost(hostname);
   return BLOCKED_HOSTS.has(host) || host.endsWith('.local');
@@ -98,7 +106,7 @@ export async function validatePublicReaderUrl(
     return { ok: false, reason: 'hostname_not_supported' };
   }
 
-  const addresses = await resolver(host);
+  const addresses = await resolveHostname(host, resolver);
   if (addresses.length === 0 || addresses.some((address) => !isPublicInternetIp(address))) {
     return { ok: false, reason: 'private_address' };
   }
@@ -239,10 +247,15 @@ export class PublicReaderProvider implements SearchProvider {
       return undefined;
     }
 
-    const response = await this.fetcher(target.url.href, {
-      headers: target.headers,
-      redirect: 'manual',
-    });
+    let response: Response;
+    try {
+      response = await this.fetcher(target.url.href, {
+        headers: target.headers,
+        redirect: 'manual',
+      });
+    } catch {
+      return undefined;
+    }
 
     if (response.status >= 300 && response.status < 400) {
       if (redirectCount >= this.maxRedirects) {
@@ -273,7 +286,7 @@ export class PublicReaderProvider implements SearchProvider {
       return undefined;
     }
 
-    const addresses = await this.resolver(host);
+    const addresses = await resolveHostname(host, this.resolver);
     const address = addresses[0];
     if (!address || addresses.some((candidate) => !isPublicInternetIp(candidate))) {
       return undefined;
