@@ -168,6 +168,21 @@ function handleProviders(): void {
   console.log(JSON.stringify(providers, null, 2));
 }
 
+type CommandHandler = (args: string[]) => void | Promise<void>;
+
+const COMMAND_HANDLERS: Record<string, CommandHandler> = {
+  run: handleRun,
+  research: handleRun,
+  verify: handleVerify,
+  inspect: handleInspect,
+  export: handleExport,
+  benchmark: handleBenchmark,
+  leaderboard: handleLeaderboard,
+  init: handleInit,
+  worker: handleWorker,
+  providers: handleProviders,
+} satisfies Record<string, CommandHandler>;
+
 async function main(): Promise<void> {
   const rawArgs = process.argv.slice(2);
   if (rawArgs.includes('--verbose') || rawArgs.includes('-v')) {
@@ -176,51 +191,6 @@ async function main(): Promise<void> {
   const filteredArgs = rawArgs.filter((arg) => arg !== '--verbose' && arg !== '-v');
   const [command, ...args] = filteredArgs;
 
-  if (command === 'run' || command === 'research') {
-    await handleRun(args);
-    return;
-  }
-
-  if (command === 'verify') {
-    await handleVerify(args);
-    return;
-  }
-
-  if (command === 'inspect') {
-    await handleInspect(args);
-    return;
-  }
-
-  if (command === 'export') {
-    await handleExport(args);
-    return;
-  }
-
-  if (command === 'benchmark') {
-    await handleBenchmark(args);
-    return;
-  }
-
-  if (command === 'leaderboard') {
-    await handleLeaderboard(args);
-    return;
-  }
-
-  if (command === 'init') {
-    await handleInit(args);
-    return;
-  }
-
-  if (command === 'worker') {
-    await handleWorker(args);
-    return;
-  }
-
-  if (command === 'providers') {
-    handleProviders();
-    return;
-  }
-
   if (command === '--help' || command === '-h') {
     printUsage(0);
     return;
@@ -228,6 +198,12 @@ async function main(): Promise<void> {
 
   if (command === undefined) {
     printUsage();
+    return;
+  }
+
+  const handler = COMMAND_HANDLERS[command];
+  if (handler) {
+    await handler(args);
     return;
   }
 
